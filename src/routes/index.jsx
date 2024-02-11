@@ -42,8 +42,6 @@ import {
     ProjectLists,
     
     // tasks
-    TasksCreate,
-    TasksDetails,
     TasksList,
     
 } from './elements.jsx';
@@ -63,11 +61,11 @@ function Router() {
         },
         {
             path: '/auth',
-            element: (
-                <GuestGuard>
-                    <Outlet />
-                </GuestGuard>
-            ),
+            // element: (
+            //     <GuestGuard>
+            //         <Outlet />
+            //     </GuestGuard>
+            // ),
             children: [
                 {
                     path: 'login',
@@ -86,11 +84,11 @@ function Router() {
         {
             path: '/dashboard',
             element: (
-                <AuthGuard>
+                // <AuthGuard>
                     <DashBoardLayout>
                         <Outlet />
                     </DashBoardLayout>
-                </AuthGuard>
+                // </AuthGuard>
             ),
             children: [
                 {
@@ -140,7 +138,6 @@ function Router() {
                 {
                     path:"projects",
                     children:[
-
                         {
                             path: 'create',
                             element: <ProjectCreate />,
@@ -148,7 +145,6 @@ function Router() {
                         {
                             path: 'list',
                             element: <ProjectLists />,
-                            index:true
                         },
                         {
                             path: 'details',
@@ -163,22 +159,9 @@ function Router() {
                 {
                     path:"tasks",
                     children:[
-
-                        {
-                            path: 'create',
-                            element: <TasksCreate />,
-                        },
                         {
                             path: 'list',
                             element: <TasksList />,
-                        },
-                        {
-                            path: 'details',
-                            element: <TasksDetails />,
-                        },
-                        {
-                            path: 'edit',
-                            element: <TasksCreate />,
                         },
                     ]
                 },

@@ -24,7 +24,7 @@ function TasksLists() {
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
-                TasksLists
+                TasksLists kanban
             </Container>
         </>
     );

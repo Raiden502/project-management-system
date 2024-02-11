@@ -69,16 +69,6 @@ export function useNavData() {
                     ],
                 },
                 {
-                    title: 'tasks',
-                    path: paths.dashboard.tasks.list,
-                    icon: ICONS.task,
-                    children: [
-                        { title: 'list', path: paths.dashboard.tasks.list },
-                        { title: 'details', path: paths.dashboard.tasks.details },
-                        { title: 'create', path: paths.dashboard.tasks.create },
-                    ],
-                },
-                {
                     title: 'teams',
                     path: paths.dashboard.teams.list,
                     icon: ICONS.teams,
@@ -87,6 +77,11 @@ export function useNavData() {
                         { title: 'details', path: paths.dashboard.teams.details },
                         { title: 'create', path: paths.dashboard.teams.create },
                     ],
+                },
+                {
+                    title: 'tasks',
+                    path: paths.dashboard.tasks.list,
+                    icon: ICONS.task,
                 },
             ],
         },

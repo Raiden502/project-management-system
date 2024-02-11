@@ -61,9 +61,6 @@ export const Calender = Loadable(
 export const Files = Loadable(lazy(() => import('src/pages/dashboard/communication/files.jsx')));
 
 // dashboard-tasks
-export const TasksCreate = Loadable(lazy(() => import('src/pages/dashboard/tasks/create.jsx')));
-
-export const TasksDetails = Loadable(lazy(() => import('src/pages/dashboard/tasks/details.jsx')));
 export const TasksList = Loadable(lazy(() => import('src/pages/dashboard/tasks/list.jsx')));
 
 // authentication
