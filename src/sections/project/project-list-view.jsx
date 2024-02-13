@@ -1,5 +1,6 @@
-import { Box } from '@mui/material';
+import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import ProjItem from './project-list-item';
+import Iconify from 'src/components/iconify/Iconify';
 
 const projects = [
     {
@@ -105,7 +106,24 @@ const projects = [
 
 function ProjectListView() {
     return (
-        <>
+        <Stack gap={4}>
+            <TextField
+                name="projectname"
+                InputProps={{
+                    sx: { borderRadius: '8px' },
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <Iconify
+                                icon="ic:round-search"
+                            />
+                        </InputAdornment>
+                    ),
+                }}
+                sx={{ height: '40px', width: '300px' }}
+                // value={}
+                // onChange={()=>{}}
+                placeholder="search"
+            />
             <Box
                 gap={3}
                 display="grid"
@@ -119,7 +137,7 @@ function ProjectListView() {
                     <ProjItem key={details.id} job={details} />
                 ))}
             </Box>
-        </>
+        </Stack>
     );
 }
 
