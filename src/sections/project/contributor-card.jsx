@@ -35,7 +35,6 @@ export default function ProjectContributor() {
                         clearOnEscape
                         freeSolo
                         id="tags"
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         value={contributors.map((userId) =>
                             _tags.find((tag) => tag.userId === userId)
                         )}
@@ -47,7 +46,9 @@ export default function ProjectContributor() {
                                 placeholder="Select Users"
                                 sx={{
                                     bgcolor: 'white',
-                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '8px',
+                                    },
                                 }}
                             />
                         )}
@@ -60,12 +61,7 @@ export default function ProjectContributor() {
                                     src={option.avatar}
                                     sx={{ width: 24, height: 24, flexShrink: 0, mr: 1 }}
                                 />
-                                <Typography
-                                    variant="subtitle2"
-                                    InputProps={{ sx: { borderRadius: '8px' } }}
-                                >
-                                    {option.username}
-                                </Typography>
+                                <Typography variant="subtitle2">{option.username}</Typography>
                             </li>
                         )}
                         renderTags={(value, getTagProps) =>
@@ -74,10 +70,7 @@ export default function ProjectContributor() {
                                     {...getTagProps({ index })}
                                     key={option.userId}
                                     label={
-                                        <Typography
-                                            variant="subtitle2"
-                                            InputProps={{ sx: { borderRadius: '8px' } }}
-                                        >
+                                        <Typography variant="subtitle2">
                                             {option.username}
                                         </Typography>
                                     }
@@ -97,7 +90,6 @@ export default function ProjectContributor() {
                         clearOnEscape
                         freeSolo
                         id="tags"
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         value={teamcontributors.map((userId) =>
                             _tags.find((tag) => tag.userId === userId)
                         )}
@@ -106,10 +98,12 @@ export default function ProjectContributor() {
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                placeholder="Select Users"
+                                placeholder="Select Teams"
                                 sx={{
                                     bgcolor: 'white',
-                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '8px',
+                                    },
                                 }}
                             />
                         )}
@@ -122,12 +116,7 @@ export default function ProjectContributor() {
                                     src={option.avatar}
                                     sx={{ width: 24, height: 24, flexShrink: 0, mr: 1 }}
                                 />
-                                <Typography
-                                    variant="subtitle2"
-                                    InputProps={{ sx: { borderRadius: '8px' } }}
-                                >
-                                    {option.username}
-                                </Typography>
+                                <Typography variant="subtitle2">{option.username}</Typography>
                             </li>
                         )}
                         renderTags={(value, getTagProps) =>
@@ -136,10 +125,7 @@ export default function ProjectContributor() {
                                     {...getTagProps({ index })}
                                     key={option.userId}
                                     label={
-                                        <Typography
-                                            variant="subtitle2"
-                                            InputProps={{ sx: { borderRadius: '8px' } }}
-                                        >
+                                        <Typography variant="subtitle2">
                                             {option.username}
                                         </Typography>
                                     }

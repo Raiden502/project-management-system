@@ -35,7 +35,6 @@ export default function TeamContributor() {
                         clearOnEscape
                         freeSolo
                         id="tags"
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         value={contributors.map((userId) =>
                             _tags.find((tag) => tag.userId === userId)
                         )}
@@ -47,7 +46,9 @@ export default function TeamContributor() {
                                 placeholder="Select Users"
                                 sx={{
                                     bgcolor: 'white',
-                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '8px',
+                                    },
                                 }}
                             />
                         )}
@@ -62,7 +63,6 @@ export default function TeamContributor() {
                                 />
                                 <Typography
                                     variant="subtitle2"
-                                    InputProps={{ sx: { borderRadius: '8px' } }}
                                 >
                                     {option.username}
                                 </Typography>
@@ -76,7 +76,6 @@ export default function TeamContributor() {
                                     label={
                                         <Typography
                                             variant="subtitle2"
-                                            InputProps={{ sx: { borderRadius: '8px' } }}
                                         >
                                             {option.username}
                                         </Typography>
@@ -97,7 +96,6 @@ export default function TeamContributor() {
                         clearOnEscape
                         freeSolo
                         id="tags"
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         value={teamcontributors.map((userId) =>
                             _tags.find((tag) => tag.userId === userId)
                         )}
@@ -109,7 +107,9 @@ export default function TeamContributor() {
                                 placeholder="Select Users"
                                 sx={{
                                     bgcolor: 'white',
-                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '8px',
+                                    },
                                 }}
                             />
                         )}
@@ -124,7 +124,6 @@ export default function TeamContributor() {
                                 />
                                 <Typography
                                     variant="subtitle2"
-                                    InputProps={{ sx: { borderRadius: '8px' } }}
                                 >
                                     {option.username}
                                 </Typography>
@@ -138,7 +137,6 @@ export default function TeamContributor() {
                                     label={
                                         <Typography
                                             variant="subtitle2"
-                                            InputProps={{ sx: { borderRadius: '8px' } }}
                                         >
                                             {option.username}
                                         </Typography>
