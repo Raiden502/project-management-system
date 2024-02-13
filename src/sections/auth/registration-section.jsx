@@ -62,11 +62,19 @@ function RegisterSection() {
                     </Typography>
                     <Typography variant="body2">
                         Already have an account?{' '}
-                        <Link
-                            style={{ color: '#00a76f', textDecoration: 'none', fontWeight: 'bold' }}
+                        <Typography
+                            variant="body2"
+                            component={Link}
+                            href="#"
+                            sx={{
+                                color: '#00a76f',
+                                textDecoration: 'none',
+                                fontWeight: 'bold',
+                                marginLeft: '4px',
+                            }}
                         >
                             Sign in
-                        </Link>
+                        </Typography>
                     </Typography>
                     <Stack gap={3} direction="row">
                         <Stack gap={3} sx={{ width: 350 }}>

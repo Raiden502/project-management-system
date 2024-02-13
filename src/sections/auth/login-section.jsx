@@ -41,19 +41,32 @@ function LoginSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 350, borderRadius: '10px', p: 3 , boxShadow:2}}>
+            <Card sx={{ width: 350, borderRadius: '10px', p: 3, boxShadow: 2 }}>
                 <Stack gap={3}>
                     <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                         Sign in to TFMS
                     </Typography>
                     <Typography variant="body2">
-                        New user? <Link style={{ color: '#00a76f',  textDecoration: 'none', fontWeight: 'bold'}}>Create an account</Link>
+                        New user?{' '}
+                        <Typography
+                            variant="body2"
+                            component={Link}
+                            href="#"
+                            sx={{
+                                color: '#00a76f',
+                                textDecoration: 'none',
+                                fontWeight: 'bold',
+                                marginLeft: '4px',
+                            }}
+                        >
+                            Create an account
+                        </Typography>
                     </Typography>
                     <Stack gap={3} sx={{}}>
                         <TextField
                             name="username"
                             label="Email address"
-                            sx={{height: '40px', }}
+                            sx={{ height: '40px' }}
                             InputProps={{ sx: { borderRadius: '8px' } }}
                             value={loginDetails.username}
                             onChange={HandlePageDetails}
@@ -63,7 +76,7 @@ function LoginSection() {
                             name="password"
                             label="Password"
                             type={passwordToogle ? 'text' : 'password'}
-                            sx={{height: '50px' }}
+                            sx={{ height: '50px' }}
                             value={loginDetails.password}
                             onChange={HandlePageDetails}
                             placeholder="Password"
@@ -87,9 +100,20 @@ function LoginSection() {
                                 ),
                             }}
                         ></TextField>
-                        <Typography variant="body2" textAlign="right">
-                            <Link style={{ color: '#00a76f', textDecoration: 'none', fontWeight: 'bold' }}>Forget Password?</Link>
-                        </Typography>
+                        <Box textAlign="right">
+                            <Typography
+                                variant="body2"
+                                component={Link}
+                                href="#"
+                                sx={{
+                                    color: '#00a76f',
+                                    textDecoration: 'none',
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                Forget Password?
+                            </Typography>
+                        </Box>
                         <Button
                             fullWidth
                             variant="contained"
