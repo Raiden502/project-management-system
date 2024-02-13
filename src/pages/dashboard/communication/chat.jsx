@@ -1,4 +1,4 @@
-import ChattingView from 'src/sections/chat/ChatView';
+import ChattingView from 'src/sections/chat/chat-view';
 function UserChatting() {
     return (
         <>

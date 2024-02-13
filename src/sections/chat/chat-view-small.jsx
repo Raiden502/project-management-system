@@ -1,6 +1,6 @@
 import { Box, Avatar, IconButton, Stack, Divider, Card } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import OverlayAvatar from 'src/sections/chat/GroupOverlay';
+import OverlayAvatar from 'src/sections/chat/group-overlay';
 
 function ChatViewSmall({ ChangeNavBar, user, ChangeChatOnTap }) {
     return (

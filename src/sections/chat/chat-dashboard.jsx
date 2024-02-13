@@ -16,8 +16,8 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import CallIcon from '@mui/icons-material/Call';
-import ChatListItem from 'src/sections/chat/ChatListItem';
-import OverlayAvatar from 'src/sections/chat/GroupOverlay';
+import ChatListItem from 'src/sections/chat/chat-listItem';
+import OverlayAvatar from 'src/sections/chat/group-overlay';
 import { AuthContext } from 'src/auth/JwtContext';
 import { CallContext } from 'src/providers/socket/CallProviders';
 

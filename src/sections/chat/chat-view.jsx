@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Typography, Container, Card, Stack } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
-import ChatDashboard from 'src/sections/chat/ChatDashboard';
-import ChatContactView from 'src/sections/chat/ChatContact';
-import ChatViewSmall from 'src/sections/chat/ChatViewSmall';
+import ChatDashboard from 'src/sections/chat/chat-dashboard';
+import ChatContactView from 'src/sections/chat/chat-contact';
+import ChatViewSmall from 'src/sections/chat/chat-view-small';
 import { AuthContext } from 'src/auth/JwtContext';
 import { ChatContext } from 'src/providers/socket/ChatProviders';
 

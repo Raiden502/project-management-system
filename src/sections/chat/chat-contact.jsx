@@ -10,7 +10,7 @@ import {
     Badge,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import OverlayAvatar from 'src/sections/chat/GroupOverlay';
+import OverlayAvatar from 'src/sections/chat/group-overlay';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {

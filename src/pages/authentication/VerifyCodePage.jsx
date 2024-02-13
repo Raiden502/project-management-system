@@ -1,4 +1,4 @@
-import OtpScreen from 'src/sections/auth/Otp'
+import OtpScreen from 'src/sections/auth/otp-screen'
 
 function VerifyCodePage(){
     return(

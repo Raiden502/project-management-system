@@ -8,20 +8,35 @@ import { useNavData } from './ConfigNavigation.jsx';
 const NAVDashboard = 260;
 
 function NavVertical() {
-	const navData = useNavData();
+    const navData = useNavData();
     const { theme } = useContext(ThemesContext);
     const renderContent = (
         <Box
             sx={{
                 height: '100%',
                 backgroundColor: 'transparent',
-                // overflowY: 'scroll',
+                position: 'relative',
+                overflowY: 'hidden', // Initially hide the scrollbar
+                '&:hover': {
+                    overflowY: 'auto', // Show the scrollbar on hover
+                },
+                '&::-webkit-scrollbar': {
+                    width: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#999',
+                    borderRadius: '4px',
+                    height: '10px',
+                },
+                '&::-webkit-scrollbar-track': {
+                    backgroundColor: '#f0f0f0',
+                },
             }}
         >
             <NavSectionVertical
                 data={navData}
                 config={{
-                    currentRole:'admin',
+                    currentRole: 'admin',
                 }}
             />
         </Box>
