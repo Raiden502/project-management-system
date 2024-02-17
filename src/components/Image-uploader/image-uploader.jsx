@@ -15,7 +15,7 @@ const ImagePreview = ({ OnClear, index, image }) => (
                     height: 100,
                     flexShrink: 0,
                     borderRadius: '10px',
-                    boxShadow: 1,
+                    boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px',
                 }}
             />
             <IconButton
@@ -26,7 +26,7 @@ const ImagePreview = ({ OnClear, index, image }) => (
                     top: 6,
                     right: 6,
                     position: 'absolute',
-                    backgroundColor: 'black',
+                    backgroundColor: '#212B36',
                     color: 'white',
                 }}
             >

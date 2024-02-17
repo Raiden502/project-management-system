@@ -55,12 +55,12 @@ function RegisterSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 750, borderRadius: '10px', p: 3, boxShadow: 2 }}>
+            <Card sx={{ width: 750, borderRadius: '10px', p: 3, boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}>
                 <Stack gap={3}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', color:'#212B36' }}>
                         Welcome to TFMS
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{color:'#212B36'}}>
                         Already have an account?{' '}
                         <Typography
                             variant="body2"
@@ -146,7 +146,7 @@ function RegisterSection() {
                             <Button
                                 variant="contained"
                                 sx={{
-                                    backgroundColor: 'black',
+                                    backgroundColor: '#212B36',
                                     textAlign: 'left',
                                     borderRadius: '8px',
                                     height: '50px',
@@ -167,7 +167,7 @@ function RegisterSection() {
                             orientation="vertical"
                             variant="middle"
                             flexItem
-                            sx={{ color: 'black' }}
+                            sx={{ color: '#212B36' }}
                         />
                         <Stack gap={3} sx={{ width: 350 }}>
                             <TextField

@@ -41,12 +41,12 @@ function LoginSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 350, borderRadius: '10px', p: 3, boxShadow: 2 }}>
+            <Card sx={{ width: 350, borderRadius: '10px', p: 3, boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}>
                 <Stack gap={3}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', color:'#212B36' }}>
                         Sign in to TFMS
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{color:'#212B36'}}>
                         New user?{' '}
                         <Typography
                             variant="body2"
@@ -118,7 +118,7 @@ function LoginSection() {
                             fullWidth
                             variant="contained"
                             sx={{
-                                backgroundColor: 'black',
+                                backgroundColor: '#212B36',
                                 textAlign: 'left',
                                 borderRadius: '8px',
                                 height: '50px',

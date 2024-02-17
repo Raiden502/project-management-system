@@ -155,7 +155,7 @@ function AudioCallView() {
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
-                backgroundColor: 'black',
+                backgroundColor: '#212B36',
                 p: 0.5,
                 display: 'flex',
                 flexDirection: 'row',

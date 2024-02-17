@@ -21,7 +21,7 @@ export default function CustomBreadcrumbs({
   const lastLink = links[links.length - 1].name;
 
   return (
-    <Box sx={{ ...sx }}>
+    <Box sx={{ ...sx, color:'#212B36'}}>
       <Stack direction="row" alignItems="center">
         <Box sx={{ flexGrow: 1 }}>
           {/* HEADING */}

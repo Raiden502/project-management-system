@@ -3,7 +3,7 @@ import ImageUploader from 'src/components/Image-uploader/image-uploader';
 
 export default function ProjectInfo() {
     return (
-        <Card sx={{ borderRadius: '15px', boxShadow: 1, position: 'relative' }}>
+        <Card sx={{ borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px', position: 'relative' }}>
             <Stack gap={4} sx={{ p: 3 }}>
                 <Stack spacing={1.5}>
                     <Typography variant="body1">Name</Typography>

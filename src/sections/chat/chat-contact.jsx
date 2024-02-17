@@ -90,7 +90,7 @@ function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
                             <Typography
                                 noWrap
                                 variant="body2"
-                                sx={{ fontSize: 16, color: 'black' }}
+                                sx={{ fontSize: 16, color: '#212B36' }}
                             >
                                 {data.name}
                             </Typography>

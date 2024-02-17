@@ -7,7 +7,7 @@ export default function TeamCreateView() {
     return (
         <Grid container spacing={3}>
             <Grid md={4}>
-                <Typography variant="h6" sx={{ mb: 0.5 }}>
+                <Typography variant="h6" sx={{ mb: 0.5 , color:'#212B36'}}>
                     Details
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -18,7 +18,7 @@ export default function TeamCreateView() {
                 <TeamInfo />
             </Grid>
             <Grid md={4}>
-                <Typography variant="h6" sx={{ mb: 0.5 }}>
+                <Typography variant="h6" sx={{ mb: 0.5 , color:'#212B36'}}>
                     Contributors
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -29,7 +29,7 @@ export default function TeamCreateView() {
                 <TeamContributor />
             </Grid>
             <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent:'flex-end' }}>
-                <Button variant="contained">Create</Button>
+                <Button variant="contained" sx={{bgcolor:'#212B36'}}>Create</Button>
             </Grid>
         </Grid>
     );

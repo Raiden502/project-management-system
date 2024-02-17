@@ -30,7 +30,7 @@ function ProjectLists() {
                             component={RouterLink}
                             href={paths.dashboard.projects.create}
                             variant="contained"
-                            sx={{ bgcolor: 'black', color: 'white', textDecoration: 'none', textTransform: 'none'  }}
+                            sx={{ bgcolor: '#212B36', color: 'white', textDecoration: 'none', textTransform: 'none'  }}
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
                             New Project

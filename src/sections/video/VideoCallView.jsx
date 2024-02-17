@@ -155,7 +155,7 @@ function VideoCallView() {
     return (
         <Box
             sx={{
-                backgroundColor: 'black',
+                backgroundColor: '#212B36',
                 height: '90vh', // Full viewport height
                 display: 'flex',
                 flexDirection: 'column',
@@ -170,7 +170,7 @@ function VideoCallView() {
                     flexDirection: 'row',
                     justifyContent: 'space-evenly',
                     alignItems: 'center',
-                    backgroundColor: 'black',
+                    backgroundColor: '#212B36',
                     width: '100%',
                     height: '100%', // Adjust as needed
                 }}
@@ -213,17 +213,17 @@ function VideoCallView() {
                 }}
                 gap={3}
             >
-                <IconButton onClick={leaveButton} sx={{ backgroundColor: 'black' }}>
+                <IconButton onClick={leaveButton} sx={{ backgroundColor: '#212B36' }}>
                     <CallEndIcon color="error" />
                 </IconButton>
-                <IconButton onClick={muteAudioButton} sx={{ backgroundColor: 'black' }}>
+                <IconButton onClick={muteAudioButton} sx={{ backgroundColor: '#212B36' }}>
                     {actions.audio === true ? (
                         <MicIcon color="success" />
                     ) : (
                         <MicOffIcon color="error" />
                     )}
                 </IconButton>
-                <IconButton onClick={muteVideoButton} sx={{ backgroundColor: 'black' }}>
+                <IconButton onClick={muteVideoButton} sx={{ backgroundColor: '#212B36' }}>
                     {actions.video === true ? (
                         <VideocamIcon color="success" />
                     ) : (

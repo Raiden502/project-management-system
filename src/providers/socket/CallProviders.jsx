@@ -258,14 +258,14 @@ export function CallProvider({ children }) {
                             width: 'inherit',
                         }}
                     >
-                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: 'black' }}>
+                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: '#212B36' }}>
                             {callState.type == 'phone' ? (
                                 <PhoneCallbackIcon color="success" />
                             ) : (
                                 <VideocamIcon color="success" />
                             )}
                         </IconButton>
-                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: 'black' }}>
+                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: '#212B36' }}>
                             {callState.type == 'phone' ? (
                                 <CallEndIcon color="error" />
                             ) : (
@@ -318,14 +318,14 @@ export function CallProvider({ children }) {
                             width: 'inherit',
                         }}
                     >
-                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: 'black' }}>
+                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: '#212B36' }}>
                             {callState.type == 'phone' ? (
                                 <PhoneCallbackIcon color="success" />
                             ) : (
                                 <VideocamIcon color="success" />
                             )}
                         </IconButton>
-                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: 'black' }}>
+                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: '#212B36' }}>
                             {callState.type == 'phone' ? (
                                 <CallEndIcon color="error" />
                             ) : (
