@@ -59,11 +59,21 @@ export function useNavData() {
             items: [
                 // USER
                 {
+                    title: 'Departments',
+                    path: paths.dashboard.departments.list,
+                    icon: ICONS.project,
+                    children: [
+                        { title: 'list', path: paths.dashboard.departments.list },
+                        { title: 'details', path: paths.dashboard.departments.details },
+                        { title: 'create', path: paths.dashboard.departments.create },
+                    ],
+                },
+                {
                     title: 'project',
                     path: paths.dashboard.projects.list,
                     icon: ICONS.project,
                     children: [
-                        { title: 'cards', path: paths.dashboard.projects.list },
+                        { title: 'list', path: paths.dashboard.projects.list },
                         { title: 'details', path: paths.dashboard.projects.details },
                         { title: 'create', path: paths.dashboard.projects.create },
                     ],
