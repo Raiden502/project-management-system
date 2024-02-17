@@ -15,7 +15,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
     return (
-        <Stack component={Card} direction="column" gap={2} sx={{ p: 3, width: 250 }}>
+        <Stack direction="column" gap={2} sx={{ p: 3, width: 250 }}>
             <Stack
                 direction="row"
                 sx={{ alignItems: 'center' }}
@@ -32,7 +32,7 @@ function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
                     <KeyboardArrowLeftIcon fontSize="inherit" />
                 </IconButton>
             </Stack>
-            <Divider light />
+            <Divider />
             <TextField
                 fullWidth
                 InputProps={{
@@ -54,11 +54,11 @@ function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
                         width: '8px',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: '#bdbdbd',
+                        backgroundColor: '#D5CECC',
                         borderRadius: '5px',
                     },
                     '&::-webkit-scrollbar-track': {
-                        backgroundColor: '#f5f5f5', // Set the color of the track
+                        // backgroundColor: '#f5f5f5', // Set the color of the track
                     },
                 }}
             >
@@ -80,7 +80,7 @@ function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
                         }}
                     >
                         {data.type === 'normal' ? (
-                            <Badge color={data.onlinestatus?"success":"default"} variant="dot">
+                            <Badge color={data.onlinestatus ? 'success' : 'default'} variant="dot">
                                 <Avatar alt="Remy Sharp" src={data.avatar} />
                             </Badge>
                         ) : (

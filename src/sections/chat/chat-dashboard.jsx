@@ -40,7 +40,7 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
     }, [messageArray]);
 
     return (
-        <Stack component={Card} direction="column" sx={{ p: 2 }}>
+        <Stack direction="column" sx={{ p: 2 }}>
             <Stack
                 direction="row"
                 sx={{ alignItems: 'center', mb: 2 }}
@@ -86,7 +86,7 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
                     <CallIcon fontSize="inherit" />
                 </IconButton>
             </Stack>
-            <Divider light />
+            <Divider />
             <Box
                 ref={chatContainerRef}
                 sx={{
@@ -116,7 +116,7 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
                     />
                 ))}
             </Box>
-            <Divider light />
+            <Divider />
             <Stack direction="row" sx={{ mt: 1 }}>
                 <TextField
                     fullWidth

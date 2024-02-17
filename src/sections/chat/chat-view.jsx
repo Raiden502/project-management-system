@@ -9,7 +9,8 @@ import { ChatContext } from 'src/providers/socket/ChatProviders';
 
 const ChattingView = () => {
     const { user } = useContext(AuthContext);
-    const { SendMessage, currentChatUser, chats, chatUsers, ChatDispatch} = useContext(ChatContext);
+    const { SendMessage, currentChatUser, chats, chatUsers, ChatDispatch } =
+        useContext(ChatContext);
     const [usersFilterData, setFilterUsersData] = useState([]);
     const [closeNav, setCloseNav] = useState(false);
 
@@ -55,7 +56,7 @@ const ChattingView = () => {
             });
             if (response.data.status) {
                 ChatDispatch({ type: 'SET_DEFAULT_USERS', payload: response.data.data });
-                ChatDispatch({ type: 'SET_DEFAULT_CURRENTUSR', payload: response.data.data[0]});
+                ChatDispatch({ type: 'SET_DEFAULT_CURRENTUSR', payload: response.data.data[0] });
                 setFilterUsersData(response.data.data);
             }
         } catch (err) {
@@ -78,38 +79,36 @@ const ChattingView = () => {
     }, [chatUsers, currentChatUser, chats]);
 
     return (
-        <Container maxWidth={false} sx={{ mt: 3 }}>
-            <Typography
-                variant="h5"
-                sx={{
-                    mb: { xs: 3, md: 3 },
-                }}
-            >
-                Chats
-            </Typography>
-            <Stack component={Card} direction="row" sx={{ height: '66vh' }}>
-                {closeNav === false ? (
-                    <ChatContactView
-                        user={usersFilterData}
-                        ChangeChatOnTap={ChangeChatOnTap}
-                        localSearch={localSearch}
-                        ChangeNavBar={ChangeNavBar}
-                    />
-                ) : (
-                    <ChatViewSmall
-                        ChangeNavBar={ChangeNavBar}
-                        user={usersFilterData}
-                        ChangeChatOnTap={ChangeChatOnTap}
-                    />
-                )}
-                <ChatDashboard
-                    messageArray={chats}
-                    currentChat={currentChatUser}
-                    SendMessage={SendMessage}
+        <Stack
+            component={Card}
+            direction="row"
+            sx={{
+                height: '66vh',
+                borderRadius: '15px',
+                boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
+            }}
+        >
+            {closeNav === false ? (
+                <ChatContactView
+                    user={usersFilterData}
+                    ChangeChatOnTap={ChangeChatOnTap}
+                    localSearch={localSearch}
+                    ChangeNavBar={ChangeNavBar}
                 />
-                <Stack component={Card} direction="column"></Stack>
-            </Stack>
-        </Container>
+            ) : (
+                <ChatViewSmall
+                    ChangeNavBar={ChangeNavBar}
+                    user={usersFilterData}
+                    ChangeChatOnTap={ChangeChatOnTap}
+                />
+            )}
+            <ChatDashboard
+                messageArray={chats}
+                currentChat={currentChatUser}
+                SendMessage={SendMessage}
+            />
+            <Stack component={Card} direction="column"></Stack>
+        </Stack>
     );
 };
 
