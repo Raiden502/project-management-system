@@ -12,15 +12,18 @@ function TeamsCreate() {
             </Helmet>
             <Container maxWidth={false}>
                 <CustomBreadcrumbs
-                    heading="Create a new teams"
+                    heading="Create"
                     links={[
                         {
                             name: 'Dashboard',
                             href: paths.dashboard.root,
                         },
                         {
+                            name: 'Teams',
+                            href: paths.dashboard.teams.root,
+                        },
+                        {
                             name: 'create',
-                            href: paths.dashboard.root,
                         },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

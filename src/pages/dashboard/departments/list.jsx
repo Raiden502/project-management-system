@@ -19,8 +19,11 @@ function DepartmentsLists() {
                             href: paths.dashboard.root,
                         },
                         {
+                            name: 'Department',
+                            href: paths.dashboard.departments.root,
+                        },
+                        {
                             name: 'List',
-                            href: paths.dashboard.root,
                         },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

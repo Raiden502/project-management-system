@@ -24,12 +24,12 @@ function NavVertical() {
                     width: '8px',
                 },
                 '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: '#999',
+                    backgroundColor: '#D5CECC',
                     borderRadius: '4px',
                     height: '10px',
                 },
                 '&::-webkit-scrollbar-track': {
-                    backgroundColor: '#f0f0f0',
+                    // backgroundColor: '#f0f0f0',
                 },
             }}
         >
@@ -47,6 +47,7 @@ function NavVertical() {
             sx={{
                 flexShrink: { lg: 0 },
                 width: { lg: NAVDashboard },
+                mr:2
             }}
         >
             <Drawer

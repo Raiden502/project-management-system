@@ -22,7 +22,10 @@ function TeamsLists() {
                         },
                         {
                             name: 'Teams',
-                            href: paths.dashboard.root,
+                            href: paths.dashboard.teams.root,
+                        },
+                        {
+                            name: 'list',
                         },
                     ]}
                     action={

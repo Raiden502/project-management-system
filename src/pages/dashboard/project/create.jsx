@@ -12,15 +12,18 @@ function ProjectsCreate() {
             </Helmet>
             <Container maxWidth={false}>
                 <CustomBreadcrumbs
-                    heading="Create a new project"
+                    heading="Create"
                     links={[
                         {
                             name: 'Dashboard',
                             href: paths.dashboard.root,
                         },
                         {
+                            name: 'Projects',
+                            href: paths.dashboard.projects.root,
+                        },
+                        {
                             name: 'create',
-                            href: paths.dashboard.root,
                         },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

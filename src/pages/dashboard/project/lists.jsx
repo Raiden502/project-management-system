@@ -22,7 +22,10 @@ function ProjectLists() {
                         },
                         {
                             name: 'Projects',
-                            href: paths.dashboard.root,
+                            href: paths.dashboard.projects.root,
+                        },
+                        {
+                            name: 'list',
                         },
                     ]}
                     action={
@@ -30,13 +33,18 @@ function ProjectLists() {
                             component={RouterLink}
                             href={paths.dashboard.projects.create}
                             variant="contained"
-                            sx={{ bgcolor: '#212B36', color: 'white', textDecoration: 'none', textTransform: 'none'  }}
+                            sx={{
+                                bgcolor: '#212B36',
+                                color: 'white',
+                                textDecoration: 'none',
+                                textTransform: 'none',
+                            }}
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
                             New Project
                         </Button>
                     }
-                    sx={{ mb: { xs: 3, md: 5,} }}
+                    sx={{ mb: { xs: 3, md: 5 } }}
                 />
                 <ProjectListView />
             </Container>

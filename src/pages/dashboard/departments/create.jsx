@@ -12,15 +12,18 @@ function DepartmentsCreate() {
             </Helmet>
             <Container maxWidth={false}>
                 <CustomBreadcrumbs
-                    heading="Create a new Department"
+                    heading="Create"
                     links={[
                         {
                             name: 'Dashboard',
                             href: paths.dashboard.root,
                         },
                         {
+                            name: 'Department',
+                            href: paths.dashboard.departments.root,
+                        },
+                        {
                             name: 'Create',
-                            href: paths.dashboard.root,
                         },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

@@ -11,20 +11,6 @@ function TeamsDetails() {
                 <title> Dashboard: Team Details</title>
             </Helmet>
             <Container maxWidth={false}>
-                <CustomBreadcrumbs
-                    heading="Team Details"
-                    links={[
-                        {
-                            name: 'Dashboard',
-                            href: paths.dashboard.root,
-                        },
-                        {
-                            name: 'Details',
-                            href: paths.dashboard.root,
-                        },
-                    ]}
-                    sx={{ mb: { xs: 3, md: 5 } }}
-                />
                 <TeamDetailsView />
             </Container>
         </>
