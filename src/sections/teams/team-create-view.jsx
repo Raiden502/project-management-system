@@ -29,7 +29,7 @@ export default function TeamCreateView() {
                 <TeamContributor />
             </Grid>
             <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent:'flex-end' }}>
-                <Button variant="contained" sx={{bgcolor:'#212B36'}}>Create</Button>
+                <Button variant="contained" sx={{bgcolor:'#212B36',  borderRadius: '8px',}}>Create</Button>
             </Grid>
         </Grid>
     );

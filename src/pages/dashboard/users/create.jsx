@@ -2,6 +2,7 @@ import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { paths } from 'src/routes/path';
+import UsersCreateView from 'src/sections/users/user-create-view';
 
 function UsersCreate() {
     return (
@@ -11,20 +12,23 @@ function UsersCreate() {
             </Helmet>
             <Container maxWidth={false}>
                 <CustomBreadcrumbs
-                    heading="UsersCreate"
+                    heading="Create"
                     links={[
                         {
                             name: 'Dashboard',
                             href: paths.dashboard.root,
                         },
                         {
-                            name: 'UsersCreate',
-                            href: paths.dashboard.root,
+                            name: 'Users',
+                            href: paths.dashboard.users.create,
+                        },
+                        {
+                            name: 'Create',
                         },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
-                UsersCreate
+                <UsersCreateView />
             </Container>
         </>
     );

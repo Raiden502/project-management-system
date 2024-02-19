@@ -48,7 +48,6 @@ export function useNavData() {
                         { title: 'profile', path: paths.dashboard.users.details },
                         { title: 'list', path: paths.dashboard.users.list },
                         { title: 'create', path: paths.dashboard.users.create },
-                        { title: 'account', path: paths.dashboard.users.create },
                     ],
                 },
                 
