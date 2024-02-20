@@ -32,9 +32,6 @@ export const paths = {
         },
         tasks:{
             list: path(ROOTS.DASHBOARD, '/tasks/list'),
-            create: path(ROOTS.DASHBOARD, '/tasks/create'),
-            details: path(ROOTS.DASHBOARD, '/tasks/details'),
-            edit: path(ROOTS.DASHBOARD, '/tasks/edit'),
         },
         departments:{
             list: path(ROOTS.DASHBOARD, '/departments/list'),
@@ -45,7 +42,6 @@ export const paths = {
         users:{
             list: path(ROOTS.DASHBOARD, '/users/list'),
             create: path(ROOTS.DASHBOARD, '/users/create'),
-            details: path(ROOTS.DASHBOARD, '/users/details'),
             edit: path(ROOTS.DASHBOARD, '/users/edit'),
         },
         communication: {

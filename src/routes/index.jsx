@@ -23,7 +23,6 @@ import {
 
     // users
     UsersCreate,
-    UsersDetails,
     UsersLists,
 
     // teams
@@ -102,10 +101,6 @@ function Router() {
                         {
                             path: 'list',
                             element: <UsersLists />,
-                        },
-                        {
-                            path: 'details',
-                            element: <UsersDetails />,
                         },
                         {
                             path: 'edit',

@@ -41,8 +41,6 @@ export const TeamsLists = Loadable(lazy(() => import('src/pages/dashboard/teams/
 // dashboard-users
 export const UsersCreate = Loadable(lazy(() => import('src/pages/dashboard/users/create.jsx')));
 
-export const UsersDetails = Loadable(lazy(() => import('src/pages/dashboard/users/details.jsx')));
-
 export const UsersLists = Loadable(lazy(() => import('src/pages/dashboard/users/list.jsx')));
 
 // dashboard-communication

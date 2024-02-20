@@ -4,18 +4,18 @@ import Iconify from 'src/components/iconify/Iconify';
 
 const icon = (name) => <Iconify icon={name} />;
 
-const ICONS = { 
+const ICONS = {
     chat: icon('ph:chats-circle-duotone'),
     user: icon('ph:user-duotone'),
     file: icon('ph:files-duotone'),
     task: icon('fluent:task-list-ltr-24-filled'),
     project: icon('ph:kanban-duotone'),
-    calendar:icon('uil:calender'),
+    calendar: icon('uil:calender'),
     disabled: icon('lets-icons:user-alt-duotone'),
-    analytics:icon('majesticons:analytics-line'),
-    task_analytics:icon('grommet-icons:analytics'),
-    dep_analytics:icon('ion:analytics-sharp'),
-    teams:icon('fluent:people-team-24-regular')
+    analytics: icon('majesticons:analytics-line'),
+    task_analytics: icon('grommet-icons:analytics'),
+    dep_analytics: icon('ion:analytics-sharp'),
+    teams: icon('fluent:people-team-24-regular'),
 };
 
 export function useNavData() {
@@ -24,13 +24,20 @@ export function useNavData() {
             subheader: 'overview',
             items: [
                 {
-                    title: 'user analytics',
-                    path: paths.dashboard.communication.chat ,
-                    icon: ICONS.analytics,
+                    title: 'department analytics',
+                    path: paths.dashboard.communication.chat,
+                    icon: ICONS.dep_analytics,
                 },
-                { title: 'department analytics', path: paths.dashboard.communication.chat , icon: ICONS.dep_analytics },
-                { title: 'Project analytics', path: paths.dashboard.communication.chat , icon: ICONS.dep_analytics },
-                { title: 'Task analytics', path: paths.dashboard.communication.chat , icon: ICONS.task_analytics },
+                {
+                    title: 'Project analytics',
+                    path: paths.dashboard.communication.chat,
+                    icon: ICONS.dep_analytics,
+                },
+                {
+                    title: 'Task analytics',
+                    path: paths.dashboard.communication.chat,
+                    icon: ICONS.task_analytics,
+                },
             ],
         },
 
@@ -45,12 +52,14 @@ export function useNavData() {
                     path: paths.dashboard.users.list,
                     icon: ICONS.user,
                     children: [
-                        { title: 'profile', path: paths.dashboard.users.details },
+                        {
+                            title: 'Performance',
+                            path: paths.dashboard.communication.chat,
+                        },
                         { title: 'list', path: paths.dashboard.users.list },
                         { title: 'create', path: paths.dashboard.users.create },
                     ],
                 },
-                
             ],
         },
         {
@@ -98,10 +107,14 @@ export function useNavData() {
             subheader: 'Communication',
             items: [
                 { title: 'Chats', path: paths.dashboard.communication.chat, icon: ICONS.chat },
-                { title: 'files', path: paths.dashboard.communication.files , icon: ICONS.file },
-                { title: 'calendar', path: paths.dashboard.communication.calendar , icon: ICONS.calendar },
+                { title: 'files', path: paths.dashboard.communication.files, icon: ICONS.file },
+                {
+                    title: 'calendar',
+                    path: paths.dashboard.communication.calendar,
+                    icon: ICONS.calendar,
+                },
             ],
-        }
+        },
     ]);
 
     return data;
