@@ -1,8 +1,9 @@
 import { Avatar, AvatarGroup, Box, Paper, Stack, Typography } from '@mui/material';
+import { Draggable } from '@hello-pangea/dnd';
 import Iconify from 'src/components/iconify/Iconify';
 import Image from 'src/components/image';
 
-export default function TaskItem({ item, provided }) {
+export default function TaskItem({ item }) {
     const renderPriority = (
         <Iconify
             icon={
@@ -80,38 +81,42 @@ export default function TaskItem({ item, provided }) {
         </Stack>
     );
     return (
-        <Paper
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            // onClick={details.onTrue}
-            sx={{
-                width: 1,
-                borderRadius: '16px',
-                overflow: 'hidden',
-                position: 'relative',
-                boxShadow:
-                    'rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px',
-                '&:hover': {
-                    boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
-                },
-            }}
-        >
-            {!!item.attachments.length && renderImg}
-            <Stack spacing={2} sx={{ px: 2, py: 1.5, position: 'relative' }}>
-                {renderPriority}
-
-                <Typography
-                    variant="subtitle2"
+        <Draggable draggableId={item.id} index={item.id}>
+            {(provided) => (
+                <Paper
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    // onClick={details.onTrue}
                     sx={{
-                        textTransform: 'capitalize',
-                        color: '#212B36',
+                        width: 1,
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        position: 'relative',
+                        boxShadow:
+                            'rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px',
+                        '&:hover': {
+                            boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
+                        },
                     }}
                 >
-                    {item.content}
-                </Typography>
-                {renderInfo}
-            </Stack>
-        </Paper>
+                    {!!item.attachments.length && renderImg}
+                    <Stack spacing={2} sx={{ px: 2, py: 1.5, position: 'relative' }}>
+                        {renderPriority}
+
+                        <Typography
+                            variant="subtitle2"
+                            sx={{
+                                textTransform: 'capitalize',
+                                color: '#212B36',
+                            }}
+                        >
+                            {item.content}
+                        </Typography>
+                        {renderInfo}
+                    </Stack>
+                </Paper>
+            )}
+        </Draggable>
     );
 }

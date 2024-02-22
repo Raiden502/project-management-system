@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Avatar, AvatarGroup, Box, Card, Stack, Typography } from '@mui/material';
+import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import TaskItem from './task-items';
+import TaskColumn from './task-column';
 
 const getItems = (count, prefix) =>
     Array.from({ length: count }, (v, k) => k).map((k) => ({
@@ -35,8 +35,6 @@ const getItems = (count, prefix) =>
         ],
     }));
 
-const grid = 8;
-
 export default function TaskKanbanView() {
     const [columns, setColumns] = useState([
         { id: 'todo', name: 'To Do', value: [...getItems(5, 'todo')] },
@@ -61,74 +59,72 @@ export default function TaskKanbanView() {
         const destinationIndex = result.destination.index;
         const sourceColumnId = result.source.droppableId;
         const destinationColumnId = result.destination.droppableId;
-
         const updatedColumns = [...columns];
 
-        if (sourceColumnId === destinationColumnId) {
-            const sourceColumnIndex = columns.findIndex((column) => column.id === sourceColumnId);
-            const reorderedItems = reorder(
-                updatedColumns[sourceColumnIndex].value,
-                sourceIndex,
-                destinationIndex
-            );
-            updatedColumns[sourceColumnIndex].value = reorderedItems;
+        console.log(sourceIndex, destinationIndex, sourceColumnId, destinationColumnId);
+
+        if (result.type === 'COLUMN') {
+            const reorderedColumns = reorder(updatedColumns, sourceIndex, destinationIndex);
+            setColumns(reorderedColumns);
         } else {
-            const sourceColumnIndex = columns.findIndex((column) => column.id === sourceColumnId);
-            const destinationColumnIndex = columns.findIndex(
-                (column) => column.id === destinationColumnId
-            );
-            const movedItem = updatedColumns[sourceColumnIndex].value[sourceIndex];
-            updatedColumns[sourceColumnIndex].value.splice(sourceIndex, 1);
-            updatedColumns[destinationColumnIndex].value.splice(destinationIndex, 0, movedItem);
+            if (sourceColumnId === destinationColumnId) {
+                const sourceColumnIndex = columns.findIndex(
+                    (column) => column.id === sourceColumnId
+                );
+                const reorderedItems = reorder(
+                    updatedColumns[sourceColumnIndex].value,
+                    sourceIndex,
+                    destinationIndex
+                );
+                updatedColumns[sourceColumnIndex].value = reorderedItems;
+            } else {
+                const sourceColumnIndex = columns.findIndex(
+                    (column) => column.id === sourceColumnId
+                );
+                const destinationColumnIndex = columns.findIndex(
+                    (column) => column.id === destinationColumnId
+                );
+                const movedItem = updatedColumns[sourceColumnIndex].value[sourceIndex];
+                updatedColumns[sourceColumnIndex].value.splice(sourceIndex, 1);
+                updatedColumns[destinationColumnIndex].value.splice(destinationIndex, 0, movedItem);
+            }
+            setColumns(updatedColumns);
         }
-        setColumns(updatedColumns);
     };
 
     return (
-        <Stack gap={3} direction="row" sx={{width: 1150, overflowX: 'scroll' }}>
-            <DragDropContext onDragEnd={onDragEnd}>
-                {columns.map((column) => (
-                    <Droppable key={column.id} droppableId={column.id}>
-                        {(provided, snapshot) => (
-                            <Stack
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                                sx={{
-                                    background: '#f4f6f8',
-                                    p: 2,
-                                    borderRadius: '16px',
-                                }}
-                            >
-                                <Typography
-                                    variant="subtitle1"
-                                    sx={{
-                                        textTransform: 'capitalize',
-                                        color: '#212B36',
-                                        fontWeight: 'bold',
-                                    }}
-                                    gutterBottom
-                                >
-                                    {column.name}
-                                </Typography>
-                                <Stack spacing={2} sx={{ width: 280, py: 3 }}>
-                                    {column.value.map((item, index) => (
-                                        <Draggable
-                                            key={item.id}
-                                            draggableId={item.id}
-                                            index={index}
-                                        >
-                                            {(provided, snapshot) => (
-                                                <TaskItem item={item} provided={provided} />
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                </Stack>
-                                {provided.placeholder}
-                            </Stack>
-                        )}
-                    </Droppable>
-                ))}
-            </DragDropContext>
-        </Stack>
+        <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="board" type="COLUMN" direction="horizontal">
+                {(provided) => (
+                    <Stack
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        sx={{
+                            overflowX: 'scroll',
+                            width: 1150,
+                        }}
+                        direction="row"
+                        spacing={3}
+                    >
+                        {columns.map((column, index) => (
+                            <TaskColumn column={column} index={index} />
+                        ))}
+                        {provided.placeholder}
+                        <Button
+                            fullWidth
+                            size="large"
+                            color="inherit"
+                            startIcon={
+                                <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
+                            }
+                            // onClick={addTask.onToggle}
+                            sx={{ fontSize: 14 }}
+                        >
+                            Add Task
+                        </Button>
+                    </Stack>
+                )}
+            </Droppable>
+        </DragDropContext>
     );
 }
