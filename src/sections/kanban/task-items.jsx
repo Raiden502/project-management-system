@@ -5,7 +5,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import Image from 'src/components/image';
 import TaskDetails from './task-edit';
 
-export default function TaskItem({ item }) {
+export default function TaskItem({ item, key, index }) {
     const details = useBoolean();
     const renderPriority = (
         <Iconify
@@ -85,7 +85,7 @@ export default function TaskItem({ item }) {
     );
     return (
         <>
-            <Draggable draggableId={`{item.id}`} index={item.id}>
+            <Draggable draggableId={item.id} index={index} key={key}>
                 {(provided) => (
                     <Paper
                         ref={provided.innerRef}

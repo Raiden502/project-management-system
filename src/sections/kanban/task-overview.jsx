@@ -6,34 +6,34 @@ import TaskColumn from './task-column';
 
 const getItems = (count, prefix) =>
     Array.from({ length: count }, (v, k) => k).map((k) => ({
-        id: prefix * 10 * (k + 1),
-        content: `item ${k}`,
+        id: `${prefix}-${k}`,
+        index: k,
         priority: 'high',
-        name: 'fix ui',
+        name: `fix ui ${prefix}-${k}`,
         description: 'fix ui screens correctly',
         comments: [
             {
                 userid: '1',
                 name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt:"12-02-2023",
-                messageType:"text",
+                createdAt: '12-02-2023',
+                messageType: 'text',
                 message: 'hi everyone',
             },
             {
                 userid: '2',
                 name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt:"12-02-2023",
-                messageType:"text",
+                createdAt: '12-02-2023',
+                messageType: 'text',
                 message: 'hi everyone',
             },
             {
                 userid: '3',
                 name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt:"12-02-2023",
-                messageType:"text",
+                createdAt: '12-02-2023',
+                messageType: 'text',
                 message: 'hi everyone',
             },
         ],
@@ -74,10 +74,9 @@ const getItems = (count, prefix) =>
 
 export default function TaskKanbanView() {
     const [columns, setColumns] = useState([
-        { id: 'todo', name: 'To Do', value: [...getItems(5, 1)] },
-        { id: 'inProgress', name: 'In Progress', value: [...getItems(5, 2)] },
-        { id: 'done', name: 'Done', value: [...getItems(5, 3)] },
-        { id: 'new', name: 'New', value: [...getItems(5, 4)] },
+        { id: 'task1', index: 0, name: 'To Do', value: [...getItems(3, 'task1')] },
+        { id: 'task2', index: 1, name: 'In Progress', value: [...getItems(3, 'task2')] },
+        { id: 'task3', index: 2, name: 'Done', value: [...getItems(3, 'task3')] },
     ]);
 
     const reorder = (list, startIndex, endIndex) => {
@@ -91,14 +90,13 @@ export default function TaskKanbanView() {
         if (!result.destination) {
             return;
         }
-
         const sourceIndex = result.source.index;
         const destinationIndex = result.destination.index;
         const sourceColumnId = result.source.droppableId;
         const destinationColumnId = result.destination.droppableId;
         const updatedColumns = [...columns];
 
-        console.log(sourceIndex, destinationIndex, sourceColumnId, destinationColumnId);
+        console.log({ sourceIndex, destinationIndex, sourceColumnId, destinationColumnId });
 
         if (result.type === 'COLUMN') {
             const reorderedColumns = reorder(updatedColumns, sourceIndex, destinationIndex);
@@ -108,11 +106,8 @@ export default function TaskKanbanView() {
                 const sourceColumnIndex = columns.findIndex(
                     (column) => column.id === sourceColumnId
                 );
-                const reorderedItems = reorder(
-                    updatedColumns[sourceColumnIndex].value,
-                    sourceIndex,
-                    destinationIndex
-                );
+                const taskList = updatedColumns[sourceColumnIndex].value;
+                const reorderedItems = reorder(taskList, sourceIndex, destinationIndex);
                 updatedColumns[sourceColumnIndex].value = reorderedItems;
             } else {
                 const sourceColumnIndex = columns.findIndex(
