@@ -18,6 +18,11 @@ export const paths = {
     },
     dashboard: {
         root: ROOTS.DASHBOARD,
+        analytics:{
+            user:path(ROOTS.DASHBOARD, '/analytics/user'),
+            project:path(ROOTS.DASHBOARD, '/analytics/project'),
+            department:path(ROOTS.DASHBOARD, '/analytics/department'),
+        },
         projects:{
             list: path(ROOTS.DASHBOARD, '/projects/list'),
             create: path(ROOTS.DASHBOARD, '/projects/create'),
@@ -47,8 +52,6 @@ export const paths = {
         communication: {
             chat: path(ROOTS.DASHBOARD, '/communication/chat'),
             meet: path(ROOTS.DASHBOARD, '/communication/meet'),
-            calendar: path(ROOTS.DASHBOARD, '/communication/calendar'),
-            files: path(ROOTS.DASHBOARD, '/communication/files'),
         },
     },
     comingSoon: '/coming-soon',

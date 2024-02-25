@@ -36,7 +36,7 @@ function NavVertical() {
             <NavSectionVertical
                 data={navData}
                 config={{
-                    currentRole: 'admin',
+                    currentRole: 'user',
                 }}
             />
         </Box>
@@ -47,7 +47,7 @@ function NavVertical() {
             sx={{
                 flexShrink: { lg: 0 },
                 width: { lg: NAVDashboard },
-                mr:2
+                mr: 2,
             }}
         >
             <Drawer

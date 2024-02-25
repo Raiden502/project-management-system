@@ -2,13 +2,25 @@ import { useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Avatar, IconButton, Stack } from '@mui/material';
+import { Avatar, IconButton, MenuItem, Stack, TextField } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import { ThemesContext } from 'src/providers/themes/ThemeProvider.jsx';
 // import SearchBar from './Search';
 // import ThemeChanger from './Theme.jsx';
 import { HEADER, NAV } from './config';
 
+const names = [
+    'Oliver Hansen',
+    'Van Henry',
+    'April Tucker',
+    'Ralph Hubbard',
+    'Omar Alexander',
+    'Carlos Abbott',
+    'Miriam Wagner',
+    'Bradley Wilkerson',
+    'Virginia Andrews',
+    'Kelly Snyder',
+];
 export default function Header() {
     const { theme } = useContext(ThemesContext);
     return (
@@ -28,6 +40,20 @@ export default function Header() {
                         justifyContent="flex-end"
                         spacing={{ xs: 0.5, sm: 1 }}
                     >
+                        <TextField
+                            select
+                            label="Projects"
+                            name="Projects"
+                            // value={personName}
+                            // onChange={handleChange}
+                            sx={{ width: '200px' }}
+                        >
+                            {names.map((name) => (
+                                <MenuItem key={name} value={name}>
+                                    {name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                         <Avatar
                             alt="Remy Sharp"
                             src="https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg"

@@ -22,16 +22,13 @@ export function useNavData() {
     const data = useMemo(() => [
         {
             subheader: 'overview',
+            roles: ['admin', 'user'],
             items: [
                 {
-                    title: 'department analytics',
-                    path: paths.dashboard.root,
-                    icon: ICONS.dep_analytics,
-                },
-                {
-                    title: 'Project analytics',
-                    path: paths.dashboard.root,
+                    title: 'Dashboard',
+                    path: paths.dashboard.analytics.project,
                     icon: ICONS.task_analytics,
+                    roles: ['admin', 'user'],
                 },
             ],
         },
@@ -40,59 +37,67 @@ export function useNavData() {
         // ----------------------------------------------------------------------
         {
             subheader: 'management',
+            roles: ['admin', 'user'],
             items: [
                 // USER
                 {
                     title: 'user',
                     path: paths.dashboard.users.list,
                     icon: ICONS.user,
+                    roles: ['admin', 'user'],
                     children: [
                         {
                             title: 'Performance',
-                            path: paths.dashboard.communication.chat,
+                            path: paths.dashboard.analytics.user,
+                            roles: ['admin', 'user'],
                         },
-                        { title: 'list', path: paths.dashboard.users.list },
-                        { title: 'create', path: paths.dashboard.users.create },
+                        { title: 'list', path: paths.dashboard.users.list, roles: ['admin', 'user'] },
+                        { title: 'create', path: paths.dashboard.users.create, roles: ['admin', 'user'] },
                     ],
                 },
             ],
         },
         {
             subheader: 'projects',
+            roles: ['admin', 'user'],
             items: [
                 // USER
                 {
                     title: 'Departments',
                     path: paths.dashboard.departments.list,
                     icon: ICONS.project,
+                    roles: ['admin', 'user'],
                     children: [
-                        { title: 'list', path: paths.dashboard.departments.list },
-                        { title: 'details', path: paths.dashboard.departments.details },
-                        { title: 'create', path: paths.dashboard.departments.create },
+                        { title: 'list', path: paths.dashboard.departments.list , roles: ['admin', 'user'],},
+                        { title: 'details', path: paths.dashboard.departments.details, roles: ['admin', 'user'], },
+                        { title: 'create', path: paths.dashboard.departments.create, roles: ['admin', 'user'], },
                     ],
                 },
                 {
                     title: 'project',
                     path: paths.dashboard.projects.list,
                     icon: ICONS.project,
+                    roles: ['admin', 'user'],
                     children: [
-                        { title: 'list', path: paths.dashboard.projects.list },
-                        { title: 'details', path: paths.dashboard.projects.details },
-                        { title: 'create', path: paths.dashboard.projects.create },
+                        { title: 'list', path: paths.dashboard.projects.list, roles: ['admin', 'user'], },
+                        { title: 'details', path: paths.dashboard.projects.details, roles: ['admin', 'user'], },
+                        { title: 'create', path: paths.dashboard.projects.create, roles: ['admin', 'user'], },
                     ],
                 },
                 {
                     title: 'teams',
                     path: paths.dashboard.teams.list,
                     icon: ICONS.teams,
+                    roles: ['admin', 'user'],
                     children: [
-                        { title: 'list', path: paths.dashboard.teams.list },
-                        { title: 'details', path: paths.dashboard.teams.details },
-                        { title: 'create', path: paths.dashboard.teams.create },
+                        { title: 'list', path: paths.dashboard.teams.list , roles: ['admin', 'user'],},
+                        { title: 'details', path: paths.dashboard.teams.details, roles: ['admin', 'user'], },
+                        { title: 'create', path: paths.dashboard.teams.create , roles: ['admin', 'user'],},
                     ],
                 },
                 {
                     title: 'tasks',
+                    roles: ['admin', 'user'],
                     path: paths.dashboard.tasks.list,
                     icon: ICONS.task,
                 },
@@ -100,9 +105,8 @@ export function useNavData() {
         },
         {
             subheader: 'Communication',
-            items: [
-                { title: 'Chats', path: paths.dashboard.communication.chat, icon: ICONS.chat },
-            ],
+            roles: ['admin', 'user'],
+            items: [{ title: 'Chats', path: paths.dashboard.communication.chat, icon: ICONS.chat , roles: ['admin', 'user'],}],
         },
     ]);
 

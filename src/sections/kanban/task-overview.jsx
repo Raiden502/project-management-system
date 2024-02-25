@@ -124,6 +124,93 @@ export default function TaskKanbanView() {
         }
     };
 
+    const AddNewColumn = () => {
+        const num = Math.random();
+        setColumns((prev) => [
+            ...prev,
+            {
+                id: `task${num}}`,
+                index: num,
+                name: `name${num}`,
+                value: [...getItems(3, `task${num}`)],
+            },
+        ]);
+    };
+
+    const AddNewRow = (index) => {
+        const num = Math.random();
+
+        const currentColumn = [...columns];
+
+        currentColumn[index].value.push({
+            id: `${num}-${num}`,
+            index: num,
+            priority: 'high',
+            name: `fix ui ${num}-${num}`,
+            description: 'fix ui screens correctly',
+            comments: [
+                {
+                    userid: '1',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                    createdAt: '12-02-2023',
+                    messageType: 'text',
+                    message: 'hi everyone',
+                },
+                {
+                    userid: '2',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                    createdAt: '12-02-2023',
+                    messageType: 'text',
+                    message: 'hi everyone',
+                },
+                {
+                    userid: '3',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                    createdAt: '12-02-2023',
+                    messageType: 'text',
+                    message: 'hi everyone',
+                },
+            ],
+            labels: ['ui', 'fronend'],
+            reporter: {
+                name: 'priya',
+                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+            },
+            attachments: [],
+            users: [
+                {
+                    userid: '1',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                },
+                {
+                    userid: '2',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
+                },
+                {
+                    userid: '3',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
+                },
+                {
+                    userid: '4',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+                },
+                {
+                    userid: '5',
+                    name: 'dummy',
+                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+                },
+            ],
+        });
+        setColumns((prev) => [...currentColumn]);
+    };
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="board" type="COLUMN" direction="horizontal">
@@ -139,7 +226,7 @@ export default function TaskKanbanView() {
                         spacing={3}
                     >
                         {columns.map((column, index) => (
-                            <TaskColumn column={column} index={index} />
+                            <TaskColumn column={column} index={index} AddNewRow={AddNewRow} />
                         ))}
                         {provided.placeholder}
                         <Button
@@ -149,7 +236,7 @@ export default function TaskKanbanView() {
                             startIcon={
                                 <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
                             }
-                            // onClick={addTask.onToggle}
+                            onClick={AddNewColumn}
                             sx={{ fontSize: 14 }}
                         >
                             Add Task

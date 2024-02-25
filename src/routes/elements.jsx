@@ -12,6 +12,18 @@ export const DashBoardLayout = Loadable(
     lazy(() => import('src/layouts/dashboard/DashboardLayout.jsx'))
 );
 
+// analytics
+
+export const DepartmentAnalytics = Loadable(
+    lazy(() => import('src/pages/dashboard/analytics/departments.jsx'))
+);
+
+export const ProjectAnalytics = Loadable(
+    lazy(() => import('src/pages/dashboard/analytics/projects.jsx'))
+);
+
+export const UserAnalytics = Loadable(lazy(() => import('src/pages/dashboard/analytics/user.jsx')));
+
 // dashboard - departments
 export const DepartmentCreate = Loadable(
     lazy(() => import('src/pages/dashboard/departments/create.jsx'))
@@ -52,12 +64,6 @@ export const SingleVideoCall = Loadable(
     lazy(() => import('src/pages/dashboard/communication/SingleVideoCall.jsx'))
 );
 
-export const Calender = Loadable(
-    lazy(() => import('src/pages/dashboard/communication/calender.jsx'))
-);
-
-export const Files = Loadable(lazy(() => import('src/pages/dashboard/communication/files.jsx')));
-
 // dashboard-tasks
 export const TasksList = Loadable(lazy(() => import('src/pages/dashboard/tasks/list.jsx')));
 
@@ -77,10 +83,6 @@ export const AboutPage = Loadable(lazy(() => import('src/pages/extras/AboutPage.
 
 export const ComingSoonPage = Loadable(lazy(() => import('src/pages/extras/ComingSoon.jsx')));
 export const ContactPage = Loadable(lazy(() => import('src/pages/extras/ContactPage.jsx')));
-export const FaqsPage = Loadable(lazy(() => import('src/pages/extras/FaqsPage.jsx')));
-export const MailUnsubscribePage = Loadable(
-    lazy(() => import('src/pages/extras/MailUnsubscribe.jsx'))
-);
 export const MaintenancePage = Loadable(lazy(() => import('src/pages/extras/MaintenancePage.jsx')));
 export const Page403 = Loadable(lazy(() => import('src/pages/extras/Page403.jsx')));
 export const Page404 = Loadable(lazy(() => import('src/pages/extras/Page404.jsx')));

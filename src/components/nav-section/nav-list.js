@@ -11,76 +11,76 @@ import NavItem from './nav-item';
 // ----------------------------------------------------------------------
 
 export default function NavList({ data, depth, hasChild, config }) {
-  const pathname = usePathname();
+    const pathname = usePathname();
 
-  const active = useActiveLink(data.path, hasChild);
+    const active = useActiveLink(data.path, hasChild);
 
-  const externalLink = data.path.includes('http');
+    const externalLink = data.path.includes('http');
 
-  const [open, setOpen] = useState(active);
+    const [open, setOpen] = useState(active);
 
-  useEffect(() => {
-    if (!active) {
-      handleClose();
-    }
-  }, [pathname]);
+    useEffect(() => {
+        if (!active) {
+            handleClose();
+        }
+    }, [pathname]);
 
-  const handleToggle = useCallback(() => {
-    setOpen((prev) => !prev);
-  }, []);
+    const handleToggle = useCallback(() => {
+        setOpen((prev) => !prev);
+    }, []);
 
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
+    const handleClose = useCallback(() => {
+        setOpen(false);
+    }, []);
 
-  return (
-    <>
-      <NavItem
-        item={data}
-        depth={depth}
-        open={open}
-        active={active}
-        externalLink={externalLink}
-        onClick={handleToggle}
-        config={config}
-      />
+    return (
+        <>
+            <NavItem
+                item={data}
+                depth={depth}
+                open={open}
+                active={active}
+                externalLink={externalLink}
+                onClick={handleToggle}
+                config={config}
+            />
 
-      {hasChild && (
-        <Collapse in={open} unmountOnExit>
-          <NavSubList data={data.children} depth={depth} config={config} />
-        </Collapse>
-      )}
-    </>
-  );
+            {hasChild && (
+                <Collapse in={open} unmountOnExit>
+                    <NavSubList data={data.children} depth={depth} config={config} />
+                </Collapse>
+            )}
+        </>
+    );
 }
 
 NavList.propTypes = {
-  config: PropTypes.object,
-  data: PropTypes.object,
-  depth: PropTypes.number,
-  hasChild: PropTypes.bool,
+    config: PropTypes.object,
+    data: PropTypes.object,
+    depth: PropTypes.number,
+    hasChild: PropTypes.bool,
 };
 
 // ----------------------------------------------------------------------
 
 function NavSubList({ data, depth, config }) {
-  return (
-    <>
-      {data.map((list) => (
-        <NavList
-          key={list.title + list.path}
-          data={list}
-          depth={depth + 1}
-          hasChild={!!list.children}
-          config={config}
-        />
-      ))}
-    </>
-  );
+    return (
+        <>
+            {data.map((list) => (
+                <NavList
+                    key={list.title + list.path}
+                    data={list}
+                    depth={depth + 1}
+                    hasChild={!!list.children}
+                    config={config}
+                />
+            ))}
+        </>
+    );
 }
 
 NavSubList.propTypes = {
-  config: PropTypes.object,
-  data: PropTypes.array,
-  depth: PropTypes.number,
+    config: PropTypes.object,
+    data: PropTypes.array,
+    depth: PropTypes.number,
 };

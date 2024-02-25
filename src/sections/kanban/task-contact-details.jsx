@@ -19,7 +19,43 @@ const ITEM_HEIGHT = 64;
 
 export default function TaskContactDetails({ assignee = [], open, onClose }) {
     const [searchContact, setSearchContact] = useState('');
-    const _contacts = []
+    const _contacts = [ {
+        id: '1',
+        name: 'dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+    },
+    {
+        id: '2',
+        name: 'dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
+    },
+    {
+        id: '3',
+        name: 'dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
+    },
+    {
+        id: '4',
+        name: 'dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+    },
+    {
+        id: '5',
+        name: 'dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+    },
+    {
+        id: '5',
+        name: 'non dummy',
+        email:"dummy@gmail.com",
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+    },
+]
 
     const handleSearchContacts = useCallback((event) => {
         setSearchContact(event.target.value);
@@ -96,7 +132,7 @@ export default function TaskContactDetails({ assignee = [], open, onClose }) {
                                     sx={{ height: ITEM_HEIGHT }}
                                 >
                                     <ListItemAvatar>
-                                        <Avatar src={contact.avatarUrl} />
+                                        <Avatar src={contact.avatar} />
                                     </ListItemAvatar>
 
                                     <ListItemText

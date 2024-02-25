@@ -4,7 +4,7 @@ import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import TaskItem from './task-items';
 
-export default function TaskColumn({ column, index }) {
+export default function TaskColumn({ column, index, AddNewRow }) {
     return (
         <Draggable draggableId={`${column.index}`} index={column.index} key={column.index}>
             {(provided) => (
@@ -52,7 +52,7 @@ export default function TaskColumn({ column, index }) {
                             startIcon={
                                 <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
                             }
-                            // onClick={addTask.onToggle}
+                            onClick={()=>{AddNewRow(column.index)}}
                             sx={{ fontSize: 14 }}
                         >
                             Add Task

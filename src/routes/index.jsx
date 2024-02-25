@@ -5,8 +5,6 @@ import {
     ComingSoonPage,
     ContactPage,
     DashBoardLayout,
-    FaqsPage,
-    MailUnsubscribePage,
     MaintenancePage,
     Page403,
     Page404,
@@ -14,12 +12,10 @@ import {
     LoginPage,
     RegisterPage,
     VerifyCode,
-    
+
     // communication
     UserChatting,
     SingleVideoCall,
-    Calender,
-    Files,
 
     // users
     UsersCreate,
@@ -39,10 +35,14 @@ import {
     ProjectCreate,
     ProjectDetails,
     ProjectLists,
-    
+
     // tasks
     TasksList,
-    
+
+    // analytics
+    DepartmentAnalytics,
+    ProjectAnalytics,
+    UserAnalytics,
 } from './elements.jsx';
 
 import AuthGuard from '../auth/AuthGuard.jsx';
@@ -84,16 +84,32 @@ function Router() {
             path: '/dashboard',
             element: (
                 // <AuthGuard>
-                    <DashBoardLayout>
-                        <Outlet />
-                    </DashBoardLayout>
+                <DashBoardLayout>
+                    <Outlet />
+                </DashBoardLayout>
                 // </AuthGuard>
             ),
             children: [
                 {
-                    path:"users",
-                    children:[
-
+                    path: 'analytics',
+                    children: [
+                        {
+                            path: 'user',
+                            element: <UserAnalytics />,
+                        },
+                        {
+                            path: 'project',
+                            element: <ProjectAnalytics />,
+                        },
+                        {
+                            path: 'department',
+                            element: <DepartmentAnalytics />,
+                        },
+                    ],
+                },
+                {
+                    path: 'users',
+                    children: [
                         {
                             path: 'create',
                             element: <UsersCreate />,
@@ -106,12 +122,11 @@ function Router() {
                             path: 'edit',
                             element: <UsersCreate />,
                         },
-                    ]
+                    ],
                 },
                 {
-                    path:"departments",
-                    children:[
-
+                    path: 'departments',
+                    children: [
                         {
                             path: 'create',
                             element: <DepartmentCreate />,
@@ -128,11 +143,11 @@ function Router() {
                             path: 'edit',
                             element: <DepartmentCreate />,
                         },
-                    ]
+                    ],
                 },
                 {
-                    path:"projects",
-                    children:[
+                    path: 'projects',
+                    children: [
                         {
                             path: 'create',
                             element: <ProjectCreate />,
@@ -149,20 +164,20 @@ function Router() {
                             path: 'edit',
                             element: <ProjectCreate />,
                         },
-                    ]
+                    ],
                 },
                 {
-                    path:"tasks",
-                    children:[
+                    path: 'tasks',
+                    children: [
                         {
                             path: 'list',
                             element: <TasksList />,
                         },
-                    ]
+                    ],
                 },
                 {
-                    path:"teams",
-                    children:[
+                    path: 'teams',
+                    children: [
                         {
                             path: 'create',
                             element: <TeamsCreate />,
@@ -179,12 +194,11 @@ function Router() {
                             path: 'edit',
                             element: <TeamsCreate />,
                         },
-                    ]
+                    ],
                 },
                 {
-                    path:"communication",
-                    children:[
-
+                    path: 'communication',
+                    children: [
                         {
                             path: 'chat',
                             element: <UserChatting />,
@@ -193,16 +207,8 @@ function Router() {
                             path: 'meet',
                             element: <SingleVideoCall />,
                         },
-                        {
-                            path: 'calendar',
-                            element: <Calender />,
-                        },
-                        {
-                            path: 'files',
-                            element: <Files />,
-                        },
-                    ]
-                }
+                    ],
+                },
             ],
         },
         {
@@ -216,14 +222,6 @@ function Router() {
         {
             path: '/contact-us',
             element: <ContactPage />,
-        },
-        {
-            path: '/faqs',
-            element: <FaqsPage />,
-        },
-        {
-            path: '/mail-unsubscribe',
-            element: <MailUnsubscribePage />,
         },
         {
             path: '/maintenance',
