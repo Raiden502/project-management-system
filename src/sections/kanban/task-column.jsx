@@ -6,7 +6,7 @@ import TaskItem from './task-items';
 
 export default function TaskColumn({ column, index }) {
     return (
-        <Draggable draggableId={column.id} index={index}>
+        <Draggable draggableId={column.id} index={column.id}>
             {(provided) => (
                 <Paper
                     {...provided.draggableProps}
@@ -39,7 +39,7 @@ export default function TaskColumn({ column, index }) {
                                     sx={{ width: 280, py: 3 }}
                                 >
                                     {column.value.map((item, index) => (
-                                        <TaskItem item={item} key={index}/>
+                                        <TaskItem item={item} key={index} />
                                     ))}
                                     {dropProvided.placeholder}
                                 </Stack>

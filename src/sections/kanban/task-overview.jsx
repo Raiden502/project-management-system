@@ -6,30 +6,67 @@ import TaskColumn from './task-column';
 
 const getItems = (count, prefix) =>
     Array.from({ length: count }, (v, k) => k).map((k) => ({
-        id: `${prefix}-item-${k}`,
+        id: prefix * 10 * (k + 1),
         content: `item ${k}`,
         priority: 'high',
-        comments: [],
+        name: 'fix ui',
+        description: 'fix ui screens correctly',
+        comments: [
+            {
+                userid: '1',
+                name: 'dummy',
+                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                createdAt:"12-02-2023",
+                messageType:"text",
+                message: 'hi everyone',
+            },
+            {
+                userid: '2',
+                name: 'dummy',
+                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                createdAt:"12-02-2023",
+                messageType:"text",
+                message: 'hi everyone',
+            },
+            {
+                userid: '3',
+                name: 'dummy',
+                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+                createdAt:"12-02-2023",
+                messageType:"text",
+                message: 'hi everyone',
+            },
+        ],
+        labels: ['ui', 'fronend'],
+        reporter: {
+            name: 'priya',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+        },
         attachments: [],
         users: [
             {
-                userid: 1,
+                userid: '1',
+                name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
             },
             {
-                userid: 2,
+                userid: '2',
+                name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
             },
             {
-                userid: 3,
+                userid: '3',
+                name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
             },
             {
-                userid: 4,
+                userid: '4',
+                name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
             },
             {
-                userid: 5,
+                userid: '5',
+                name: 'dummy',
                 avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
             },
         ],
@@ -37,10 +74,10 @@ const getItems = (count, prefix) =>
 
 export default function TaskKanbanView() {
     const [columns, setColumns] = useState([
-        { id: 'todo', name: 'To Do', value: [...getItems(5, 'todo')] },
-        { id: 'inProgress', name: 'In Progress', value: [...getItems(5, 'inProgress')] },
-        { id: 'done', name: 'Done', value: [...getItems(5, 'done')] },
-        { id: 'new', name: 'New', value: [...getItems(5, 'new')] },
+        { id: 'todo', name: 'To Do', value: [...getItems(5, 1)] },
+        { id: 'inProgress', name: 'In Progress', value: [...getItems(5, 2)] },
+        { id: 'done', name: 'Done', value: [...getItems(5, 3)] },
+        { id: 'new', name: 'New', value: [...getItems(5, 4)] },
     ]);
 
     const reorder = (list, startIndex, endIndex) => {

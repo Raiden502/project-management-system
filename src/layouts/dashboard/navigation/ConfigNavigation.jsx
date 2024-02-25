@@ -25,17 +25,12 @@ export function useNavData() {
             items: [
                 {
                     title: 'department analytics',
-                    path: paths.dashboard.communication.chat,
+                    path: paths.dashboard.root,
                     icon: ICONS.dep_analytics,
                 },
                 {
                     title: 'Project analytics',
-                    path: paths.dashboard.communication.chat,
-                    icon: ICONS.dep_analytics,
-                },
-                {
-                    title: 'Task analytics',
-                    path: paths.dashboard.communication.chat,
+                    path: paths.dashboard.root,
                     icon: ICONS.task_analytics,
                 },
             ],
@@ -107,12 +102,6 @@ export function useNavData() {
             subheader: 'Communication',
             items: [
                 { title: 'Chats', path: paths.dashboard.communication.chat, icon: ICONS.chat },
-                { title: 'files', path: paths.dashboard.communication.files, icon: ICONS.file },
-                {
-                    title: 'calendar',
-                    path: paths.dashboard.communication.calendar,
-                    icon: ICONS.calendar,
-                },
             ],
         },
     ]);
