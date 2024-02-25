@@ -15,19 +15,11 @@ export default function TaskColumn({ column, index, AddNewRow }) {
                         background: '#f4f6f8',
                         p: 2,
                         borderRadius: '16px',
-                        minWidth: '280px',
+                        minWidth: '315px',
                     }}
                 >
                     <Stack {...provided.dragHandleProps}>
-                        <Typography
-                            variant="subtitle1"
-                            sx={{
-                                textTransform: 'capitalize',
-                                color: '#212B36',
-                                fontWeight: 'bold',
-                            }}
-                            gutterBottom
-                        >
+                        <Typography variant="subtitle1" sx={{}} gutterBottom>
                             {column.name}
                         </Typography>
                         <Droppable droppableId={column.id} type="TASK">
@@ -52,7 +44,9 @@ export default function TaskColumn({ column, index, AddNewRow }) {
                             startIcon={
                                 <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
                             }
-                            onClick={()=>{AddNewRow(column.index)}}
+                            onClick={() => {
+                                AddNewRow(column.index);
+                            }}
                             sx={{ fontSize: 14 }}
                         >
                             Add Task

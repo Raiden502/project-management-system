@@ -25,27 +25,27 @@ const headCells = [
     {
         id: 'name',
         align: 'left',
-        label: 'Name',
+        label: 'Task Name',
     },
     {
-        id: 'email',
+        id: 'description',
         align: 'left',
-        label: 'Email',
+        label: 'Description',
     },
     {
-        id: 'department',
+        id: 'Priority',
         align: 'left',
-        label: 'Department',
-    },
-    {
-        id: 'role',
-        align: 'left',
-        label: 'Role',
+        label: 'Priority',
     },
     {
         id: 'status',
         align: 'left',
         label: 'Status',
+    },
+    {
+        id: 'Progress',
+        align: 'left',
+        label: 'Progress',
     },
 ];
 
@@ -83,10 +83,6 @@ export default function TaskListView() {
     return (
         <Box
             component={Card}
-            sx={{
-                borderRadius: '15px',
-                boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
-            }}
         >
             <Stack p={3} gap={3} direction="row">
                 <TextField
@@ -94,9 +90,6 @@ export default function TaskListView() {
                     label="Role"
                     type="text"
                     sx={{ height: '50px' }}
-                    InputProps={{
-                        sx: { borderRadius: '8px' },
-                    }}
                 />
                 <TextField
                     name="search"
@@ -105,7 +98,6 @@ export default function TaskListView() {
                     sx={{ height: '50px' }}
                     fullWidth
                     InputProps={{
-                        sx: { borderRadius: '8px' },
                         startAdornment: (
                             <InputAdornment position="start">
                                 <Iconify icon="ic:round-search" />
@@ -118,9 +110,6 @@ export default function TaskListView() {
                 <Table>
                     <TableHead sx={{ backgroundColor: '#f9f9f9' }}>
                         <TableRow>
-                            <TableCell sx={{ border: 'none' }}>
-                                <Checkbox checked onClick={() => {}} />
-                            </TableCell>
                             {headCells.map((item) => (
                                 <TableCell key={item.id} align={item.align} sx={{ border: 'none' }}>
                                     <Typography variant="body2" fontWeight="">
@@ -137,22 +126,14 @@ export default function TaskListView() {
                                 hover
                                 sx={{
                                     borderBottom:
-                                        index < DataCell.length - 1 ? '1px dashed grey' : 'none',
+                                        index < DataCell.length - 1 ? '1px dashed #f4f4f4' : 'none',
                                 }}
                             >
-                                <TableCell sx={{ border: 'none' }}>
-                                    <Checkbox checked onClick={() => {}} />
-                                </TableCell>
-                                <TableCell
-                                    sx={{ display: 'flex', alignItems: 'center', border: 'none' }}
-                                >
-                                    <Avatar alt={item.name} src={item.avatar} sx={{ mr: 2 }} />
-                                    {item.name}
-                                </TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.email}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.department}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.role}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>
+                                <TableCell>{item.name}</TableCell>
+                                <TableCell>{item.email}</TableCell>
+                                <TableCell>{item.department}</TableCell>
+                                <TableCell>{item.role}</TableCell>
+                                <TableCell>
                                     <Label
                                         variant="soft"
                                         color={
@@ -166,11 +147,6 @@ export default function TaskListView() {
                                             {item.status}
                                         </Typography>
                                     </Label>
-                                </TableCell>
-                                <TableCell sx={{ border: 'none' }}>
-                                    <IconButton onClick={() => {}}>
-                                        <Iconify icon="eva:more-vertical-fill" />
-                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         ))}

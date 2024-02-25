@@ -73,7 +73,7 @@ export default function CandidateDetails() {
                     direction="row"
                     spacing={2}
                     key={index}
-                    sx={{ p: 3, borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px', position:'relative'}}
+                    sx={{ p: 3, position: 'relative' }}
                 >
                     <IconButton sx={{ position: 'absolute', top: 8, right: 8 }}>
                         <Iconify icon="eva:more-vertical-fill" />
@@ -87,19 +87,12 @@ export default function CandidateDetails() {
 
                     <Stack spacing={2}>
                         <ListItemText
-                            primary={
-                                <Typography
-                                    variant="body2"
-                                    sx={{ textTransform: 'none', color: '#212B36' }}
-                                >
-                                    {candidate.name}
-                                </Typography>
-                            }
+                            primary={<Typography variant="body2">{candidate.name}</Typography>}
                             secondary={
                                 <Typography
                                     variant="caption"
                                     component="span"
-                                    sx={{ textTransform: 'none', color: 'text.disabled', mt: 0.5 }}
+                                    sx={{ color: 'text.disabled', mt: 0.5 }}
                                 >
                                     {candidate.role}
                                 </Typography>

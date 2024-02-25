@@ -75,6 +75,18 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                         display: 'flex',
                         flexDirection: 'column',
                     },
+                    overflowY: 'hidden', // Initially hide the scrollbar
+                    '&:hover': {
+                        overflowY: 'auto', // Show the scrollbar on hover
+                    },
+                    '&::-webkit-scrollbar': {
+                        width: '8px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: '#D5CECC',
+                        borderRadius: '4px',
+                        height: '10px',
+                    },
                 }}
             >
                 <Stack

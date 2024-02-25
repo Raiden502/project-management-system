@@ -17,16 +17,17 @@ function ChatViewSmall({ ChangeNavBar, user, ChangeChatOnTap }) {
                 gap={2}
                 sx={{
                     height: 300,
-                    overflowY: 'scroll',
+                    overflowY: 'hidden', // Initially hide the scrollbar
+                    '&:hover': {
+                        overflowY: 'auto', // Show the scrollbar on hover
+                    },
                     '&::-webkit-scrollbar': {
                         width: '8px',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: '#bdbdbd',
-                        borderRadius: '5px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        backgroundColor: '#f5f5f5', // Set the color of the track
+                        backgroundColor: '#D5CECC',
+                        borderRadius: '4px',
+                        height: '10px',
                     },
                 }}
             >
@@ -34,13 +35,13 @@ function ChatViewSmall({ ChangeNavBar, user, ChangeChatOnTap }) {
                     <Stack
                         direction="row"
                         sx={{
-                            p:1,
+                            p: 1,
                             '&:hover': {
                                 backgroundColor: '#f5f5f5',
-                                cursor:'pointer'
+                                cursor: 'pointer',
                             },
-                            display:'flex',
-                            justifyContent:'center'
+                            display: 'flex',
+                            justifyContent: 'center',
                         }}
                         onClick={() => {
                             ChangeChatOnTap(data.id);

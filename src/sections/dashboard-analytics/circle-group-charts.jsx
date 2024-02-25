@@ -78,7 +78,10 @@ export default function CircleGroupChart({ title, subheader, chart, ...other }) 
     });
 
     return (
-        <Card {...other}>
+        <Card
+            sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}
+            {...other}
+        >
             <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
 
             <StyledChart

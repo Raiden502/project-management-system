@@ -26,7 +26,7 @@ export default function TeamContributor() {
     };
 
     return (
-        <Card sx={{ borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px', position: 'relative' }}>
+        <Card sx={{ position: 'relative' }}>
             <Stack gap={3} sx={{ p: 3 }}>
                 <Stack spacing={1.5}>
                     <Typography variant="body1">Users</Typography>
@@ -46,9 +46,6 @@ export default function TeamContributor() {
                                 placeholder="Select Users"
                                 sx={{
                                     bgcolor: 'white',
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '8px',
-                                    },
                                 }}
                             />
                         )}
@@ -61,11 +58,7 @@ export default function TeamContributor() {
                                     src={option.avatar}
                                     sx={{ width: 24, height: 24, flexShrink: 0, mr: 1 }}
                                 />
-                                <Typography
-                                    variant="subtitle2"
-                                >
-                                    {option.username}
-                                </Typography>
+                                <Typography variant="subtitle2">{option.username}</Typography>
                             </li>
                         )}
                         renderTags={(value, getTagProps) =>
@@ -74,9 +67,7 @@ export default function TeamContributor() {
                                     {...getTagProps({ index })}
                                     key={option.userId}
                                     label={
-                                        <Typography
-                                            variant="subtitle2"
-                                        >
+                                        <Typography variant="subtitle2">
                                             {option.username}
                                         </Typography>
                                     }
@@ -107,9 +98,6 @@ export default function TeamContributor() {
                                 placeholder="Select Users"
                                 sx={{
                                     bgcolor: 'white',
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '8px',
-                                    },
                                 }}
                             />
                         )}
@@ -122,11 +110,7 @@ export default function TeamContributor() {
                                     src={option.avatar}
                                     sx={{ width: 24, height: 24, flexShrink: 0, mr: 1 }}
                                 />
-                                <Typography
-                                    variant="subtitle2"
-                                >
-                                    {option.username}
-                                </Typography>
+                                <Typography variant="subtitle2">{option.username}</Typography>
                             </li>
                         )}
                         renderTags={(value, getTagProps) =>
@@ -135,9 +119,7 @@ export default function TeamContributor() {
                                     {...getTagProps({ index })}
                                     key={option.userId}
                                     label={
-                                        <Typography
-                                            variant="subtitle2"
-                                        >
+                                        <Typography variant="subtitle2">
                                             {option.username}
                                         </Typography>
                                     }

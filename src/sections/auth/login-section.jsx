@@ -41,21 +41,19 @@ function LoginSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 350, borderRadius: '10px', p: 3, boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}>
+            <Card sx={{ width: 350, p:3 }}>
                 <Stack gap={3}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color:'#212B36' }}>
+                    <Typography variant="h4">
                         Sign in to TFMS
                     </Typography>
-                    <Typography variant="body2" sx={{color:'#212B36'}}>
+                    <Typography variant="subtitle2">
                         New user?{' '}
                         <Typography
-                            variant="body2"
+                            variant="subtitle2"
                             component={Link}
                             href="#"
                             sx={{
                                 color: '#00a76f',
-                                textDecoration: 'none',
-                                fontWeight: 'bold',
                                 marginLeft: '4px',
                             }}
                         >
@@ -66,8 +64,7 @@ function LoginSection() {
                         <TextField
                             name="username"
                             label="Email address"
-                            sx={{ height: '40px' }}
-                            InputProps={{ sx: { borderRadius: '8px' } }}
+                            sx={{ height: '50px' }}
                             value={loginDetails.username}
                             onChange={HandlePageDetails}
                             placeholder="Email address"
@@ -81,7 +78,6 @@ function LoginSection() {
                             onChange={HandlePageDetails}
                             placeholder="Password"
                             InputProps={{
-                                sx: { borderRadius: '8px' },
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
@@ -107,7 +103,6 @@ function LoginSection() {
                                 href="#"
                                 sx={{
                                     color: '#00a76f',
-                                    textDecoration: 'none',
                                     fontWeight: 'bold',
                                 }}
                             >
@@ -120,9 +115,7 @@ function LoginSection() {
                             sx={{
                                 backgroundColor: '#212B36',
                                 textAlign: 'left',
-                                borderRadius: '8px',
-                                height: '50px',
-                                textTransform: 'none',
+                                height: '50px'
                             }}
                             onClick={SubmitDetails}
                         >

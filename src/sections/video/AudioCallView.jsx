@@ -6,7 +6,7 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import CallIcon from '@mui/icons-material/Call';
 import MicIcon from '@mui/icons-material/Mic';
 import CloseIcon from '@mui/icons-material/Close';
-import {useCallSocket } from 'src/utils/socket';
+import { useCallSocket } from 'src/utils/socket';
 
 const servers = {
     iceServers: [
@@ -18,7 +18,7 @@ const servers = {
 
 function AudioCallView() {
     const { CallDispatch, incomingCall } = useContext(CallContext);
-    const IoInstance = useCallSocket()
+    const IoInstance = useCallSocket();
     const peerConnection = new RTCPeerConnection(servers);
     const [actions, setActions] = useState({ audio: false });
     const [timeRemaining, setTimeRemaining] = useState(0);
@@ -120,7 +120,7 @@ function AudioCallView() {
 
     useEffect(() => {
         const timerInterval = setInterval(() => {
-            setTimeRemaining((prevTime) =>prevTime+1);
+            setTimeRemaining((prevTime) => prevTime + 1);
         }, 1000);
         return () => clearInterval(timerInterval);
     }, []);

@@ -45,9 +45,6 @@ export default function TeamDetailsView() {
             <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button
                     sx={{
-                        borderRadius: '8px',
-                        textTransform: 'none',
-                        color: '#212B36',
                         textAlign: 'right',
                     }}
                     startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
@@ -60,11 +57,6 @@ export default function TeamDetailsView() {
                     </IconButton>
                     <Button
                         variant="contained"
-                        sx={{
-                            backgroundColor: '#212B36',
-                            borderRadius: '8px',
-                            textTransform: 'capitalize',
-                        }}
                         endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
                     >
                         <Typography variant="body2">Publish</Typography>
@@ -74,27 +66,10 @@ export default function TeamDetailsView() {
             <Box sx={{ mt: 3 }}>
                 <Tabs value={value} onChange={handleChange}>
                     <Tab
-                        label={
-                            <Typography
-                                variant="body2"
-                                sx={{ textTransform: 'capitalize', color: '#212B36', fontWeight:'bold'}}
-                            >
-                                Project Content
-                            </Typography>
-                        }
+                        label={<Typography variant="subtitle2">Project Content</Typography>}
                         key={0}
                     />
-                    <Tab
-                        label={
-                            <Typography
-                                variant="body2"
-                                sx={{ textTransform: 'capitalize', color: '#212B36', fontWeight:'bold' }}
-                            >
-                                Candidates
-                            </Typography>
-                        }
-                        key={1}
-                    />
+                    <Tab label={<Typography variant="subtitle2">Candidates</Typography>} key={1} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>

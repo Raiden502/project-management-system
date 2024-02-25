@@ -10,6 +10,7 @@ const ICONS = {
     file: icon('ph:files-duotone'),
     task: icon('fluent:task-list-ltr-24-filled'),
     project: icon('ph:kanban-duotone'),
+    departments: icon('mingcute:building-2-line'),
     calendar: icon('uil:calender'),
     disabled: icon('lets-icons:user-alt-duotone'),
     analytics: icon('majesticons:analytics-line'),
@@ -65,7 +66,7 @@ export function useNavData() {
                 {
                     title: 'Departments',
                     path: paths.dashboard.departments.list,
-                    icon: ICONS.project,
+                    icon: ICONS.departments,
                     roles: ['admin', 'user'],
                     children: [
                         { title: 'list', path: paths.dashboard.departments.list , roles: ['admin', 'user'],},

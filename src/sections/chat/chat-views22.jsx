@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Typography, Container, Card, Stack, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import {useChatSocket} from 'src/utils/socket';
+import { useChatSocket } from 'src/utils/socket';
 import axiosInstance from 'src/utils/axios';
 import ChatDashboard from 'src/sections/chat/chat-dashboard';
 import ChatContactView from 'src/sections/chat/chat-contact';
@@ -165,14 +165,14 @@ const ChattingView = () => {
             socketIOInstance.on('online-status', (receivedMessage) => {
                 const temp = usersData.map((item) => {
                     if (item.id === receivedMessage.recipientID) {
-                        return { ...item, onlinestatus: receivedMessage.onlinestatus};
+                        return { ...item, onlinestatus: receivedMessage.onlinestatus };
                     }
                     return item;
                 });
                 setUsersData(temp);
                 setFilterUsersData(temp);
-                if(currentChat.id===receivedMessage.recipientID){
-                    setCurrentChat({...currentChat, onlinestatus: receivedMessage.onlinestatus})
+                if (currentChat.id === receivedMessage.recipientID) {
+                    setCurrentChat({ ...currentChat, onlinestatus: receivedMessage.onlinestatus });
                 }
             });
         }

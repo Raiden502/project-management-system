@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Stack, Box, TextField, Select, OutlinedInput, MenuItem } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Iconify from 'src/components/iconify/Iconify';
+import { useTheme } from '@emotion/react';
 import CountWidgetSummary from './count-view';
 import CircleGroupChart from './circle-group-charts';
 import ContactDetails from './contacts-view';
@@ -29,6 +30,7 @@ const names = [
 ];
 
 export default function AnalyticsView() {
+    const theme = useTheme()
     const [personName, setPersonName] = useState([]);
 
     const handleChange = (event) => {
@@ -41,14 +43,14 @@ export default function AnalyticsView() {
         );
     };
     return (
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ mt: 3 }}>
             <TextField
                 select
                 label="Projects"
                 name="Projects"
                 value={personName}
                 onChange={handleChange}
-                sx={{ width: '400px' }}
+                sx={{ maxWidth: '300px' }}
             >
                 {names.map((name) => (
                     <MenuItem key={name} value={name}>
@@ -59,51 +61,38 @@ export default function AnalyticsView() {
             <Grid container spacing={3}>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary
-                        title="Total Users"
-                        total={311000}
-                        icon={<Iconify icon="fluent:people-team-20-filled" />}
-                    />
+                    <CountWidgetSummary title="Total Users" total={31} />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary
-                        title="Total Teams"
-                        total={311000}
-                        icon={<Iconify icon="fluent:people-team-20-filled" />}
-                    />
+                    <CountWidgetSummary title="Total Teams" total={3} />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary
-                        title="Total Tasks"
-                        total={311000}
-                        icon={<Iconify icon="fluent:people-team-20-filled" />}
-                    />
+                    <CountWidgetSummary title="Total Tasks" total={20} />
                 </Grid>
 
                 <Grid xs={12} md={4}>
                     <CircleGroupChart
-                        title="Current Download"
+                        title="Total Task Priorities"
                         chart={{
                             series: [
-                                { label: 'Mac', value: 12244 },
-                                { label: 'Window', value: 53345 },
-                                { label: 'iOS', value: 44313 },
-                                { label: 'Android', value: 78343 },
+                                { label: 'High', value: 12 },
+                                { label: 'Low', value: 5 },
+                                { label: 'Medium', value: 4 },
                             ],
                         }}
                     />
                 </Grid>
                 <Grid xs={12} md={4}>
                     <CircleGroupChart
-                        title="Current Download"
+                        title="Total Task Status"
                         chart={{
                             series: [
-                                { label: 'Mac', value: 12244 },
-                                { label: 'Window', value: 53345 },
-                                { label: 'iOS', value: 44313 },
-                                { label: 'Android', value: 78343 },
+                                { label: 'Todo', value: 12 },
+                                { label: 'In Progress', value: 53 },
+                                { label: 'Done', value: 14 },
+                                { label: 'Testing', value: 7 },
                             ],
                         }}
                     />
@@ -117,13 +106,18 @@ export default function AnalyticsView() {
                 title="Data Activity"
                 chart={{
                     labels: TIME_LABELS,
-                    colors: ['red', 'info', 'error', 'warning', 'text.disabled'],
+                    colors: [
+                        theme.palette.primary.main,
+                        theme.palette.error.main,
+                        theme.palette.warning.main,
+                        theme.palette.text.disabled,
+                    ],
                     series: [
                         {
                             type: 'Week',
                             data: [
-                                { name: 'Images', data: [20, 34, 48, 65, 37, 48] },
-                                { name: 'Media', data: [10, 34, 13, 26, 27, 28] },
+                                { name: 'Tasks', data: [20, 34, 48, 65, 37, 48] },
+                                { name: 'Project', data: [10, 34, 13, 26, 27, 28] },
                                 { name: 'Documents', data: [10, 14, 13, 16, 17, 18] },
                                 { name: 'Other', data: [5, 12, 6, 7, 8, 9] },
                             ],
@@ -132,11 +126,11 @@ export default function AnalyticsView() {
                             type: 'Month',
                             data: [
                                 {
-                                    name: 'Images',
+                                    name: 'Tasks',
                                     data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
                                 },
                                 {
-                                    name: 'Media',
+                                    name: 'Project',
                                     data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
                                 },
                                 {
@@ -152,8 +146,8 @@ export default function AnalyticsView() {
                         {
                             type: 'Year',
                             data: [
-                                { name: 'Images', data: [10, 34, 13, 56, 77] },
-                                { name: 'Media', data: [10, 34, 13, 56, 77] },
+                                { name: 'Tasks', data: [10, 34, 13, 56, 77] },
+                                { name: 'Project', data: [10, 34, 13, 56, 77] },
                                 { name: 'Documents', data: [10, 34, 13, 56, 77] },
                                 { name: 'Other', data: [10, 34, 13, 56, 77] },
                             ],

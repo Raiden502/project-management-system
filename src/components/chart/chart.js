@@ -3,7 +3,7 @@ import ApexChart from 'react-apexcharts';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 // theme
-// import { bgBlur } from 'src/theme/css';
+import { bgBlur } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
@@ -11,23 +11,23 @@ const Chart = styled(ApexChart)(({ theme }) => ({
     '& .apexcharts-canvas': {
         // Tooltip
         '& .apexcharts-tooltip': {
-            // ...bgBlur({
-            //     color: theme.palette.background.default,
-            // }),
+            ...bgBlur({
+                color: theme.palette.background.default,
+            }),
             color: theme.palette.text.primary,
             boxShadow: 1,
             borderRadius: 1 * 1.25,
             '&.apexcharts-theme-light': {
                 borderColor: 'transparent',
-                // ...bgBlur({
-                //     color: theme.palette.background.default,
-                // }),
+                ...bgBlur({
+                    color: theme.palette.background.default,
+                }),
             },
         },
         '& .apexcharts-xaxistooltip': {
-            // ...bgBlur({
-            //     color: theme.palette.background.default,
-            // }),
+            ...bgBlur({
+                color: theme.palette.background.default,
+            }),
             borderColor: 'transparent',
             color: theme.palette.text.primary,
             boxShadow: 1,

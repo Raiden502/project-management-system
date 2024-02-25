@@ -20,11 +20,13 @@ import { RouterLink } from 'src/routes/components';
 export default function ProjItem({ job }) {
     // const popover = usePopover();
 
+    // const popover = usePopover();
+
     const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
 
     return (
         <>
-            <Card sx={{ borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px', width: 360, position: 'relative' }}>
+            <Card sx={{ width: 360, position: 'relative' }}>
                 <IconButton onClick={() => {}} sx={{ position: 'absolute', top: 8, right: 8 }}>
                     <Iconify icon="eva:more-vertical-fill" />
                 </IconButton>
@@ -74,7 +76,7 @@ export default function ProjItem({ job }) {
                             WebkitLineClamp: 2,
                         }}
                     >
-                        <Typography>{desc}</Typography>
+                        <Typography variant="body1">{desc}</Typography>
                     </Box>
                 </Stack>
 

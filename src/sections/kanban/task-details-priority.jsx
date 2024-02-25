@@ -6,7 +6,6 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Iconify from 'src/components/iconify/Iconify';
 // components
 
-
 // ----------------------------------------------------------------------
 
 export default function TaskDetailsPriority({ priority, onChangePriority }) {

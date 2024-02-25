@@ -1,12 +1,10 @@
+import { useTheme } from '@emotion/react';
 import { useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { Avatar, IconButton, MenuItem, Stack, TextField } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import { ThemesContext } from 'src/providers/themes/ThemeProvider.jsx';
-// import SearchBar from './Search';
-// import ThemeChanger from './Theme.jsx';
 import { HEADER, NAV } from './config';
 
 const names = [
@@ -22,7 +20,7 @@ const names = [
     'Kelly Snyder',
 ];
 export default function Header() {
-    const { theme } = useContext(ThemesContext);
+    const { theme } = useTheme();
     return (
         <Box sx={{ position: 'sticky', top: 0, zIndex: 2, mb: 2 }}>
             <AppBar
@@ -38,15 +36,17 @@ export default function Header() {
                         direction="row"
                         alignItems="center"
                         justifyContent="flex-end"
-                        spacing={{ xs: 0.5, sm: 1 }}
+                        spacing={{ xs: 0.5, sm: 3 }}
                     >
                         <TextField
                             select
-                            label="Projects"
-                            name="Projects"
+                            fullWidth
+                            label="Departments"
+                            name="Departments"
                             // value={personName}
                             // onChange={handleChange}
-                            sx={{ width: '200px' }}
+                            sx={{ maxWidth: '200px' }}
+                            InputProps={{ sx: { borderRadius: '8px' } }}
                         >
                             {names.map((name) => (
                                 <MenuItem key={name} value={name}>

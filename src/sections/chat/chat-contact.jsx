@@ -40,25 +40,21 @@ function ChatContactView({ user, ChangeChatOnTap, localSearch, ChangeNavBar }) {
                 }}
                 onChange={(e) => localSearch(e.target.value)}
                 placeholder="Search contacts..."
-                sx={{
-                    '& .MuiInputBase-root': {
-                        borderRadius: '10px', // Adjust the radius to your preference
-                    },
-                }}
             ></TextField>
             <Box
                 sx={{
                     height: 300,
-                    overflowY: 'scroll',
+                    overflowY: 'hidden', // Initially hide the scrollbar
+                    '&:hover': {
+                        overflowY: 'auto', // Show the scrollbar on hover
+                    },
                     '&::-webkit-scrollbar': {
                         width: '8px',
                     },
                     '&::-webkit-scrollbar-thumb': {
                         backgroundColor: '#D5CECC',
-                        borderRadius: '5px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        // backgroundColor: '#f5f5f5', // Set the color of the track
+                        borderRadius: '4px',
+                        height: '10px',
                     },
                 }}
             >

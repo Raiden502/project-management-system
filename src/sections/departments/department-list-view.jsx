@@ -110,7 +110,6 @@ function DepartmentListView() {
             <TextField
                 name="projectname"
                 InputProps={{
-                    sx: { borderRadius: '8px' },
                     startAdornment: (
                         <InputAdornment position="start">
                             <Iconify

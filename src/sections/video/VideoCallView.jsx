@@ -62,7 +62,7 @@ function VideoCallView() {
             payload: null,
         });
         CallDispatch({ type: 'SET_LEAVE' });
-        window.close()
+        window.close();
     };
     const startCall = () => {
         navigator.mediaDevices
@@ -131,7 +131,7 @@ function VideoCallView() {
         localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
         CallDispatch({ type: 'SET_LEAVE' });
-        window.close()
+        window.close();
     };
 
     useEffect(() => {

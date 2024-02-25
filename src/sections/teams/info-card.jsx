@@ -3,14 +3,13 @@ import ImageUploader from 'src/components/Image-uploader/image-uploader';
 
 export default function TeamInfo() {
     return (
-        <Card sx={{ borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px', position: 'relative' }}>
+        <Card sx={{ position: 'relative' }}>
             <Stack gap={4} sx={{ p: 3 }}>
                 <Stack spacing={1.5}>
                     <Typography variant="body1">Name</Typography>
                     <TextField
                         name="projectname"
                         sx={{ height: '40px' }}
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         // value={}
                         // onChange={()=>{}}
                         placeholder="e.g., My Awesome Project"
@@ -24,7 +23,6 @@ export default function TeamInfo() {
                         maxRows={10}
                         label="Description"
                         sx={{}}
-                        InputProps={{ sx: { borderRadius: '8px' } }}
                         // value={newUser.password}
                         // onChange={HandlePageDetails}
                         placeholder="description"

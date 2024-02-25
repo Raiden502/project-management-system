@@ -6,21 +6,11 @@ export default function FullDetailsView() {
     return (
         <Grid container spacing={3}>
             <Grid xs={12} md={8}>
-                <Stack
-                    component={Card}
-                    spacing={2}
-                    sx={{ p: 3, borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}
-                >
-                    <Typography
-                        variant="h5"
-                        sx={{ textTransform: 'capitalize', color: '#212B36', fontWeight: 'bold' }}
-                    >
+                <Stack component={Card} spacing={2} sx={{ p: 3 }}>
+                    <Typography variant="h5" sx={{}}>
                         Project Title
                     </Typography>
-                    <Typography
-                        variant="h6"
-                        sx={{ textTransform: 'capitalize', color: '#212B36', fontWeight: 'bold' }}
-                    >
+                    <Typography variant="h6" sx={{}}>
                         Project Description
                     </Typography>
                     <Typography variant="body2" sx={{ textTransform: 'none', color: '#212B36' }}>
@@ -40,24 +30,12 @@ export default function FullDetailsView() {
                         consideration while building such system are:
                     </Typography>
                     <Stack spacing={2}>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                textTransform: 'capitalize',
-                                color: '#212B36',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            Tools
-                        </Typography>
+                        <Typography variant="h6">Tools</Typography>
                         <Stack direction="row" alignItems="center" spacing={1}>
                             <Chip
                                 key={0}
                                 label={
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ textTransform: 'none', color: '#212B36' }}
-                                    >
+                                    <Typography variant="body2" sx={{ color: '#212B36' }}>
                                         UI
                                     </Typography>
                                 }
@@ -66,24 +44,12 @@ export default function FullDetailsView() {
                         </Stack>
                     </Stack>
                     <Stack spacing={2}>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                textTransform: 'capitalize',
-                                color: '#212B36',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            Links
-                        </Typography>
+                        <Typography variant="h6">Links</Typography>
                         <Stack direction="row" alignItems="center" spacing={1}>
                             <Chip
                                 key={0}
                                 label={
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ textTransform: 'none', color: '#212B36' }}
-                                    >
+                                    <Typography variant="body2" sx={{ color: '#212B36' }}>
                                         UI
                                     </Typography>
                                 }
@@ -94,11 +60,7 @@ export default function FullDetailsView() {
                 </Stack>
             </Grid>
             <Grid xs={12} md={4}>
-                <Stack
-                    component={Card}
-                    spacing={2}
-                    sx={{ p: 3, borderRadius: '15px', boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}
-                >
+                <Stack component={Card} spacing={2} sx={{ p: 3 }}>
                     {[
                         {
                             label: (

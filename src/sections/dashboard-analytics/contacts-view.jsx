@@ -8,8 +8,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Iconify from 'src/components/iconify/Iconify';
+import { Card, Typography } from '@mui/material';
 
-const ITEM_HEIGHT = 84;
+const ITEM_HEIGHT = 70;
 
 export default function ContactDetails({ assignee = [] }) {
     const _contacts = [
@@ -44,39 +45,62 @@ export default function ContactDetails({ assignee = [] }) {
             avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
         },
         {
-            id: '5',
+            id: '6',
+            name: 'non dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+        },
+        {
+            id: '7',
             name: 'non dummy',
             email: 'dummy@gmail.com',
             avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
         },
     ];
     return (
-        <Box
-            sx={{
-                px: 2.5,
-                height: ITEM_HEIGHT * 6,
-                overflowY: 'scroll',
-                boxShadow:1,
-            }}
-        >
-            {_contacts.map((contact) => (
-                <ListItem key={contact.id} disableGutters sx={{ height: ITEM_HEIGHT }}>
-                    <ListItemAvatar>
-                        <Avatar src={contact.avatar} />
-                    </ListItemAvatar>
+        <Card sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px', p:3}}>
+            <Typography variant="h6">Top Performer</Typography>
 
-                    <ListItemText
-                        primaryTypographyProps={{
-                            typography: 'subtitle2',
-                            sx: { mb: 0.25 },
-                        }}
-                        secondaryTypographyProps={{ typography: 'caption' }}
-                        primary={contact.name}
-                        secondary={contact.email}
-                    />
-                </ListItem>
-            ))}
-        </Box>
+            <Box
+                sx={{
+                    height: ITEM_HEIGHT * 6,
+                    mt:1,
+                    overflowY: 'hidden', // Initially hide the scrollbar
+                    '&:hover': {
+                        overflowY: 'auto', // Show the scrollbar on hover
+                    },
+                    '&::-webkit-scrollbar': {
+                        width: '8px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: '#D5CECC',
+                        borderRadius: '4px',
+                        height: '10px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        // backgroundColor: '#f0f0f0',
+                    },
+                }}
+            >
+                {_contacts.map((contact) => (
+                    <ListItem key={contact.id} disableGutters sx={{ height: ITEM_HEIGHT }}>
+                        <ListItemAvatar>
+                            <Avatar src={contact.avatar} />
+                        </ListItemAvatar>
+
+                        <ListItemText
+                            primaryTypographyProps={{
+                                typography: 'subtitle2',
+                                sx: { mb: 0.25 },
+                            }}
+                            secondaryTypographyProps={{ typography: 'caption' }}
+                            primary={contact.name}
+                            secondary={contact.email}
+                        />
+                    </ListItem>
+                ))}
+            </Box>
+        </Card>
     );
 }
 
@@ -85,17 +109,3 @@ ContactDetails.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
 };
-
-// ----------------------------------------------------------------------
-
-function applyFilter({ inputData, query }) {
-    if (query) {
-        inputData = inputData.filter(
-            (contact) =>
-                contact.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-                contact.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
-        );
-    }
-
-    return inputData;
-}

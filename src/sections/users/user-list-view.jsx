@@ -54,7 +54,7 @@ const DataCell = [
         userid: 1,
         name: 'name',
         email: 'name@gmail.com',
-        avatar: '',
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
         status: 'active',
@@ -63,7 +63,7 @@ const DataCell = [
         userid: 2,
         name: 'name',
         email: 'name@gmail.com',
-        avatar: '',
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
         status: 'active',
@@ -72,7 +72,7 @@ const DataCell = [
         userid: 3,
         name: 'name',
         email: 'name@gmail.com',
-        avatar: '',
+        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
         status: 'pending',
@@ -81,13 +81,7 @@ const DataCell = [
 
 export default function UserListView() {
     return (
-        <Box
-            component={Card}
-            sx={{
-                borderRadius: '15px',
-                boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
-            }}
-        >
+        <Box component={Card}>
             <Stack p={3} gap={3} direction="row">
                 <TextField
                     name="role"
@@ -118,11 +112,11 @@ export default function UserListView() {
                 <Table>
                     <TableHead sx={{ backgroundColor: '#f9f9f9' }}>
                         <TableRow>
-                            <TableCell sx={{ border: 'none' }}>
+                            <TableCell>
                                 <Checkbox checked onClick={() => {}} />
                             </TableCell>
                             {headCells.map((item) => (
-                                <TableCell key={item.id} align={item.align} sx={{ border: 'none' }}>
+                                <TableCell key={item.id} align={item.align}>
                                     <Typography variant="body2" fontWeight="">
                                         {item.label}
                                     </Typography>
@@ -137,22 +131,20 @@ export default function UserListView() {
                                 hover
                                 sx={{
                                     borderBottom:
-                                        index < DataCell.length - 1 ? '1px dashed grey' : 'none',
+                                        index < DataCell.length - 1 ? '1px dashed #f4f4f4' : 'none',
                                 }}
                             >
-                                <TableCell sx={{ border: 'none' }}>
+                                <TableCell>
                                     <Checkbox checked onClick={() => {}} />
                                 </TableCell>
-                                <TableCell
-                                    sx={{ display: 'flex', alignItems: 'center', border: 'none' }}
-                                >
+                                <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Avatar alt={item.name} src={item.avatar} sx={{ mr: 2 }} />
                                     {item.name}
                                 </TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.email}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.department}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>{item.role}</TableCell>
-                                <TableCell sx={{ border: 'none' }}>
+                                <TableCell>{item.email}</TableCell>
+                                <TableCell>{item.department}</TableCell>
+                                <TableCell>{item.role}</TableCell>
+                                <TableCell>
                                     <Label
                                         variant="soft"
                                         color={
@@ -167,7 +159,7 @@ export default function UserListView() {
                                         </Typography>
                                     </Label>
                                 </TableCell>
-                                <TableCell sx={{ border: 'none' }}>
+                                <TableCell>
                                     <IconButton onClick={() => {}}>
                                         <Iconify icon="eva:more-vertical-fill" />
                                     </IconButton>

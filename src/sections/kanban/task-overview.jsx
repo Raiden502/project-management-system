@@ -219,8 +219,20 @@ export default function TaskKanbanView() {
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         sx={{
-                            overflowX: 'scroll',
                             width: 1150,
+                            py:3,
+                            overflowY: 'hidden', // Initially hide the scrollbar
+                            '&:hover': {
+                                overflowY: 'auto', // Show the scrollbar on hover
+                            },
+                            '&::-webkit-scrollbar': {
+                                width: '8px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: '#D5CECC',
+                                borderRadius: '4px',
+                                height: '10px',
+                            },
                         }}
                         direction="row"
                         spacing={3}

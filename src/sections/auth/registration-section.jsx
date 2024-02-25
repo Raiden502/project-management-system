@@ -55,21 +55,19 @@ function RegisterSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 750, borderRadius: '10px', p: 3, boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}>
+            <Card sx={{ width: 750, p: 3}}>
                 <Stack gap={3}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color:'#212B36' }}>
+                    <Typography variant="h4" sx={{}}>
                         Welcome to TFMS
                     </Typography>
-                    <Typography variant="body2" sx={{color:'#212B36'}}>
+                    <Typography variant="subtitle2" sx={{}}>
                         Already have an account?{' '}
                         <Typography
-                            variant="body2"
+                            variant="subtitle2"
                             component={Link}
                             href="#"
                             sx={{
                                 color: '#00a76f',
-                                textDecoration: 'none',
-                                fontWeight: 'bold',
                                 marginLeft: '4px',
                             }}
                         >
@@ -81,8 +79,7 @@ function RegisterSection() {
                             <TextField
                                 name="firstname"
                                 label="Full Name"
-                                sx={{ height: '40px' }}
-                                InputProps={{ sx: { borderRadius: '8px' } }}
+                                sx={{ height: '50px' }}
                                 value={newUser.firstname}
                                 onChange={HandlePageDetails}
                             ></TextField>
@@ -90,12 +87,11 @@ function RegisterSection() {
                                 name="password"
                                 label="Password"
                                 type={passwordToogle ? 'text' : 'password'}
-                                sx={{ height: '40px' }}
+                                sx={{ height: '50px' }}
                                 value={newUser.password}
                                 onChange={HandlePageDetails}
                                 placeholder="Password"
                                 InputProps={{
-                                    sx: { borderRadius: '8px' },
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
@@ -117,16 +113,14 @@ function RegisterSection() {
                             <TextField
                                 name="companyname"
                                 label="Company name"
-                                sx={{height: '40px' }}
-                                InputProps={{ sx: { borderRadius: '8px' } }}
+                                sx={{height: '50px' }}
                                 value={newUser.lastname}
                                 onChange={HandlePageDetails}
                             ></TextField>
                             <TextField
                                 name="username"
                                 label="Bussiness Email"
-                                sx={{ height: '40px' }}
-                                InputProps={{ sx: { borderRadius: '8px' } }}
+                                sx={{ height: '50px' }}
                                 value={newUser.username}
                                 onChange={HandlePageDetails}
                                 placeholder="example@company.com"
@@ -136,7 +130,7 @@ function RegisterSection() {
                                 label={
                                     <Typography
                                         variant="subtitle2"
-                                        sx={{ fontSize: '12px', color: 'text.disabled' }}
+                                        sx={{color: 'text.disabled' }}
                                     >
                                         By signing up, I agree to Terms of Service and Privacy
                                         Policy.
@@ -148,9 +142,7 @@ function RegisterSection() {
                                 sx={{
                                     backgroundColor: '#212B36',
                                     textAlign: 'left',
-                                    borderRadius: '8px',
                                     height: '50px',
-                                    textTransform: 'none',
                                 }}
                                 onClick={SubmitDetails}
                             >
@@ -173,8 +165,7 @@ function RegisterSection() {
                             <TextField
                                 name="department"
                                 label="Department Name"
-                                sx={{height: '40px' }}
-                                InputProps={{ sx: { borderRadius: '8px' } }}
+                                sx={{height: '50px' }}
                                 value={newUser.firstname}
                                 onChange={HandlePageDetails}
                             ></TextField>
@@ -184,8 +175,6 @@ function RegisterSection() {
                                 maxRows={10}
                                 name="description"
                                 label="Description"
-                                sx={{}}
-                                InputProps={{ sx: { borderRadius: '8px' } }}
                                 value={newUser.password}
                                 onChange={HandlePageDetails}
                                 placeholder="description"
@@ -193,7 +182,7 @@ function RegisterSection() {
                             <Button
                                 variant="outlined"
                                 color="warning"
-                                sx={{ width: 50, textTransform: 'none' }}
+                                sx={{ width: 50 }}
                             >
                                 Reset
                             </Button>

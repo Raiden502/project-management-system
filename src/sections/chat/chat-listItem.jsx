@@ -50,8 +50,8 @@ function ChatListItem({ row, avatar, currentChat }) {
                     <Stack
                         sx={{
                             pt: 1.5,
-                            pl:1.5,
-                            pr:1.5,
+                            pl: 1.5,
+                            pr: 1.5,
                             minWidth: 48,
                             maxWidth: 320,
                             borderRadius: 1,

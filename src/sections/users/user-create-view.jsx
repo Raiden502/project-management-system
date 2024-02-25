@@ -51,13 +51,10 @@ export default function UsersCreateView() {
                 component={Card}
                 sx={{
                     p: 3,
-                    borderRadius: '15px',
-                    boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
-                    display:'flex',
-                    flexDirection:'column',
-                    justifyContent:'center'
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                 }}
-                
             >
                 <Stack sx={{ alignItems: 'center' }} gap={3}>
                     <AvatarUploader
@@ -99,8 +96,6 @@ export default function UsersCreateView() {
                 component={Card}
                 sx={{
                     p: 3,
-                    borderRadius: '15px',
-                    boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
                 }}
             >
                 <Box
@@ -114,11 +109,7 @@ export default function UsersCreateView() {
                     sx={{ mb: 3 }}
                 >
                     {formList.map((item) => (
-                        <TextField
-                            name={item.id}
-                            label={item.label}
-                            InputProps={{ sx: { borderRadius: '8px' } }}
-                        />
+                        <TextField name={item.id} label={item.label} />
                     ))}
                 </Box>
                 <Autocomplete
@@ -176,13 +167,10 @@ export default function UsersCreateView() {
                     rows={6}
                     name="address"
                     label="Address"
-                    InputProps={{ sx: { borderRadius: '8px' } }}
                     sx={{ mb: 3 }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button variant="contained" sx={{ bgcolor: '#212B36', borderRadius: '8px' }}>
-                        Create
-                    </Button>
+                    <Button variant="contained">Create</Button>
                 </Box>
             </Grid>
         </Grid>

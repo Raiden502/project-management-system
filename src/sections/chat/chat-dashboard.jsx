@@ -93,17 +93,17 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
                     width: 700,
                     p: 2,
                     mt: 2,
-                    overflowY: 'scroll',
-                    scrollBehavior: 'smooth',
+                    overflowY: 'hidden', // Initially hide the scrollbar
+                    '&:hover': {
+                        overflowY: 'auto', // Show the scrollbar on hover
+                    },
                     '&::-webkit-scrollbar': {
                         width: '8px',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: '#bdbdbd',
-                        borderRadius: '5px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        backgroundColor: '#f5f5f5', // Set the color of the track
+                        backgroundColor: '#D5CECC',
+                        borderRadius: '4px',
+                        height: '10px',
                     },
                 }}
             >
@@ -121,11 +121,7 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
                 <TextField
                     fullWidth
                     placeholder="write message"
-                    sx={{
-                        '& .MuiInputBase-root': {
-                            borderRadius: '10px', // Adjust the radius to your preference
-                        },
-                    }}
+                    sx={{}}
                     onChange={(e) => {
                         setCurrentMessage(e.target.value);
                     }}

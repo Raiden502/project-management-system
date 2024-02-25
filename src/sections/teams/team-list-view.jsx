@@ -110,7 +110,6 @@ function TeamListView() {
             <TextField
                 name="projectname"
                 InputProps={{
-                    sx: { borderRadius: '8px' },
                     startAdornment: (
                         <InputAdornment position="start">
                             <Iconify icon="ic:round-search" />

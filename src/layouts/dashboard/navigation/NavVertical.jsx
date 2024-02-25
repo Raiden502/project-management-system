@@ -1,15 +1,15 @@
 import { Box, Stack, IconButton, Drawer } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useContext } from 'react';
+import { useTheme } from '@emotion/react';
 import NavSectionVertical from 'src/components/nav-section/nav-section-vertical.js';
-import { ThemesContext } from '../../../providers/themes/ThemeProvider.jsx';
 import { useNavData } from './ConfigNavigation.jsx';
 
 const NAVDashboard = 260;
 
 function NavVertical() {
     const navData = useNavData();
-    const { theme } = useContext(ThemesContext);
+    const { theme } = useTheme()
     const renderContent = (
         <Box
             sx={{
