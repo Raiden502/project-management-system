@@ -49,37 +49,7 @@ const headCells = [
     },
 ];
 
-const DataCell = [
-    {
-        userid: 1,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: '',
-        department: 'department-1',
-        role: 'admin',
-        status: 'active',
-    },
-    {
-        userid: 2,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: '',
-        department: 'department-1',
-        role: 'admin',
-        status: 'active',
-    },
-    {
-        userid: 3,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: '',
-        department: 'department-1',
-        role: 'admin',
-        status: 'pending',
-    },
-];
-
-export default function TaskListView() {
+export default function TaskListView({tasks}) {
     return (
         <Box
             component={Card}
@@ -120,13 +90,13 @@ export default function TaskListView() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {DataCell.map((item, index) => (
+                        {tasks.map((item, index) => (
                             <TableRow
                                 key={item.userid}
                                 hover
                                 sx={{
                                     borderBottom:
-                                        index < DataCell.length - 1 ? '1px dashed #f4f4f4' : 'none',
+                                        index < tasks.length - 1 ? '1px dashed #f4f4f4' : 'none',
                                 }}
                             >
                                 <TableCell>{item.name}</TableCell>
@@ -165,7 +135,7 @@ export default function TaskListView() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={DataCell.length}
+                    count={tasks.length}
                     rowsPerPage={5}
                     page={10}
                     // onPageChange={handleChangePage}

@@ -13,50 +13,6 @@ import { Card, Typography } from '@mui/material';
 const ITEM_HEIGHT = 70;
 
 export default function ContactDetails({ assignee = [] }) {
-    const _contacts = [
-        {
-            id: '1',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-        },
-        {
-            id: '2',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-        },
-        {
-            id: '3',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-        },
-        {
-            id: '4',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        },
-        {
-            id: '5',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-        {
-            id: '6',
-            name: 'non dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-        {
-            id: '7',
-            name: 'non dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-    ];
     return (
         <Card sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px', p:3}}>
             <Typography variant="h6">Top Performer</Typography>
@@ -82,7 +38,7 @@ export default function ContactDetails({ assignee = [] }) {
                     },
                 }}
             >
-                {_contacts.map((contact) => (
+                {assignee.map((contact) => (
                     <ListItem key={contact.id} disableGutters sx={{ height: ITEM_HEIGHT }}>
                         <ListItemAvatar>
                             <Avatar src={contact.avatar} />

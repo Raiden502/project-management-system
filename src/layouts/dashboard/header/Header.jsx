@@ -46,7 +46,7 @@ export default function Header() {
                             // value={personName}
                             // onChange={handleChange}
                             sx={{ maxWidth: '200px' }}
-                            InputProps={{ sx: { borderRadius: '8px' } }}
+                           
                         >
                             {names.map((name) => (
                                 <MenuItem key={name} value={name}>

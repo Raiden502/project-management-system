@@ -13,19 +13,40 @@ import ListItemText from '@mui/material/ListItemText';
 // components
 import Iconify from 'src/components/iconify/Iconify';
 import { RouterLink } from 'src/routes/components';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useBoolean } from 'src/utils/use-boolean';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
 export default function DepartmentItem({ job }) {
-    // const popover = usePopover();
-
+    const popover = usePopover();
+    const confirm = useBoolean();
+    const navigate = useNavigate()
     const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
+
+    const editDepartment = (departmentId) => {
+        navigate('/dashboard/departments/create', {
+            state: { departmentId },
+        });
+    };
+
+    const detailsDepartment = (departmentId) => {
+        navigate('/dashboard/departments/details', {
+            state: { departmentId },
+        });
+    };
 
     return (
         <>
-            <Card sx={{width: 360, position: 'relative' }}>
-                <IconButton onClick={() => {}} sx={{ position: 'absolute', top: 8, right: 8 }}>
+            <Card sx={{ width: 360, position: 'relative' }}>
+                <IconButton
+                    onClick={popover.onOpen}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                >
                     <Iconify icon="eva:more-vertical-fill" />
                 </IconButton>
 
@@ -74,7 +95,7 @@ export default function DepartmentItem({ job }) {
                             WebkitLineClamp: 2,
                         }}
                     >
-                        <Typography variant='body1'>{desc}</Typography>
+                        <Typography variant="body1">{desc}</Typography>
                     </Box>
                 </Stack>
 
@@ -139,6 +160,53 @@ export default function DepartmentItem({ job }) {
                     ))}
                 </Box>
             </Card>
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="right-top"
+                sx={{ width: 180 }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        editDepartment('1');
+                    }}
+                >
+                    <Iconify icon="solar:pen-bold" />
+                    Edit
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        detailsDepartment('1');
+                    }}
+                >
+                    <Iconify icon="clarity:details-solid" />
+                    Details
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        confirm.onTrue();
+                    }}
+                    sx={{ color: 'error.main' }}
+                >
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                    Delete
+                </MenuItem>
+            </CustomPopover>
+
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title="Delete"
+                content="Are you sure want to delete?"
+                action={
+                    <Button variant="contained" color="error" onClick={() => {}}>
+                        Delete
+                    </Button>
+                }
+            />
         </>
     );
 }

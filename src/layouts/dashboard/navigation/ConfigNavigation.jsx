@@ -22,7 +22,7 @@ const ICONS = {
 export function useNavData() {
     const data = useMemo(() => [
         {
-            subheader: 'overview',
+            // subheader: 'overview',
             roles: ['admin', 'user'],
             items: [
                 {
@@ -37,7 +37,7 @@ export function useNavData() {
         // MANAGEMENT
         // ----------------------------------------------------------------------
         {
-            subheader: 'management',
+            // subheader: 'management',
             roles: ['admin', 'user'],
             items: [
                 // USER
@@ -59,7 +59,7 @@ export function useNavData() {
             ],
         },
         {
-            subheader: 'projects',
+            // subheader: 'projects',
             roles: ['admin', 'user'],
             items: [
                 // USER
@@ -105,7 +105,7 @@ export function useNavData() {
             ],
         },
         {
-            subheader: 'Communication',
+            // subheader: 'Communication',
             roles: ['admin', 'user'],
             items: [{ title: 'Chats', path: paths.dashboard.communication.chat, icon: ICONS.chat , roles: ['admin', 'user'],}],
         },

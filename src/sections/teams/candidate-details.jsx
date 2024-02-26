@@ -14,50 +14,7 @@ import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-const candidates = [
-    {
-        name: 'name',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name1',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name2',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name3',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name4',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name5',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name6',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-    {
-        name: 'name7',
-        avatarUrl: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        role: 'engineer',
-    },
-];
-
-export default function CandidateDetails() {
+export default function CandidateDetails({candidates}) {
     return (
         <Box
             gap={3}

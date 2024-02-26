@@ -1,8 +1,10 @@
 import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import DepartmentItem from './department-list-item';
 import Iconify from 'src/components/iconify/Iconify';
+import { useState } from 'react';
+import axiosInstance from 'src/utils/axios';
 
-const projects = [
+const tempData = [
     {
         id: 1,
         name: 'EcoSmart Home Automation',
@@ -105,6 +107,19 @@ const projects = [
 ];
 
 function DepartmentListView() {
+    const [departments, setDepartments] = useState([...tempData]);
+
+    const getDepartmentList = async () => {
+        try {
+            const response = await axiosInstance.get('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setDepartments(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
     return (
         <Stack gap={4}>
             <TextField
@@ -112,9 +127,7 @@ function DepartmentListView() {
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <Iconify
-                                icon="ic:round-search"
-                            />
+                            <Iconify icon="ic:round-search" />
                         </InputAdornment>
                     ),
                 }}
@@ -132,7 +145,7 @@ function DepartmentListView() {
                     md: 'repeat(3, 1fr)',
                 }}
             >
-                {projects.map((details) => (
+                {departments.map((details) => (
                     <DepartmentItem key={details.id} job={details} />
                 ))}
             </Box>

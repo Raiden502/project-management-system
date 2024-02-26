@@ -13,14 +13,14 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import AvatarUploader from 'src/components/Image-uploader/avatar-uploader';
+import axiosInstance from 'src/utils/axios';
 
 const formList = [
     { id: 'name', label: 'Name' },
-    { id: 'password', label: 'Password' },
     { id: 'email', label: 'Email Address' },
     { id: 'phone', label: 'Phone Number' },
-    { id: 'organization', label: 'Organization' },
     { id: 'role', label: 'Role' },
 ];
 
@@ -37,13 +37,49 @@ const _tags = [
     },
 ];
 
+const tempData = {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    role: '',
+    departments: [],
+    avatar: '',
+};
+
 export default function UsersCreateView() {
-    const [contributors, setContributors] = useState([]);
+    const location = useLocation();
+    const [formData, setFormData] = useState({ ...tempData });
     const [selectedImages, setSelectedImages] = useState(null);
 
     const HandleUserList = (event, emitValue) => {
-        setContributors((prev) => [...emitValue.map((option) => option.deptId)]);
+        setFormData((prev) => ({
+            ...prev,
+            departments: [...emitValue.map((option) => option.deptId)],
+        }));
     };
+
+    const HandleDetails = (event) => {
+        const { name, value } = event.target;
+        console.log(name, value)
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const syncData = async () => {
+        try {
+            const requestData = { ...formData, avatar: selectedImages, type: 'edit' };
+            const response = await axiosInstance.post('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setDashboardDetails(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    console.log("users", location.state?.userId)
+
     return (
         <Grid container spacing={3}>
             <Grid
@@ -109,7 +145,12 @@ export default function UsersCreateView() {
                     sx={{ mb: 3 }}
                 >
                     {formList.map((item) => (
-                        <TextField name={item.id} label={item.label} />
+                        <TextField
+                            name={item.id}
+                            label={item.label}
+                            value={formData[item.id]}
+                            onChange={HandleDetails}
+                        />
                     ))}
                 </Box>
                 <Autocomplete
@@ -118,13 +159,15 @@ export default function UsersCreateView() {
                     freeSolo
                     id="tags"
                     sx={{ mb: 3 }}
-                    value={contributors.map((deptId) => _tags.find((tag) => tag.deptId === deptId))}
+                    value={formData.departments.map((deptId) =>
+                        _tags.find((tag) => tag.deptId === deptId)
+                    )}
                     options={_tags.map((option) => option)}
                     onChange={HandleUserList}
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            placeholder="Select Users"
+                            placeholder="Select Departments"
                             sx={{
                                 bgcolor: 'white',
                                 '& .MuiOutlinedInput-root': {
@@ -167,6 +210,8 @@ export default function UsersCreateView() {
                     rows={6}
                     name="address"
                     label="Address"
+                    value={formData.address}
+                    onChange={HandleDetails}
                     sx={{ mb: 3 }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

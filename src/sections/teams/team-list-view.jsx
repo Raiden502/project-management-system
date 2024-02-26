@@ -1,8 +1,10 @@
 import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import TeamItem from './team-list-item';
 import Iconify from 'src/components/iconify/Iconify';
+import axiosInstance from 'src/utils/axios';
+import { useState } from 'react';
 
-const projects = [
+const tempData = [
     {
         id: 1,
         name: 'EcoSmart Home Automation',
@@ -105,6 +107,19 @@ const projects = [
 ];
 
 function TeamListView() {
+    const [teams, setTeams] = useState([...tempData]);
+
+    const getTeamsList = async () => {
+        try {
+            const response = await axiosInstance.get('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setTeams(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
     return (
         <Stack gap={4}>
             <TextField
@@ -130,7 +145,7 @@ function TeamListView() {
                     md: 'repeat(3, 1fr)',
                 }}
             >
-                {projects.map((details) => (
+                {teams.map((details) => (
                     <TeamItem key={details.id} job={details} />
                 ))}
             </Box>

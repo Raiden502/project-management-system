@@ -1,8 +1,10 @@
 import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import ProjItem from './project-list-item';
 import Iconify from 'src/components/iconify/Iconify';
+import { useState } from 'react';
+import axiosInstance from 'src/utils/axios';
 
-const projects = [
+const tempData = [
     {
         id: 1,
         name: 'EcoSmart Home Automation',
@@ -105,6 +107,19 @@ const projects = [
 ];
 
 function ProjectListView() {
+    const [projects, setProjects] = useState([...tempData]);
+
+    const getProjectList = async () => {
+        try {
+            const response = await axiosInstance.get('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setProjects(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
     return (
         <Stack gap={4}>
             <TextField

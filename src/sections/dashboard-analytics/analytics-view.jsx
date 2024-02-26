@@ -9,6 +9,7 @@ import ContactDetails from './contacts-view';
 import UserListView from './user-list-view';
 import TaskListView from './task-list-view';
 import DataActivity from './data-activity';
+import axiosInstance from 'src/utils/axios';
 
 const TIME_LABELS = {
     week: ['Mon', 'Tue', 'Web', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -29,15 +30,176 @@ const names = [
     'Kelly Snyder',
 ];
 
+const dummy = {
+    total_users: 30,
+    total_teams: 30,
+    total_tasks: 30,
+    priority: [
+        { label: 'High', value: 12 },
+        { label: 'Low', value: 5 },
+        { label: 'Medium', value: 4 },
+    ],
+    status: [
+        { label: 'Todo', value: 12 },
+        { label: 'In Progress', value: 53 },
+        { label: 'Done', value: 14 },
+        { label: 'Testing', value: 7 },
+    ],
+    week: [
+        { name: 'Tasks', data: [20, 34, 48, 65, 37, 48] },
+        { name: 'Project', data: [10, 34, 13, 26, 27, 28] },
+        { name: 'Documents', data: [10, 14, 13, 16, 17, 18] },
+        { name: 'Other', data: [5, 12, 6, 7, 8, 9] },
+    ],
+    month: [
+        {
+            name: 'Tasks',
+            data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
+        },
+        {
+            name: 'Project',
+            data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
+        },
+        {
+            name: 'Documents',
+            data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
+        },
+        {
+            name: 'Other',
+            data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
+        },
+    ],
+    year: [
+        { name: 'Tasks', data: [10, 34, 13, 56, 77] },
+        { name: 'Project', data: [10, 34, 13, 56, 77] },
+        { name: 'Documents', data: [10, 34, 13, 56, 77] },
+        { name: 'Other', data: [10, 34, 13, 56, 77] },
+    ],
+    performer: [
+        {
+            id: '1',
+            name: 'dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
+        },
+        {
+            id: '2',
+            name: 'dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
+        },
+        {
+            id: '3',
+            name: 'dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
+        },
+        {
+            id: '4',
+            name: 'dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+        },
+        {
+            id: '5',
+            name: 'dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+        },
+        {
+            id: '6',
+            name: 'non dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+        },
+        {
+            id: '7',
+            name: 'non dummy',
+            email: 'dummy@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
+        },
+    ],
+    assignies: [
+        {
+            userid: 1,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+            department: 'department-1',
+            role: 'admin',
+            status: 'active',
+        },
+        {
+            userid: 2,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+            department: 'department-1',
+            role: 'admin',
+            status: 'active',
+        },
+        {
+            userid: 3,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
+            department: 'department-1',
+            role: 'admin',
+            status: 'pending',
+        },
+    ],
+    tasks: [
+        {
+            userid: 1,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: '',
+            department: 'department-1',
+            role: 'admin',
+            status: 'active',
+        },
+        {
+            userid: 2,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: '',
+            department: 'department-1',
+            role: 'admin',
+            status: 'active',
+        },
+        {
+            userid: 3,
+            name: 'name',
+            email: 'name@gmail.com',
+            avatar: '',
+            department: 'department-1',
+            role: 'admin',
+            status: 'pending',
+        },
+    ],
+};
 export default function AnalyticsView() {
-    const theme = useTheme()
-    const [personName, setPersonName] = useState([]);
+    const theme = useTheme();
+    const [ProjectName, setProjectName] = useState([]);
+    const [dashboard, setDashboardDetails] = useState({ ...dummy });
+
+    const getProjectDetails = async () => {
+        try {
+            const response = await axiosInstance.get('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setDashboardDetails(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
+        setProjectName(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value
         );
@@ -48,7 +210,7 @@ export default function AnalyticsView() {
                 select
                 label="Projects"
                 name="Projects"
-                value={personName}
+                value={ProjectName}
                 onChange={handleChange}
                 sx={{ maxWidth: '300px' }}
             >
@@ -61,26 +223,22 @@ export default function AnalyticsView() {
             <Grid container spacing={3}>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary title="Total Users" total={31} />
+                    <CountWidgetSummary title="Total Users" total={dashboard.total_users} />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary title="Total Teams" total={3} />
+                    <CountWidgetSummary title="Total Teams" total={dashboard.total_teams} />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <CountWidgetSummary title="Total Tasks" total={20} />
+                    <CountWidgetSummary title="Total Tasks" total={dashboard.total_tasks} />
                 </Grid>
 
                 <Grid xs={12} md={4}>
                     <CircleGroupChart
                         title="Total Task Priorities"
                         chart={{
-                            series: [
-                                { label: 'High', value: 12 },
-                                { label: 'Low', value: 5 },
-                                { label: 'Medium', value: 4 },
-                            ],
+                            series: dashboard.priority,
                         }}
                     />
                 </Grid>
@@ -88,18 +246,13 @@ export default function AnalyticsView() {
                     <CircleGroupChart
                         title="Total Task Status"
                         chart={{
-                            series: [
-                                { label: 'Todo', value: 12 },
-                                { label: 'In Progress', value: 53 },
-                                { label: 'Done', value: 14 },
-                                { label: 'Testing', value: 7 },
-                            ],
+                            series: dashboard.status,
                         }}
                     />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <ContactDetails />
+                    <ContactDetails assignee={dashboard.performer} />
                 </Grid>
             </Grid>
             <DataActivity
@@ -115,48 +268,21 @@ export default function AnalyticsView() {
                     series: [
                         {
                             type: 'Week',
-                            data: [
-                                { name: 'Tasks', data: [20, 34, 48, 65, 37, 48] },
-                                { name: 'Project', data: [10, 34, 13, 26, 27, 28] },
-                                { name: 'Documents', data: [10, 14, 13, 16, 17, 18] },
-                                { name: 'Other', data: [5, 12, 6, 7, 8, 9] },
-                            ],
+                            data: dashboard.week,
                         },
                         {
                             type: 'Month',
-                            data: [
-                                {
-                                    name: 'Tasks',
-                                    data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                                },
-                                {
-                                    name: 'Project',
-                                    data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                                },
-                                {
-                                    name: 'Documents',
-                                    data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                                },
-                                {
-                                    name: 'Other',
-                                    data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                                },
-                            ],
+                            data: dashboard.month,
                         },
                         {
                             type: 'Year',
-                            data: [
-                                { name: 'Tasks', data: [10, 34, 13, 56, 77] },
-                                { name: 'Project', data: [10, 34, 13, 56, 77] },
-                                { name: 'Documents', data: [10, 34, 13, 56, 77] },
-                                { name: 'Other', data: [10, 34, 13, 56, 77] },
-                            ],
+                            data: dashboard.year,
                         },
                     ],
                 }}
             />
-            <UserListView />
-            <TaskListView />
+            <UserListView userList={dashboard.assignies} />
+            <TaskListView tasks={dashboard.tasks} />
         </Stack>
     );
 }

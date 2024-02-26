@@ -13,21 +13,39 @@ import ListItemText from '@mui/material/ListItemText';
 // components
 import Iconify from 'src/components/iconify/Iconify';
 import { RouterLink } from 'src/routes/components';
+import { usePopover } from 'src/components/custom-popover';
+import { useBoolean } from 'src/utils/use-boolean';
+import { useNavigate } from 'react-router-dom';
+import CustomPopover from 'src/components/custom-popover/custom-popover';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { Button } from '@mui/material';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
 export default function ProjItem({ job }) {
-    // const popover = usePopover();
-
-    // const popover = usePopover();
+    const popover = usePopover();
+    const confirm = useBoolean();
+    const navigate = useNavigate()
 
     const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
+
+    const editProject = (ProjectId) => {
+        navigate('/dashboard/projects/create', {
+            state: { ProjectId },
+        });
+    };
+
+    const detailsProject = (ProjectId) => {
+        navigate('/dashboard/projects/details', {
+            state: { ProjectId },
+        });
+    };
 
     return (
         <>
             <Card sx={{ width: 360, position: 'relative' }}>
-                <IconButton onClick={() => {}} sx={{ position: 'absolute', top: 8, right: 8 }}>
+                <IconButton onClick={popover.onOpen} sx={{ position: 'absolute', top: 8, right: 8 }}>
                     <Iconify icon="eva:more-vertical-fill" />
                 </IconButton>
 
@@ -141,6 +159,53 @@ export default function ProjItem({ job }) {
                     ))}
                 </Box>
             </Card>
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="right-top"
+                sx={{ width: 180 }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        editProject('1');
+                    }}
+                >
+                    <Iconify icon="solar:pen-bold" />
+                    Edit
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        detailsProject('1');
+                    }}
+                >
+                    <Iconify icon="clarity:details-solid" />
+                    Details
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        confirm.onTrue();
+                    }}
+                    sx={{ color: 'error.main' }}
+                >
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                    Delete
+                </MenuItem>
+            </CustomPopover>
+
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title="Delete"
+                content="Are you sure want to delete?"
+                action={
+                    <Button variant="contained" color="error" onClick={() => {}}>
+                        Delete
+                    </Button>
+                }
+            />
         </>
     );
 }

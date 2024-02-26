@@ -49,37 +49,8 @@ const headCells = [
     },
 ];
 
-const DataCell = [
-    {
-        userid: 1,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        status: 'active',
-    },
-    {
-        userid: 2,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        status: 'active',
-    },
-    {
-        userid: 3,
-        name: 'name',
-        email: 'name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        status: 'pending',
-    },
-];
 
-export default function UserListView() {
+export default function UserListView({userList}) {
     return (
         <Box component={Card}>
             <Stack p={3} gap={3} direction="row">
@@ -113,13 +84,13 @@ export default function UserListView() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {DataCell.map((item, index) => (
+                        {userList.map((item, index) => (
                             <TableRow
                                 key={item.userid}
                                 hover
                                 sx={{
                                     borderBottom:
-                                        index < DataCell.length - 1 ? '1px dashed #f4f4f4' : 'none',
+                                        index < userList.length - 1 ? '1px dashed #f4f4f4' : 'none',
                                 }}
                             >
                                 <TableCell
@@ -163,7 +134,7 @@ export default function UserListView() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={DataCell.length}
+                    count={userList.length}
                     rowsPerPage={5}
                     page={10}
                     // onPageChange={handleChangePage}

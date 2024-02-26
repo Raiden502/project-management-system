@@ -17,9 +17,17 @@ import {
     TablePagination,
     Switch,
     FormControlLabel,
+    MenuItem,
+    Button,
 } from '@mui/material';
+import { useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import Label from 'src/components/label';
+import axiosInstance from 'src/utils/axios';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useBoolean } from 'src/utils/use-boolean';
+import { useNavigate } from 'react-router-dom';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 const headCells = [
     {
@@ -80,6 +88,29 @@ const DataCell = [
 ];
 
 export default function UserListView() {
+    const [userList, setUserList] = useState([...DataCell]);
+    const popover = usePopover();
+    const confirm = useBoolean();
+    const navigate = useNavigate();
+
+    const deleteUser = async () => {
+        try {
+            const response = await axiosInstance.post('');
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                console.log('deleted');
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const editUser = (userId) => {
+        navigate('/dashboard/users/create', {
+            state: { userId },
+        });
+    };
+
     return (
         <Box component={Card}>
             <Stack p={3} gap={3} direction="row">
@@ -112,9 +143,6 @@ export default function UserListView() {
                 <Table>
                     <TableHead sx={{ backgroundColor: '#f9f9f9' }}>
                         <TableRow>
-                            <TableCell>
-                                <Checkbox checked onClick={() => {}} />
-                            </TableCell>
                             {headCells.map((item) => (
                                 <TableCell key={item.id} align={item.align}>
                                     <Typography variant="body2" fontWeight="">
@@ -125,18 +153,15 @@ export default function UserListView() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {DataCell.map((item, index) => (
+                        {userList.map((item, index) => (
                             <TableRow
                                 key={item.userid}
                                 hover
                                 sx={{
                                     borderBottom:
-                                        index < DataCell.length - 1 ? '1px dashed #f4f4f4' : 'none',
+                                        index < userList.length - 1 ? '1px dashed #f4f4f4' : 'none',
                                 }}
                             >
-                                <TableCell>
-                                    <Checkbox checked onClick={() => {}} />
-                                </TableCell>
                                 <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Avatar alt={item.name} src={item.avatar} sx={{ mr: 2 }} />
                                     {item.name}
@@ -160,7 +185,7 @@ export default function UserListView() {
                                     </Label>
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => {}}>
+                                    <IconButton onClick={popover.onOpen}>
                                         <Iconify icon="eva:more-vertical-fill" />
                                     </IconButton>
                                 </TableCell>
@@ -181,13 +206,51 @@ export default function UserListView() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={DataCell.length}
+                    count={userList.length}
                     rowsPerPage={5}
                     page={10}
                     // onPageChange={handleChangePage}
                     // onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="right-top"
+                sx={{ width: 180 }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        editUser('1');
+                    }}
+                >
+                    <Iconify icon="solar:pen-bold" />
+                    Edit
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        popover.onClose();
+                        confirm.onTrue();
+                    }}
+                    sx={{ color: 'error.main' }}
+                >
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                    Delete
+                </MenuItem>
+            </CustomPopover>
+
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title="Delete"
+                content="Are you sure want to delete?"
+                action={
+                    <Button variant="contained" color="error" onClick={() => {}}>
+                        Delete
+                    </Button>
+                }
+            />
         </Box>
     );
 }
