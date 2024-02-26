@@ -41,7 +41,7 @@ function LoginSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 350, p:3 }}>
+            <Card sx={{ width: 400, p:3 }}>
                 <Stack gap={3}>
                     <Typography variant="h4">
                         Sign in to TFMS
@@ -51,7 +51,7 @@ function LoginSection() {
                         <Typography
                             variant="subtitle2"
                             component={Link}
-                            href="#"
+                            to="/auth/register"
                             sx={{
                                 color: '#00a76f',
                                 marginLeft: '4px',

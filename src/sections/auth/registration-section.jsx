@@ -182,7 +182,7 @@ function RegisterSection() {
                         <Typography
                             variant="subtitle2"
                             component={Link}
-                            href="#"
+                            to="/auth/login"
                             sx={{
                                 color: '#00a76f',
                                 marginLeft: '4px',
