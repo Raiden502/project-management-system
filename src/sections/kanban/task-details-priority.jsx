@@ -4,6 +4,7 @@ import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import ButtonBase from '@mui/material/ButtonBase';
 import Iconify from 'src/components/iconify/Iconify';
+import { Typography } from '@mui/material';
 // components
 
 // ----------------------------------------------------------------------
@@ -51,7 +52,7 @@ export default function TaskDetailsPriority({ priority, onChangePriority }) {
                         }}
                     />
 
-                    {option}
+                    <Typography variant="body2">{option}</Typography>
                 </ButtonBase>
             ))}
         </Stack>

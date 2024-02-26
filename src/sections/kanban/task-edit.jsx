@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 import Iconify from 'src/components/iconify/Iconify';
 import { useBoolean } from 'src/utils/use-boolean';
@@ -141,7 +141,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                                     <Chip
                                         key={label}
                                         color="info"
-                                        label={label}
+                                        label={<Typography variant='body2'>{label}</Typography>}
                                         size="small"
                                         variant="soft"
                                     />

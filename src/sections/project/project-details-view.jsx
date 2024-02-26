@@ -114,7 +114,7 @@ export default function ProjectDetailsView() {
 
     const editProject = () => {
         navigate('/dashboard/projects/create', {
-            state: { projectId: location.state.projectId },
+            state: { projectId: location.state?.projectId },
         });
     };
 

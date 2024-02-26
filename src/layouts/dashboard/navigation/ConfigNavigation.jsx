@@ -66,7 +66,7 @@ export function useNavData() {
                 {
                     title: 'Departments',
                     path: paths.dashboard.departments.list,
-                    icon: ICONS.project,
+                    icon: ICONS.departments,
                     roles: ['admin', 'user'],
                     children: [
                         { title: 'list', path: paths.dashboard.departments.list , roles: ['admin', 'user'],},

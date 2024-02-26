@@ -109,7 +109,7 @@ export default function TeamDetailsView() {
 
     const editTeams = () => {
         navigate('/dashboard/teams/create', {
-            state: { teamId: location.state.teamId },
+            state: { teamId: location.state?.teamId },
         });
     };
     return (
