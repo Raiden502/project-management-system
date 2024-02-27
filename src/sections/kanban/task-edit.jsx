@@ -101,14 +101,17 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
 
                     <Stack direction="row" alignItems="center">
                         <StyledLabel>Reporter</StyledLabel>
-                        <Avatar alt="reporter" src={task.reporter.avatar} />
+                        {
+                            task.reporter.map((repo)=><Avatar alt="reporter" src={repo.avatar} />)
+                        }
+                        
                     </Stack>
 
                     <Stack direction="row">
                         <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Assignee</StyledLabel>
 
                         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                            {task.users.map((user) => (
+                            {task.assigne.map((user) => (
                                 <Avatar key={user.userid} alt={user.name} src={user.avatar} />
                             ))}
 
@@ -125,7 +128,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             </Tooltip>
 
                             <TaskContactDetails
-                                assignee={task.users}
+                                assignee={task.assigne}
                                 open={contacts.value}
                                 onClose={contacts.onFalse}
                             />

@@ -6,33 +6,24 @@ import {
 
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-
-import publishReducer from "./slices/Publish";
-import postsReducer from "./slices/Posts";
+import kanbanReducer from './slices/Kanban'
 import accountsReducer from "./slices/Account";
+
 
 export const rootPersistConfig = {
 	key: "root",
 	storage,
 	keyPrefix: "redux-",
-	whitelist: ["publish", "accounts"],
+	whitelist: ["accounts"],
 };
 
-// export const publishPersistConfig = {
-// 	key: "publish",
-// 	storage,
-// 	keyPrefix: "redux-",
-// 	whitelist: [],
-// };
-
 const rootReducer = combineReducers({
-	publish: publishReducer,
-	posts: postsReducer,
 	accounts: accountsReducer,
+	kanban: kanbanReducer,
 });
 
 const store = configureStore({
-	reducer: persistReducer(rootPersistConfig, rootReducer), // Use the combined reducer
+	reducer: persistReducer(rootPersistConfig, rootReducer),
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			serializableCheck: false,
@@ -41,8 +32,6 @@ const store = configureStore({
 });
 
 const persistor = persistStore(store);
-
 const useSelector = useAppSelector;
-const useDispatch = useAppDispatch; // No need for the arrow function
-
+const useDispatch = useAppDispatch;
 export { store, useSelector, persistor, useDispatch };

@@ -3,8 +3,9 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import TaskItem from './task-items';
+import RowAdd from './task-row-add';
 
-export default function TaskColumn({ column, index, AddNewRow }) {
+export default function TaskColumn({ column, setTaskData, tasks}) {
     return (
         <Draggable draggableId={`${column.index}`} index={column.index} key={column.index}>
             {(provided) => (
@@ -20,7 +21,7 @@ export default function TaskColumn({ column, index, AddNewRow }) {
                 >
                     <Stack {...provided.dragHandleProps}>
                         <Typography variant="subtitle1" sx={{}} gutterBottom>
-                            {column.name}
+                            {column.type}
                         </Typography>
                         <Droppable droppableId={column.id} type="TASK">
                             {(dropProvided) => (
@@ -30,27 +31,14 @@ export default function TaskColumn({ column, index, AddNewRow }) {
                                     spacing={2}
                                     sx={{ width: 280, py: 3 }}
                                 >
-                                    {column.value.map((item, index2) => (
-                                        <TaskItem item={item} key={item.index} index={item.index} />
+                                    {tasks && tasks.map((item, index2) => (
+                                        <TaskItem item={item} key={item.id}/>
                                     ))}
                                     {dropProvided.placeholder}
                                 </Stack>
                             )}
                         </Droppable>
-                        <Button
-                            fullWidth
-                            size="large"
-                            color="inherit"
-                            startIcon={
-                                <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
-                            }
-                            onClick={() => {
-                                AddNewRow(column.index);
-                            }}
-                            sx={{ fontSize: 14 }}
-                        >
-                            Add Task
-                        </Button>
+                        <RowAdd setTaskData={setTaskData} taskId={column.id} taskData={tasks}/>
                     </Stack>
                 </Paper>
             )}

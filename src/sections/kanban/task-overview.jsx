@@ -3,81 +3,20 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import TaskColumn from './task-column';
-
-const getItems = (count, prefix) =>
-    Array.from({ length: count }, (v, k) => k).map((k) => ({
-        id: `${prefix}-${k}`,
-        index: k,
-        priority: 'high',
-        name: `fix ui ${prefix}-${k}`,
-        description: 'fix ui screens correctly',
-        comments: [
-            {
-                userid: '1',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt: '12-02-2023',
-                messageType: 'text',
-                message: 'hi everyone',
-            },
-            {
-                userid: '2',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt: '12-02-2023',
-                messageType: 'text',
-                message: 'hi everyone',
-            },
-            {
-                userid: '3',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                createdAt: '12-02-2023',
-                messageType: 'text',
-                message: 'hi everyone',
-            },
-        ],
-        labels: ['ui', 'fronend'],
-        reporter: {
-            name: 'priya',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-        },
-        attachments: [],
-        users: [
-            {
-                userid: '1',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-            },
-            {
-                userid: '2',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-            },
-            {
-                userid: '3',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-            },
-            {
-                userid: '4',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-            },
-            {
-                userid: '5',
-                name: 'dummy',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            },
-        ],
-    }));
+import ColumnAdd from './task-column-add';
 
 export default function TaskKanbanView() {
     const [columns, setColumns] = useState([
-        { id: 'task1', index: 0, name: 'To Do', value: [...getItems(3, 'task1')] },
-        { id: 'task2', index: 1, name: 'In Progress', value: [...getItems(3, 'task2')] },
-        { id: 'task3', index: 2, name: 'Done', value: [...getItems(3, 'task3')] },
+        { id: 'T1', index: 0, type: 'To Do' },
+        { id: 'T2', index: 1, type: 'In Progress' },
+        { id: 'T3', index: 2, type: 'Done' },
     ]);
+
+    const [taskData, setTaskData] = useState({
+        T1: [],
+        T2: [],
+        T3: [],
+    });
 
     const reorder = (list, startIndex, endIndex) => {
         const result = Array.from(list);
@@ -95,120 +34,25 @@ export default function TaskKanbanView() {
         const sourceColumnId = result.source.droppableId;
         const destinationColumnId = result.destination.droppableId;
         const updatedColumns = [...columns];
+        const updatedRows = { ...taskData };
 
         console.log({ sourceIndex, destinationIndex, sourceColumnId, destinationColumnId });
 
         if (result.type === 'COLUMN') {
-            const reorderedColumns = reorder(updatedColumns, sourceIndex, destinationIndex);
-            setColumns(reorderedColumns);
-        } else {
-            if (sourceColumnId === destinationColumnId) {
-                const sourceColumnIndex = columns.findIndex(
-                    (column) => column.id === sourceColumnId
-                );
-                const taskList = updatedColumns[sourceColumnIndex].value;
-                const reorderedItems = reorder(taskList, sourceIndex, destinationIndex);
-                updatedColumns[sourceColumnIndex].value = reorderedItems;
-            } else {
-                const sourceColumnIndex = columns.findIndex(
-                    (column) => column.id === sourceColumnId
-                );
-                const destinationColumnIndex = columns.findIndex(
-                    (column) => column.id === destinationColumnId
-                );
-                const movedItem = updatedColumns[sourceColumnIndex].value[sourceIndex];
-                updatedColumns[sourceColumnIndex].value.splice(sourceIndex, 1);
-                updatedColumns[destinationColumnIndex].value.splice(destinationIndex, 0, movedItem);
-            }
+            const [removed] = updatedColumns.splice(sourceIndex, 1);
+            updatedColumns.splice(destinationIndex, 0, removed);
             setColumns(updatedColumns);
+            return;
         }
-    };
-
-    const AddNewColumn = () => {
-        const num = Math.random();
-        setColumns((prev) => [
-            ...prev,
-            {
-                id: `task${num}}`,
-                index: num,
-                name: `name${num}`,
-                value: [...getItems(3, `task${num}`)],
-            },
-        ]);
-    };
-
-    const AddNewRow = (index) => {
-        const num = Math.random();
-
-        const currentColumn = [...columns];
-
-        currentColumn[index].value.push({
-            id: `${num}-${num}`,
-            index: num,
-            priority: 'high',
-            name: `fix ui ${num}-${num}`,
-            description: 'fix ui screens correctly',
-            comments: [
-                {
-                    userid: '1',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                    createdAt: '12-02-2023',
-                    messageType: 'text',
-                    message: 'hi everyone',
-                },
-                {
-                    userid: '2',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                    createdAt: '12-02-2023',
-                    messageType: 'text',
-                    message: 'hi everyone',
-                },
-                {
-                    userid: '3',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                    createdAt: '12-02-2023',
-                    messageType: 'text',
-                    message: 'hi everyone',
-                },
-            ],
-            labels: ['ui', 'fronend'],
-            reporter: {
-                name: 'priya',
-                avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-            },
-            attachments: [],
-            users: [
-                {
-                    userid: '1',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-                },
-                {
-                    userid: '2',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-                },
-                {
-                    userid: '3',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-                },
-                {
-                    userid: '4',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-                },
-                {
-                    userid: '5',
-                    name: 'dummy',
-                    avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-                },
-            ],
-        });
-        setColumns((prev) => [...currentColumn]);
+        if (sourceColumnId === destinationColumnId) {
+            const [removed] = updatedRows[sourceColumnId].splice(sourceIndex, 1);
+            updatedRows[sourceColumnId].splice(destinationIndex, 0, removed);
+        } else {
+            const movedItem = updatedRows[sourceColumnId][sourceIndex];
+            updatedRows[sourceColumnId].splice(sourceIndex, 1);
+            updatedRows[destinationColumnId].splice(destinationIndex, 0, movedItem);
+        }
+        setTaskData((prevItem) => ({ ...updatedRows }));
     };
 
     return (
@@ -220,7 +64,7 @@ export default function TaskKanbanView() {
                         ref={provided.innerRef}
                         sx={{
                             width: 1150,
-                            py:3,
+                            py: 3,
                             overflowY: 'hidden', // Initially hide the scrollbar
                             '&:hover': {
                                 overflowY: 'auto', // Show the scrollbar on hover
@@ -237,22 +81,15 @@ export default function TaskKanbanView() {
                         direction="row"
                         spacing={3}
                     >
-                        {columns.map((column, index) => (
-                            <TaskColumn column={column} index={index} AddNewRow={AddNewRow} />
+                        {columns.map((column) => (
+                            <TaskColumn
+                                column={column}
+                                tasks={taskData[column.id]}
+                                setTaskData={setTaskData}
+                            />
                         ))}
                         {provided.placeholder}
-                        <Button
-                            fullWidth
-                            size="large"
-                            color="inherit"
-                            startIcon={
-                                <Iconify icon="mingcute:add-line" width={18} sx={{ mr: -0.5 }} />
-                            }
-                            onClick={AddNewColumn}
-                            sx={{ fontSize: 14 }}
-                        >
-                            Add Task
-                        </Button>
+                        <ColumnAdd setColumns={setColumns} />
                     </Stack>
                 )}
             </Droppable>

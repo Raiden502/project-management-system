@@ -5,7 +5,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import Image from 'src/components/image';
 import TaskDetails from './task-edit';
 
-export default function TaskItem({ item, key, index }) {
+export default function TaskItem({ item, key}) {
     const details = useBoolean();
     const renderPriority = (
         <Iconify
@@ -67,9 +67,9 @@ export default function TaskItem({ item, key, index }) {
                 <Iconify width={16} icon="eva:attach-2-fill" sx={{ mr: 0.25 }} />
                 <Box component="span">{item.attachments.length}</Box>
             </Stack>
-            {item.users && (
+            {item.assigne && (
                 <AvatarGroup total={4}>
-                    {item.users.map((user) => (
+                    {item.assigne.map((user) => (
                         <Avatar
                             alt="Remy Sharp"
                             src={user.avatar}
@@ -85,7 +85,7 @@ export default function TaskItem({ item, key, index }) {
     );
     return (
         <>
-            <Draggable draggableId={item.id} index={index} key={key}>
+            <Draggable draggableId={item.id} index={item.index} key={key}>
                 {(provided) => (
                     <Paper
                         ref={provided.innerRef}
