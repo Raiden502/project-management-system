@@ -17,14 +17,7 @@ function UserChatting() {
                         {
                             name: 'Dashboard',
                             href: paths.dashboard.root,
-                        },
-                        {
-                            name: 'Chats',
-                            href: paths.dashboard.communication.chat,
-                        },
-                        {
-                            name: 'create',
-                        },
+                        }
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />

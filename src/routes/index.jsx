@@ -101,10 +101,6 @@ function Router() {
                             path: 'project',
                             element: <ProjectAnalytics />,
                         },
-                        {
-                            path: 'department',
-                            element: <DepartmentAnalytics />,
-                        },
                     ],
                 },
                 {

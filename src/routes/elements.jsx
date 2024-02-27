@@ -13,11 +13,6 @@ export const DashBoardLayout = Loadable(
 );
 
 // analytics
-
-export const DepartmentAnalytics = Loadable(
-    lazy(() => import('src/pages/dashboard/analytics/departments.jsx'))
-);
-
 export const ProjectAnalytics = Loadable(
     lazy(() => import('src/pages/dashboard/analytics/projects.jsx'))
 );

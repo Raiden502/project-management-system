@@ -21,7 +21,6 @@ export const paths = {
         analytics:{
             user:path(ROOTS.DASHBOARD, '/analytics/user'),
             project:path(ROOTS.DASHBOARD, '/analytics/project'),
-            department:path(ROOTS.DASHBOARD, '/analytics/department'),
         },
         projects:{
             list: path(ROOTS.DASHBOARD, '/projects/list'),
