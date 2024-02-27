@@ -1,104 +1,91 @@
-import { useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { useState, useCallback, useMemo } from 'react';
+// @mui
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import { inputBaseClasses } from '@mui/material/InputBase';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Iconify from 'src/components/iconify/Iconify';
-import { useBoolean } from 'src/utils/use-boolean';
+import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
+// utils
+import uuidv4 from 'src/utils/uuidv4';
 
 // ----------------------------------------------------------------------
 
-export default function RowAdd({ setTaskData, taskId, taskData }) {
+export default function TaskAdd({ status, onAddTask, onCloseAddTask }) {
     const [name, setName] = useState('');
-    const addSection = useBoolean();
 
-    const handleChangeColumnName = useCallback((event) => {
+    const defaultTask = useMemo(
+        () => ({
+            id: uuidv4(),
+            status,
+            name: name.trim(),
+            priority: 'medium',
+            attachments: [],
+            labels: [],
+            comments: [],
+            assignee: [],
+            due: [null, null],
+            reporter: {
+                id: '',
+                name: '',
+                avatarUrl: '',
+            },
+        }),
+        [name, status]
+    );
+
+    const handleKeyUpAddTask = useCallback(
+        (event) => {
+            if (event.key === 'Enter') {
+                if (name) {
+                    onAddTask(defaultTask);
+                }
+            }
+        },
+        [defaultTask, name, onAddTask]
+    );
+
+    const handleClickAddTask = useCallback(() => {
+        if (name) {
+            onAddTask(defaultTask);
+        } else {
+            onCloseAddTask();
+        }
+    }, [defaultTask, name, onAddTask, onCloseAddTask]);
+
+    const handleChangeName = useCallback((event) => {
         setName(event.target.value);
     }, []);
 
-    // const handleCreateColumn = useCallback(async () => {
-    //     try {
-    //         if (name) {
-    //             onCreateColumn({ name });
-    //             setName('');
-    //         }
-    //         addSection.onFalse();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }, [addSection, name]);
-
-    const AddNewColumn = () => {
-        if (name !== '') {
-            const dummyData = {
-                id: 'TT0',
-                index: 0,
-                priority: '',
-                name: name,
-                type: '',
-                description: '',
-                comments: [],
-                labels: [],
-                reporter: [],
-                attachments: [],
-                assigne: [],
-            };
-
-            if (taskData) {
-                const currentTasks = [...taskData];
-                const newIndex = taskData.length;
-                dummyData.id = `TT${newIndex}`;
-                dummyData.index = newIndex;
-                currentTasks.push(dummyData);
-                setTaskData((prev) => ({ ...prev, [taskId]: [...currentTasks] }));
-            } else {
-                setTaskData((prev) => ({ ...prev, [taskId]: [dummyData] }));
-            }
-        }
-        setName('');
-        addSection.onFalse();
-    };
-
-    const handleKeyUp = useCallback(
-        (event) => {
-            if (event.key === 'Enter') {
-                AddNewColumn();
-            }
-        },
-        [AddNewColumn]
-    );
-
     return (
-        <Paper sx={{ minWidth: 280, width: 280 }}>
-            {addSection.value ? (
-                <ClickAwayListener onClickAway={AddNewColumn}>
-                    <TextField
-                        autoFocus
-                        fullWidth
-                        placeholder="New Task"
-                        value={name}
-                        onChange={handleChangeColumnName}
-                        onKeyUp={handleKeyUp}
-                        sx={{
-                            [`& .${inputBaseClasses.input}`]: {
-                                typography: 'h6',
-                            },
-                        }}
-                    />
-                </ClickAwayListener>
-            ) : (
-                <Button
+        <ClickAwayListener onClickAway={handleClickAddTask}>
+            <Paper
+                sx={{
+                    borderRadius: 1.5,
+                    boxShadow: (theme) => theme.customShadows.z1,
+                }}
+            >
+                <InputBase
+                    autoFocus
+                    multiline
                     fullWidth
-                    size="large"
-                    color="inherit"
-                    variant="outlined"
-                    startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
-                    onClick={addSection.onTrue}
-                >
-                    create
-                </Button>
-            )}
-        </Paper>
+                    placeholder="Task name"
+                    value={name}
+                    onChange={handleChangeName}
+                    onKeyUp={handleKeyUpAddTask}
+                    sx={{
+                        px: 2,
+                        height: 56,
+                        [`& .${inputBaseClasses.input}`]: {
+                            typography: 'subtitle2',
+                        },
+                    }}
+                />
+            </Paper>
+        </ClickAwayListener>
     );
 }
+
+TaskAdd.propTypes = {
+    onAddTask: PropTypes.func,
+    onCloseAddTask: PropTypes.func,
+    status: PropTypes.string,
+};

@@ -19,6 +19,8 @@ import TaskContactDetails from './task-contact-details';
 import TaskDetailsPriority from './task-details-priority';
 import TaskDetailsCommentList from './task-details-comments';
 import TaskDetailsCommentInput from './task-comment-input';
+import TaskInputName from './task-input-name';
+import TaskDetailsToolbar from './task-item-toolbar';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +52,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
         setPriority(newValue);
     }, []);
 
+    
     return (
         <Drawer
             open={openDetails}
@@ -67,6 +70,13 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                 },
             }}
         >
+            <TaskDetailsToolbar
+                taskName={task.name}
+                onDelete={onDeleteTask}
+                taskStatus={task.status}
+                onCloseDetails={onCloseDetails}
+            />
+            <Divider />
             <Box
                 sx={{
                     height: 1,
@@ -97,21 +107,22 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                         px: 2.5,
                     }}
                 >
-                    <TextField value={taskName} onChange={handleChangeTaskName} />
+                    <TaskInputName
+                        placeholder="Task name"
+                        value={taskName}
+                        onChange={handleChangeTaskName}
+                    />
 
                     <Stack direction="row" alignItems="center">
                         <StyledLabel>Reporter</StyledLabel>
-                        {
-                            task.reporter.map((repo)=><Avatar alt="reporter" src={repo.avatar} />)
-                        }
-                        
+                        <Avatar alt={task.reporter.name} src={task.reporter.avatarUrl} />
                     </Stack>
 
                     <Stack direction="row">
                         <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Assignee</StyledLabel>
 
                         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                            {task.assigne.map((user) => (
+                            {task.assignee.map((user) => (
                                 <Avatar key={user.userid} alt={user.name} src={user.avatar} />
                             ))}
 
@@ -144,7 +155,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                                     <Chip
                                         key={label}
                                         color="info"
-                                        label={<Typography variant='body2'>{label}</Typography>}
+                                        label={<Typography variant="body2">{label}</Typography>}
                                         size="small"
                                         variant="soft"
                                     />

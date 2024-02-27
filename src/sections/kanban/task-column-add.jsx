@@ -1,61 +1,54 @@
 import { useState, useCallback } from 'react';
+// @mui
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { inputBaseClasses } from '@mui/material/InputBase';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+// hooks
+
 import Iconify from 'src/components/iconify/Iconify';
+import { useKanban } from './hooks';
 import { useBoolean } from 'src/utils/use-boolean';
 
 // ----------------------------------------------------------------------
 
-export default function ColumnAdd({ setColumns }) {
+export default function TaskColumnAdd() {
+    const { onCreateColumn } = useKanban();
+
     const [name, setName] = useState('');
+
     const addSection = useBoolean();
 
     const handleChangeColumnName = useCallback((event) => {
         setName(event.target.value);
     }, []);
 
-    // const handleCreateColumn = useCallback(async () => {
-    //     try {
-    //         if (name) {
-    //             onCreateColumn({ name });
-    //             setName('');
-    //         }
-    //         addSection.onFalse();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }, [addSection, name]);
-
-    const AddNewColumn = () => {
-        name !== '' &&
-            setColumns((prev) => [
-                ...prev,
-                {
-                    id: `T${prev.length + 1}`,
-                    index: prev.length + 1,
-                    type: name,
-                },
-            ]);
-        setName('')
-        addSection.onFalse();
-    };
+    const handleCreateColumn = useCallback(async () => {
+        try {
+            if (name) {
+                onCreateColumn({ name });
+                setName('');
+            }
+            addSection.onFalse();
+        } catch (error) {
+            console.error(error);
+        }
+    }, [addSection, name, onCreateColumn]);
 
     const handleKeyUp = useCallback(
         (event) => {
             if (event.key === 'Enter') {
-                AddNewColumn();
+                handleCreateColumn();
             }
         },
-        [AddNewColumn]
+        [handleCreateColumn]
     );
 
     return (
         <Paper sx={{ minWidth: 280, width: 280 }}>
             {addSection.value ? (
-                <ClickAwayListener onClickAway={AddNewColumn}>
+                <ClickAwayListener onClickAway={handleCreateColumn}>
                     <TextField
                         autoFocus
                         fullWidth

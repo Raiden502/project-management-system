@@ -1,59 +1,95 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
+import { useDispatch } from 'src/redux/store';
+import { getBoard } from 'src/redux/slices/Kanban';
+import { hideScroll } from 'src/theme/css';
+import { useKanban } from './hooks';
 import TaskColumn from './task-column';
-import ColumnAdd from './task-column-add';
+import TaskColumnAdd from './task-column-add';
+
+function useInitial() {
+    const dispatch = useDispatch();
+
+    const getBoardCallback = useCallback(() => {
+        dispatch(getBoard());
+    }, [dispatch]);
+
+    useEffect(() => {
+        getBoardCallback();
+    }, [getBoardCallback]);
+
+    return null;
+}
 
 export default function TaskKanbanView() {
-    const [columns, setColumns] = useState([
-        { id: 'T1', index: 0, type: 'To Do' },
-        { id: 'T2', index: 1, type: 'In Progress' },
-        { id: 'T3', index: 2, type: 'Done' },
-    ]);
+    useInitial();
+    const { tasks, columns, ordered, updateOrdered, updateColumns, boardStatus } = useKanban();
 
-    const [taskData, setTaskData] = useState({
-        T1: [],
-        T2: [],
-        T3: [],
-    });
+    const onDragEnd = useCallback(
+        (result) => {
+            const { destination, source, draggableId, type } = result;
+            if (!destination) return;
 
-    const reorder = (list, startIndex, endIndex) => {
-        const result = Array.from(list);
-        const [removed] = result.splice(startIndex, 1);
-        result.splice(endIndex, 0, removed);
-        return result;
-    };
+            if (
+                destination.droppableId === source.droppableId &&
+                destination.index === source.index
+            )
+                return;
 
-    const onDragEnd = (result) => {
-        if (!result.destination) {
-            return;
-        }
-        const sourceIndex = result.source.index;
-        const destinationIndex = result.destination.index;
-        const sourceColumnId = result.source.droppableId;
-        const destinationColumnId = result.destination.droppableId;
-        const updatedColumns = [...columns];
-        const updatedRows = { ...taskData };
+            if (type === 'COLUMN') {
+                const newOrdered = [...ordered];
+                newOrdered.splice(source.index, 1);
+                newOrdered.splice(destination.index, 0, draggableId);
+                updateOrdered(newOrdered);
+                return;
+            }
 
-        console.log({ sourceIndex, destinationIndex, sourceColumnId, destinationColumnId });
+            const initialColumn = columns[source.droppableId];
+            const finishColumn = columns[destination.droppableId];
 
-        if (result.type === 'COLUMN') {
-            const [removed] = updatedColumns.splice(sourceIndex, 1);
-            updatedColumns.splice(destinationIndex, 0, removed);
-            setColumns(updatedColumns);
-            return;
-        }
-        if (sourceColumnId === destinationColumnId) {
-            const [removed] = updatedRows[sourceColumnId].splice(sourceIndex, 1);
-            updatedRows[sourceColumnId].splice(destinationIndex, 0, removed);
-        } else {
-            const movedItem = updatedRows[sourceColumnId][sourceIndex];
-            updatedRows[sourceColumnId].splice(sourceIndex, 1);
-            updatedRows[destinationColumnId].splice(destinationIndex, 0, movedItem);
-        }
-        setTaskData((prevItem) => ({ ...updatedRows }));
-    };
+            // Update Inside
+            if (initialColumn.id === finishColumn.id) {
+                console.info('Update Inside!');
+                const updatedTaskIds = [...initialColumn.taskIds];
+                updatedTaskIds.splice(source.index, 1);
+                updatedTaskIds.splice(destination.index, 0, draggableId);
+                const updatedColumn = {
+                    ...initialColumn,
+                    taskIds: updatedTaskIds,
+                };
+                updateColumns({
+                    ...columns,
+                    [updatedColumn.id]: updatedColumn,
+                });
+                return;
+            }
+
+            console.info('Update Outside!');
+            // Initial
+            const initialTaskIds = [...initialColumn.taskIds];
+            initialTaskIds.splice(source.index, 1);
+            const updatedStart = {
+                ...initialColumn,
+                taskIds: initialTaskIds,
+            };
+            // Finish
+            const finishTaskIds = [...finishColumn.taskIds];
+            finishTaskIds.splice(destination.index, 0, draggableId);
+            const updatedFinish = {
+                ...finishColumn,
+                taskIds: finishTaskIds,
+            };
+            // End
+            updateColumns({
+                ...columns,
+                [updatedStart.id]: updatedStart,
+                [updatedFinish.id]: updatedFinish,
+            });
+        },
+        [columns, ordered, updateColumns, updateOrdered]
+    );
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -81,15 +117,16 @@ export default function TaskKanbanView() {
                         direction="row"
                         spacing={3}
                     >
-                        {columns.map((column) => (
+                        {ordered.map((columnId, index) => (
                             <TaskColumn
-                                column={column}
-                                tasks={taskData[column.id]}
-                                setTaskData={setTaskData}
+                                index={index}
+                                key={columnId}
+                                column={columns[columnId]}
+                                tasks={tasks}
                             />
                         ))}
                         {provided.placeholder}
-                        <ColumnAdd setColumns={setColumns} />
+                        <TaskColumnAdd />
                     </Stack>
                 )}
             </Droppable>
