@@ -18,15 +18,31 @@ import { useBoolean } from 'src/utils/use-boolean';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/JwtContext';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function DepartmentItem({ job }) {
+export default function DepartmentItem({ department }) {
     const popover = usePopover();
     const confirm = useBoolean();
-    const navigate = useNavigate()
-    const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+    const {
+        name,
+        created_date,
+        description,
+        department_id,
+        avatar,
+        project_count,
+        task_count,
+        teams_count,
+        user_id,
+        users_count,
+        associate_user,
+        last_modified,
+    } = department;
 
     const editDepartment = (departmentId) => {
         navigate('/dashboard/departments/create', {
@@ -52,8 +68,8 @@ export default function DepartmentItem({ job }) {
 
                 <Stack sx={{ p: 3, pb: 2 }}>
                     <Avatar
-                        alt={'asas'}
-                        src={icon}
+                        alt={'department'}
+                        src={avatar}
                         variant="rounded"
                         sx={{ width: 48, height: 48, mb: 2 }}
                     />
@@ -63,14 +79,14 @@ export default function DepartmentItem({ job }) {
                         primary={
                             <Link
                                 component={RouterLink}
-                                // href={paths.dashboard.job.details(id)}
+                                // href={paths.dashboard.department.details(id)}
                                 color="inherit"
                                 underline="none"
                             >
                                 {name}
                             </Link>
                         }
-                        secondary={`Posted date: ${date}`}
+                        secondary={`Posted date: ${created_date}`}
                         primaryTypographyProps={{
                             typography: 'subtitle1',
                             fontWeight: 600,
@@ -84,7 +100,6 @@ export default function DepartmentItem({ job }) {
                         }}
                     />
 
-                    {/* <Typography>{desc}</Typography> */}
                     <Box
                         sx={{
                             maxWidth: '100%',
@@ -95,7 +110,7 @@ export default function DepartmentItem({ job }) {
                             WebkitLineClamp: 2,
                         }}
                     >
-                        <Typography variant="body1">{desc}</Typography>
+                        <Typography variant="body1">{description}</Typography>
                     </Box>
                 </Stack>
 
@@ -104,7 +119,7 @@ export default function DepartmentItem({ job }) {
                 <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
                     {[
                         {
-                            label: `${teamsize} team size`,
+                            label: `${teams_count} team size`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -114,7 +129,7 @@ export default function DepartmentItem({ job }) {
                             ),
                         },
                         {
-                            label: `${candidates} candidates`,
+                            label: `${users_count} candidates`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -124,7 +139,7 @@ export default function DepartmentItem({ job }) {
                             ),
                         },
                         {
-                            label: `${tasks} tasks`,
+                            label: `${task_count} tasks`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -134,7 +149,7 @@ export default function DepartmentItem({ job }) {
                             ),
                         },
                         {
-                            label: status,
+                            label: `${project_count} projects`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -167,9 +182,10 @@ export default function DepartmentItem({ job }) {
                 sx={{ width: 180 }}
             >
                 <MenuItem
+                    disabled={user.role === 'user'}
                     onClick={() => {
                         popover.onClose();
-                        editDepartment('1');
+                        editDepartment(department_id);
                     }}
                 >
                     <Iconify icon="solar:pen-bold" />
@@ -178,13 +194,14 @@ export default function DepartmentItem({ job }) {
                 <MenuItem
                     onClick={() => {
                         popover.onClose();
-                        detailsDepartment('1');
+                        detailsDepartment(department_id);
                     }}
                 >
                     <Iconify icon="clarity:details-solid" />
                     Details
                 </MenuItem>
                 <MenuItem
+                    disabled={user.role === 'user'}
                     onClick={() => {
                         popover.onClose();
                         confirm.onTrue();
@@ -212,5 +229,5 @@ export default function DepartmentItem({ job }) {
 }
 
 DepartmentItem.propTypes = {
-    job: PropTypes.object,
+    department: PropTypes.object,
 };

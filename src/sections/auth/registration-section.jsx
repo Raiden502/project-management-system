@@ -32,10 +32,10 @@ function RegisterSection() {
         password: '',
         companyname: '',
         email: '',
-        organization: '',
-        organizationdesc: '',
-        department: '',
-        departmentdesc: '',
+        org_name: '',
+        org_desc: '',
+        dept_name: '',
+        dept_desc: '',
     });
 
     const HandlePageDetails = useCallback(
@@ -122,18 +122,18 @@ function RegisterSection() {
                 return (
                     <Stack spacing={2}>
                         <TextField
-                            name="organization"
+                            name="org_name"
                             label="Organization Name"
-                            value={newUser.organization}
+                            value={newUser.org_name}
                             onChange={HandlePageDetails}
                         ></TextField>
                         <TextField
                             multiline
                             rows={5}
                             maxRows={10}
-                            name="organizationdesc"
+                            name="org_desc"
                             label="Description"
-                            value={newUser.organizationdesc}
+                            value={newUser.org_desc}
                             onChange={HandlePageDetails}
                             placeholder="description"
                         ></TextField>
@@ -144,18 +144,18 @@ function RegisterSection() {
                 return (
                     <Stack spacing={2}>
                         <TextField
-                            name="department"
+                            name="dept_name"
                             label="Department Name"
-                            value={newUser.department}
+                            value={newUser.dept_name}
                             onChange={HandlePageDetails}
                         ></TextField>
                         <TextField
                             multiline
                             rows={5}
                             maxRows={10}
-                            name="departmentdesc"
+                            name="dept_desc"
                             label="Description"
-                            value={newUser.departmentdesc}
+                            value={newUser.dept_desc}
                             onChange={HandlePageDetails}
                             placeholder="description"
                         ></TextField>

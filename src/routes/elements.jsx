@@ -1,8 +1,14 @@
-import { Suspense, lazy } from 'react';
+
+import { Suspense, lazy, useContext } from 'react';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 const Loadable = (Component) => (props) =>
     (
-        <Suspense fallback={<>Loading</>}>
+        <Suspense
+            fallback={
+                <LoadingScreen />
+            }
+        >
             <Component {...props} />
         </Suspense>
     );

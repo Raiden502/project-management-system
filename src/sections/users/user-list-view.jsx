@@ -20,30 +20,29 @@ import {
     MenuItem,
     Button,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
-import Label from 'src/components/label';
 import axiosInstance from 'src/utils/axios';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useBoolean } from 'src/utils/use-boolean';
 import { useNavigate } from 'react-router-dom';
-import { ConfirmDialog } from 'src/components/custom-dialog';
+import { useSelector } from 'src/redux/store';
+import UserListRow from './user-list-row';
 
 const headCells = [
     {
-        id: 'name',
+        id: 'user_name',
         align: 'left',
         label: 'Name',
     },
     {
-        id: 'email',
+        id: 'email_addrs',
         align: 'left',
         label: 'Email',
     },
     {
-        id: 'department',
+        id: 'phonenumber',
         align: 'left',
-        label: 'Department',
+        label: 'Phone Number',
     },
     {
         id: 'role',
@@ -51,7 +50,7 @@ const headCells = [
         label: 'Role',
     },
     {
-        id: 'status',
+        id: 'verified',
         align: 'left',
         label: 'Status',
     },
@@ -59,44 +58,43 @@ const headCells = [
 
 const DataCell = [
     {
-        userid: 1,
-        name: 'name',
-        email: 'name@gmail.com',
+        user_id: 1,
+        user_name: 'user_name',
+        email_addrs: 'user_name@gmail.com',
         avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
-        status: 'active',
+        verified: 'active',
     },
     {
-        userid: 2,
-        name: 'name',
-        email: 'name@gmail.com',
+        user_id: 2,
+        user_name: 'user_name',
+        email_addrs: 'user_name@gmail.com',
         avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
-        status: 'active',
+        verified: 'active',
     },
     {
-        userid: 3,
-        name: 'name',
-        email: 'name@gmail.com',
+        user_id: 3,
+        user_name: 'user_name',
+        email_addrs: 'user_name@gmail.com',
         avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
         department: 'department-1',
         role: 'admin',
-        status: 'pending',
+        verified: 'pending',
     },
 ];
 
 export default function UserListView() {
     const [userList, setUserList] = useState([...DataCell]);
-    const popover = usePopover();
-    const confirm = useBoolean();
     const navigate = useNavigate();
+    const department = useSelector((state) => state.department);
 
     const deleteUser = async () => {
         try {
             const response = await axiosInstance.post('');
-            const { data, errorcode, status, message } = response.data;
+            const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 console.log('deleted');
             }
@@ -105,17 +103,30 @@ export default function UserListView() {
         }
     };
 
-    const editUser = (userId) => {
-        navigate('/dashboard/users/create', {
-            state: { userId },
-        });
+    const fetchUsers = async () => {
+        try {
+            const response = await axiosInstance.post('user/user_list', {
+                department_id: department.department_id,
+            });
+            const { data, errorcode, verified, message } = response.data;
+            if (errorcode === 0) {
+                setUserList(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
     };
+
+    // const firstRender = useRef(true);
+    useEffect(() => {
+        fetchUsers();
+    }, [department.department_id]);
 
     return (
         <Box component={Card}>
             <Stack p={3} gap={3} direction="row">
                 <TextField
-                    name="role"
+                    user_name="role"
                     label="Role"
                     type="text"
                     sx={{ height: '50px' }}
@@ -124,7 +135,7 @@ export default function UserListView() {
                     }}
                 />
                 <TextField
-                    name="search"
+                    user_name="search"
                     placeholder="Search ..."
                     type="text"
                     sx={{ height: '50px' }}
@@ -154,42 +165,7 @@ export default function UserListView() {
                     </TableHead>
                     <TableBody>
                         {userList.map((item, index) => (
-                            <TableRow
-                                key={item.userid}
-                                hover
-                                sx={{
-                                    borderBottom:
-                                        index < userList.length - 1 ? '1px dashed #f4f4f4' : 'none',
-                                }}
-                            >
-                                <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Avatar alt={item.name} src={item.avatar} sx={{ mr: 2 }} />
-                                    {item.name}
-                                </TableCell>
-                                <TableCell>{item.email}</TableCell>
-                                <TableCell>{item.department}</TableCell>
-                                <TableCell>{item.role}</TableCell>
-                                <TableCell>
-                                    <Label
-                                        variant="soft"
-                                        color={
-                                            (item.status === 'active' && 'success') ||
-                                            (item.status === 'pending' && 'warning') ||
-                                            (item.status === 'banned' && 'error') ||
-                                            'default'
-                                        }
-                                    >
-                                        <Typography variant="body2" fontSize={12} fontWeight="bold">
-                                            {item.status}
-                                        </Typography>
-                                    </Label>
-                                </TableCell>
-                                <TableCell>
-                                    <IconButton onClick={popover.onOpen}>
-                                        <Iconify icon="eva:more-vertical-fill" />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
+                            <UserListRow row={item} />
                         ))}
                     </TableBody>
                 </Table>
@@ -213,44 +189,6 @@ export default function UserListView() {
                     // onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
-            <CustomPopover
-                open={popover.open}
-                onClose={popover.onClose}
-                arrow="right-top"
-                sx={{ width: 180 }}
-            >
-                <MenuItem
-                    onClick={() => {
-                        popover.onClose();
-                        editUser('1');
-                    }}
-                >
-                    <Iconify icon="solar:pen-bold" />
-                    Edit
-                </MenuItem>
-                <MenuItem
-                    onClick={() => {
-                        popover.onClose();
-                        confirm.onTrue();
-                    }}
-                    sx={{ color: 'error.main' }}
-                >
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                    Delete
-                </MenuItem>
-            </CustomPopover>
-
-            <ConfirmDialog
-                open={confirm.value}
-                onClose={confirm.onFalse}
-                title="Delete"
-                content="Are you sure want to delete?"
-                action={
-                    <Button variant="contained" color="error" onClick={() => {}}>
-                        Delete
-                    </Button>
-                }
-            />
         </Box>
     );
 }

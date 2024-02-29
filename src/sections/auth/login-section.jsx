@@ -26,7 +26,7 @@ function LoginSection() {
 
     const SubmitDetails = async () => {
         try {
-            await login(loginDetails.username, loginDetails.password);
+            await login({email:loginDetails.username, password:loginDetails.password});
         } catch (error) {
             console.error('Login failed', error);
         }

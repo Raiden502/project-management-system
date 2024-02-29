@@ -8,6 +8,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import kanbanReducer from './slices/Kanban'
 import accountsReducer from "./slices/Account";
+import departmentReducer from "./slices/Departments"
 
 
 export const rootPersistConfig = {
@@ -20,6 +21,7 @@ export const rootPersistConfig = {
 const rootReducer = combineReducers({
 	accounts: accountsReducer,
 	kanban: kanbanReducer,
+	department:departmentReducer,
 });
 
 const store = configureStore({

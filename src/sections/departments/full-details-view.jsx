@@ -32,7 +32,7 @@ export default function FullDetailsView({ department }) {
                                     Date Posted
                                 </Typography>
                             ),
-                            value:`${department.datePosted}`,
+                            value: `${department.datePosted}`,
                             icon: <Iconify icon="solar:calendar-date-bold" />,
                         },
                         {
@@ -58,6 +58,26 @@ export default function FullDetailsView({ department }) {
                             ),
                             value: `${department.department}`,
                             icon: <Iconify icon="fluent:organization-20-filled" />,
+                        },
+                        {
+                            label: `Team size`,
+                            icon: <Iconify icon="ph:microsoft-teams-logo" />,
+                            value: department.teams_count,
+                        },
+                        {
+                            label: `Candidates`,
+                            icon: <Iconify icon="solar:users-group-rounded-bold" />,
+                            value: department.users_count,
+                        },
+                        {
+                            label: `Tasks`,
+                            icon: <Iconify icon="lets-icons:subttasks" />,
+                            value: department.task_count,
+                        },
+                        {
+                            label: `Projects`,
+                            icon: <Iconify icon="fluent:status-20-filled" />,
+                            value: department.project_count,
                         },
                     ].map((item) => (
                         <Stack key={item.label} spacing={1.5} direction="row">

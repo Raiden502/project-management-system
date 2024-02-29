@@ -1,26 +1,57 @@
 import { useTheme } from '@emotion/react';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Avatar, IconButton, MenuItem, Stack, TextField } from '@mui/material';
+import { Avatar, Divider, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import { HEADER, NAV } from './config';
+import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
+import { setDepartment } from 'src/redux/slices/Departments';
+import { useDispatch } from 'src/redux/store';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { paths } from 'src/routes/path';
+import { useRouter } from 'src/routes/hook';
+import { useNavigate } from 'react-router-dom';
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
 export default function Header() {
     const { theme } = useTheme();
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const popover = usePopover();
+    const [dept, setDept] = useState([]);
+    const [defaultDept, setDefaultDept] = useState('');
+    const firstdeptRender = useRef(true);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/dept_filter', { org_id: user.org_id });
+            const { data, errorcode, verified, message } = response.data;
+            if (errorcode === 0) {
+                setDept(data);
+                if (data.length > 0) {
+                    setDefaultDept(data[0].department_id);
+                    dispatch(setDepartment(data[0]));
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleChangeDept = (event) => {
+        dispatch(setDepartment(dept.find((item) => item.department_id === event.target.value)));
+        setDefaultDept(event.target.value);
+    };
+
+    useEffect(() => {
+        if (firstdeptRender.current) {
+            fetchUsers();
+            firstdeptRender.current = false;
+        }
+    }, []);
+
     return (
         <Box sx={{ position: 'sticky', top: 0, zIndex: 2, mb: 2 }}>
             <AppBar
@@ -43,22 +74,77 @@ export default function Header() {
                             fullWidth
                             label="Departments"
                             name="Departments"
-                            // value={personName}
-                            // onChange={handleChange}
+                            value={defaultDept}
+                            onChange={handleChangeDept}
                             sx={{ maxWidth: '200px' }}
-                           
                         >
-                            {names.map((name) => (
-                                <MenuItem key={name} value={name}>
-                                    {name}
+                            {dept.map((item) => (
+                                <MenuItem key={item.department_id} value={item.department_id}>
+                                    {item.name}
                                 </MenuItem>
                             ))}
                         </TextField>
-                        <Avatar
-                            alt="Remy Sharp"
-                            src="https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg"
-                        />
+                        <IconButton onClick={popover.onOpen}>
+                            <Avatar alt="Remy Sharp" src={user.avatar} />
+                        </IconButton>
                     </Stack>
+                    <CustomPopover
+                        open={popover.open}
+                        onClose={popover.onClose}
+                        sx={{ width: 200, p: 0 }}
+                    >
+                        <Box sx={{ p: 2, pb: 1.5 }}>
+                            <Typography variant="subtitle2" noWrap>
+                                {user.user_name}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                                {user.role}
+                            </Typography>
+
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                                {user.email_address}
+                            </Typography>
+                        </Box>
+
+                        <Divider sx={{ borderStyle: 'dashed' }} />
+
+                        <Stack sx={{ p: 1 }}>
+                            <MenuItem
+                                key="Home"
+                                onClick={() => {
+                                    popover.onClose();
+                                    navigate(
+                                        user.role === 'user'
+                                            ? paths.dashboard.tasks.list
+                                            : paths.dashboard.analytics.project
+                                    );
+                                }}
+                            >
+                                Home
+                            </MenuItem>
+                            <MenuItem
+                                key="Profile"
+                                onClick={() => {
+                                    popover.onClose();
+                                    navigate(paths.dashboard.users.list);
+                                }}
+                            >
+                                Profile
+                            </MenuItem>
+                        </Stack>
+
+                        <Divider sx={{ borderStyle: 'dashed' }} />
+
+                        <MenuItem
+                            onClick={() => {
+                                localStorage.removeItem('accessToken');
+                                navigate('/');
+                            }}
+                            sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
+                        >
+                            Logout
+                        </MenuItem>
+                    </CustomPopover>
                 </Toolbar>
             </AppBar>
         </Box>

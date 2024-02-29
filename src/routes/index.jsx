@@ -60,11 +60,11 @@ function Router() {
         },
         {
             path: '/auth',
-            // element: (
-            //     <GuestGuard>
-            //         <Outlet />
-            //     </GuestGuard>
-            // ),
+            element: (
+                <GuestGuard>
+                    <Outlet />
+                </GuestGuard>
+            ),
             children: [
                 {
                     path: 'login',
@@ -83,11 +83,11 @@ function Router() {
         {
             path: '/dashboard',
             element: (
-                // <AuthGuard>
+                <AuthGuard>
                 <DashBoardLayout>
                     <Outlet />
                 </DashBoardLayout>
-                // </AuthGuard>
+                </AuthGuard>
             ),
             children: [
                 {

@@ -1,8 +1,9 @@
 import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import DepartmentItem from './department-list-item';
 import Iconify from 'src/components/iconify/Iconify';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import axiosInstance from 'src/utils/axios';
+import { AuthContext } from 'src/auth/JwtContext';
 
 const tempData = [
     {
@@ -108,18 +109,28 @@ const tempData = [
 
 function DepartmentListView() {
     const [departments, setDepartments] = useState([...tempData]);
+    const { user } = useContext(AuthContext);
 
     const getDepartmentList = async () => {
         try {
-            const response = await axiosInstance.get('');
+            const response = await axiosInstance.post('/dept/dept_list', { org_id: user.org_id });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
                 setDepartments(data);
+                console.log(data);
             }
         } catch (err) {
             console.log(err);
         }
     };
+
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current) {
+            getDepartmentList();
+            firstRender.current = false;
+        }
+    });
     return (
         <Stack gap={4}>
             <TextField
@@ -146,7 +157,7 @@ function DepartmentListView() {
                 }}
             >
                 {departments.map((details) => (
-                    <DepartmentItem key={details.id} job={details} />
+                    <DepartmentItem key={details.department_id} department={details} />
                 ))}
             </Box>
         </Stack>

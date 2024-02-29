@@ -9,12 +9,14 @@ import {
     Tabs,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import FullDetailsView from './full-details-view';
 import CandidateDetails from './candidate-details';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/utils/axios';
+import { AuthContext } from 'src/auth/JwtContext';
+import { useSelector } from 'src/redux/store';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -96,10 +98,12 @@ const tempData = {
 };
 
 export default function DepartmentDetailsView() {
+    const department = useSelector((state) => state.department);
     const [value, setValue] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
-    const [department, setDepartment] = useState({ ...tempData });
+    const { user } = useContext(AuthContext);
+    const [departmentDetails, setDepartmentDetails] = useState({ ...tempData });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -117,15 +121,26 @@ export default function DepartmentDetailsView() {
 
     const getDepartmentData = async () => {
         try {
-            const response = await axiosInstance.get('');
+            const response = await axiosInstance.post('/dept/dept_details', {
+                dept_id: department.department_id,
+            });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
-                setDepartment(data);
+                setDepartmentDetails(data)
+                console.log(data);
             }
         } catch (err) {
             console.log(err);
         }
     };
+
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current && department.department_id) {
+            getDepartmentData();
+            firstRender.current = false;
+        }
+    },[department.department_id]);
 
     return (
         <>
@@ -153,18 +168,15 @@ export default function DepartmentDetailsView() {
             </Stack>
             <Box sx={{ mt: 3 }}>
                 <Tabs value={value} onChange={handleChange}>
-                    <Tab
-                        label={<Typography variant="subtitle2">Content</Typography>}
-                        key={0}
-                    />
+                    <Tab label={<Typography variant="subtitle2">Content</Typography>} key={0} />
                     <Tab label={<Typography variant="subtitle2">Candidates</Typography>} key={1} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
-                <FullDetailsView department={department} />
+                <FullDetailsView department={departmentDetails} />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <CandidateDetails candidates={department.contacts} />
+                <CandidateDetails candidates={departmentDetails.contacts} />
             </CustomTabPanel>
         </>
     );

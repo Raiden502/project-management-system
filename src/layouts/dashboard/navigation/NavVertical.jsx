@@ -6,12 +6,14 @@ import NavSectionVertical from 'src/components/nav-section/nav-section-vertical.
 import { useNavData } from './ConfigNavigation.jsx';
 import Logo from 'src/assets/logo.png'
 import Image from 'src/components/image/image.js';
+import { AuthContext } from 'src/auth/JwtContext.jsx';
 
 const NAVDashboard = 260;
 
 function NavVertical() {
     const navData = useNavData();
     const { theme } = useTheme()
+    const {user} = useContext(AuthContext)
     const renderContent = (
         <Box
             sx={{
@@ -38,7 +40,7 @@ function NavVertical() {
             <NavSectionVertical
                 data={navData}
                 config={{
-                    currentRole: 'user',
+                    currentRole: user.role,
                 }}
             />
         </Box>
@@ -65,8 +67,8 @@ function NavVertical() {
                 }}
             >
                 <Stack sx={{ alignItems:'center', p:3}} gap={3}>
-                    <Avatar src="https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg" alt='Priya' sx={{width:42, height:42}} />
-                    <Typography variant='subtitle1'>User Name</Typography>
+                    <Avatar src={user.avatar} alt='Priya' sx={{width:42, height:42}} />
+                    <Typography variant='subtitle1'>{user.user_name}</Typography>
                 </Stack>
                 {renderContent}
             </Drawer>
