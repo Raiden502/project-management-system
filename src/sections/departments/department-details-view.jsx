@@ -115,7 +115,7 @@ export default function DepartmentDetailsView() {
 
     const editDepartment = () => {
         navigate('/dashboard/departments/create', {
-            state: { departmentId: location.state.departmentId },
+            state: { departmentId: location.state?.departmentId || department.department_id },
         });
     };
 
@@ -126,7 +126,7 @@ export default function DepartmentDetailsView() {
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
-                setDepartmentDetails(data)
+                setDepartmentDetails(data);
                 console.log(data);
             }
         } catch (err) {
@@ -140,7 +140,7 @@ export default function DepartmentDetailsView() {
             getDepartmentData();
             firstRender.current = false;
         }
-    },[department.department_id]);
+    }, [department.department_id]);
 
     return (
         <>
@@ -155,15 +155,9 @@ export default function DepartmentDetailsView() {
                     <Typography variant="body2">Back</Typography>
                 </Button>
                 <Stack direction="row" gap={3}>
-                    <IconButton onClick={editDepartment}>
+                    <IconButton onClick={editDepartment} disabled={user.role === 'user'}>
                         <Iconify icon="solar:pen-bold" />
                     </IconButton>
-                    <Button
-                        variant="contained"
-                        endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-                    >
-                        <Typography variant="body2">Publish</Typography>
-                    </Button>
                 </Stack>
             </Stack>
             <Box sx={{ mt: 3 }}>

@@ -14,8 +14,13 @@ import { styled, alpha } from '@mui/material/styles';
 import { useBoolean } from 'src/utils/use-boolean';
 import Iconify from 'src/components/iconify/Iconify';
 import DeptContactDetails from './department-contact-list';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useSnackbar } from 'src/components/snackbar';
 import AvatarUploader from 'src/components/Image-uploader/avatar-uploader';
+import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'src/redux/store';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const StyledLabel = styled('span')(({ theme }) => ({
     ...theme.typography.caption,
@@ -61,6 +66,11 @@ const temp = [
 export default function DepartmentCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
+    const { user } = useContext(AuthContext);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const department = useSelector((state) => state.department);
+    const { enqueueSnackbar } = useSnackbar();
     const [selectedImages, setSelectedImages] = useState(null);
     const [users, setUsers] = useState([...temp]);
     const [teams, setTeams] = useState([...temp]);
@@ -92,11 +102,107 @@ export default function DepartmentCreateView() {
         }
     };
 
+    const fetchFormData = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/get_dept_editdetails', {
+                dept_id: location.state?.departmentId,
+            });
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setFormData(data);
+                setSelectedImages(data?.avatar);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const createDept = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/create_dept', {
+                ...formData,
+                org_id: user.org_id,
+                user_id: user.user_id,
+                avatar: selectedImages,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('details saved successful', { variant: 'success' });
+                console.log(message);
+                navigate('/dashboard/departments/list');
+            } else {
+                enqueueSnackbar(' failed to saved', { variant: 'warning' });
+            }
+        } catch (err) {
+            console.log(err);
+            enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+    };
+
+    const editDept = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/edit_dept', {
+                ...formData,
+                department_id: location.state?.departmentId,
+                avatar: selectedImages,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('details saved successful', { variant: 'success' });
+                console.log(message);
+                navigate('/dashboard/departments/list');
+            } else {
+                enqueueSnackbar(' failed to saved', { variant: 'warning' });
+            }
+        } catch (err) {
+            console.log(err);
+            enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+    };
+
+    const fetchList = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/get_dept_contacts', {
+                org_id: user.org_id,
+            });
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                const { users, teams } = data;
+                setUsers(users);
+                setTeams(teams);
+                console.log(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current) {
+            fetchList();
+            firstRender.current = false;
+        }
+    }, [location.state?.departmentId]);
+
+    const secRender = useRef(true);
+    useEffect(() => {
+        if (secRender.current && location.state?.departmentId) {
+            fetchFormData();
+            secRender.current = false;
+        }
+    }, [location.state?.departmentId]);
     return (
         <Grid container spacing={3}>
-            <Grid
-                md={4}>
-                <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', p:3,}}>
+            <Grid md={4}>
+                <Card
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        p: 3,
+                    }}
+                >
                     <Stack sx={{ alignItems: 'center' }} gap={3}>
                         <AvatarUploader
                             selectedImages={selectedImages}
@@ -137,7 +243,14 @@ export default function DepartmentCreateView() {
                                 {users
                                     .filter((item) => formData.users.includes(item.id))
                                     .map((user) => (
-                                        <Box sx={{ m: 1, position: 'relative', p: 1 }}>
+                                        <Box
+                                            sx={{
+                                                m: 1,
+                                                position: 'relative',
+                                                p: 1,
+                                                alignItems: 'center',
+                                            }}
+                                        >
                                             <Avatar
                                                 key={user.userid}
                                                 alt={user.name}
@@ -249,7 +362,12 @@ export default function DepartmentCreateView() {
                 </Card>
             </Grid>
             <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button variant="contained">Create</Button>
+                <Button
+                    onClick={location.state?.departmentId ? editDept : createDept}
+                    variant="contained"
+                >
+                    {location.state?.departmentId ? "Save": "Create"}
+                </Button>
             </Grid>
         </Grid>
     );

@@ -13,10 +13,13 @@ import { useBoolean } from 'src/utils/use-boolean';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useNavigate } from 'react-router-dom';
 import Iconify from 'src/components/iconify/Iconify';
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/JwtContext';
 
 export default function UserListRow({ row, index }) {
     const popover = usePopover();
     const confirm = useBoolean();
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const { user_id, user_name, avatar, email_addrs, mobile_num, verified, role } = row;
 
@@ -28,13 +31,7 @@ export default function UserListRow({ row, index }) {
 
     return (
         <>
-            <TableRow
-                key={user_id}
-                hover
-                // sx={{
-                //     borderBottom: index < userList.length - 1 ? '1px dashed #f4f4f4' : 'none',
-                // }}
-            >
+            <TableRow key={user_id} hover>
                 <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar alt={user_name} src={avatar} sx={{ mr: 2 }} />
                     {user_name}
@@ -69,6 +66,7 @@ export default function UserListRow({ row, index }) {
                 sx={{ width: 180 }}
             >
                 <MenuItem
+                    disabled={user.role === 'user'}
                     onClick={() => {
                         popover.onClose();
                         editUser(user_id);
@@ -78,7 +76,7 @@ export default function UserListRow({ row, index }) {
                     Edit
                 </MenuItem>
                 <MenuItem
-                    disabled={role === 'super_admin'}
+                    disabled={role === 'super_admin' || user.role === 'user'}
                     onClick={() => {
                         popover.onClose();
                         confirm.onTrue();

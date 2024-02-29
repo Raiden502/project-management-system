@@ -43,6 +43,9 @@ export default function Header() {
     const handleChangeDept = (event) => {
         dispatch(setDepartment(dept.find((item) => item.department_id === event.target.value)));
         setDefaultDept(event.target.value);
+        navigate(
+            user.role === 'user' ? paths.dashboard.tasks.list : paths.dashboard.analytics.project
+        );
     };
 
     useEffect(() => {

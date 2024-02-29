@@ -19,14 +19,17 @@ import {
     FormControlLabel,
     MenuItem,
     Button,
+    Backdrop,
 } from '@mui/material';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import axiosInstance from 'src/utils/axios';
 import { useBoolean } from 'src/utils/use-boolean';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'src/redux/store';
+import EmptyContent from 'src/components/empty-content';
 import UserListRow from './user-list-row';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 const headCells = [
     {
@@ -56,40 +59,35 @@ const headCells = [
     },
 ];
 
-const DataCell = [
-    {
-        user_id: 1,
-        user_name: 'user_name',
-        email_addrs: 'user_name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        verified: 'active',
-    },
-    {
-        user_id: 2,
-        user_name: 'user_name',
-        email_addrs: 'user_name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        verified: 'active',
-    },
-    {
-        user_id: 3,
-        user_name: 'user_name',
-        email_addrs: 'user_name@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        department: 'department-1',
-        role: 'admin',
-        verified: 'pending',
-    },
-];
-
 export default function UserListView() {
-    const [userList, setUserList] = useState([...DataCell]);
+    const [userList, setUserList] = useState([]);
     const navigate = useNavigate();
     const department = useSelector((state) => state.department);
+    const loading = useBoolean();
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const [searchUsers, setSearchUsers] = useState('');
+
+    const handleSearchTable = useCallback((event) => {
+        setSearchUsers(event.target.value);
+    }, []);
+
+    const dataFiltered = applyFilter({
+        inputData: userList,
+        query: searchUsers,
+    });
+
+    const notFound = !dataFiltered.length && !!searchUsers;
 
     const deleteUser = async () => {
         try {
@@ -105,6 +103,7 @@ export default function UserListView() {
 
     const fetchUsers = async () => {
         try {
+            loading.onTrue();
             const response = await axiosInstance.post('user/user_list', {
                 department_id: department.department_id,
             });
@@ -114,34 +113,33 @@ export default function UserListView() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            loading.onFalse();
         }
     };
 
-    // const firstRender = useRef(true);
+    const firstRender = useRef(true);
     useEffect(() => {
-        fetchUsers();
+        if (firstRender.current && department.department_id) {
+            fetchUsers();
+            firstRender.current = false;
+        }
     }, [department.department_id]);
 
     return (
         <Box component={Card}>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <Stack p={3} gap={3} direction="row">
-                <TextField
-                    user_name="role"
-                    label="Role"
-                    type="text"
-                    sx={{ height: '50px' }}
-                    InputProps={{
-                        sx: { borderRadius: '8px' },
-                    }}
-                />
                 <TextField
                     user_name="search"
                     placeholder="Search ..."
                     type="text"
                     sx={{ height: '50px' }}
-                    fullWidth
+                    value={searchUsers}
+                    onChange={handleSearchTable}
                     InputProps={{
-                        sx: { borderRadius: '8px' },
                         startAdornment: (
                             <InputAdornment position="start">
                                 <Iconify icon="ic:round-search" />
@@ -164,9 +162,18 @@ export default function UserListView() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {userList.map((item, index) => (
-                            <UserListRow row={item} />
-                        ))}
+                        {notFound || dataFiltered.length === 0 ? (
+                            <TableRow>
+                                {' '}
+                                <TableCell colSpan={12}>
+                                    <EmptyContent title="No Data" />{' '}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            dataFiltered
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((item, index) => <UserListRow row={item} />)
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -174,21 +181,32 @@ export default function UserListView() {
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-end',
                     p: 3,
                 }}
             >
-                <FormControlLabel control={<Switch checked onChange={() => {}} />} label="Dense" />
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[1, 5, 10, 25]}
                     component="div"
-                    count={userList.length}
-                    rowsPerPage={5}
-                    page={10}
-                    // onPageChange={handleChangePage}
-                    // onRowsPerPageChange={handleChangeRowsPerPage}
+                    count={dataFiltered.length}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
         </Box>
     );
+}
+
+function applyFilter({ inputData, query }) {
+    if (query) {
+        inputData = inputData.filter(
+            (contact) =>
+                contact.user_name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+                contact.email_addrs.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+                contact.role.toLowerCase().indexOf(query.toLowerCase()) !== -1
+        );
+    }
+    return inputData;
 }
