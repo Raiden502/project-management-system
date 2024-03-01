@@ -38,72 +38,13 @@ function CustomTabPanel(props) {
     );
 }
 
-const tempData = {
-    title: 'CSI Department',
-    description:
-        'In any organisation there are number of tasks which are not needed to be executed in real time like data sync, report generation, reconciliation of payments etc. These tasks can be executed in background in scheduled manner and this dramatically increases the overall performance of the system by segregating the time consuming and resource intensive processes. But these background tasks are prone to failure and thus some retrying mechanisms are needed for such jobs. Usually there are number of micro-services in a system and many of them will need these type of background jobs at some point or the other. But building this mechanism in all the services will lead to lot of boiler plate code in the services and will also require a lot of development and maintenance effort. So the need arises to build a centralised system which can handle scheduling such type of jobs in generic manner. Some of the common requirements that should be taken into consideration while building such system are:',
-    department: 'MCA DEPARTMENT',
-    organization: 'GVP COLLEGE',
-    datePosted: '12-09-67',
-    contacts: [
-        {
-            name: 'name',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name1',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name2',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name3',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name4',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name5',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name6',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name7',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-    ],
-};
-
 export default function DepartmentDetailsView() {
     const department = useSelector((state) => state.department);
     const [value, setValue] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    const [departmentDetails, setDepartmentDetails] = useState({ ...tempData });
+    const [departmentDetails, setDepartmentDetails] = useState({});
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -170,7 +111,7 @@ export default function DepartmentDetailsView() {
                 <FullDetailsView department={departmentDetails} />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <CandidateDetails candidates={departmentDetails.contacts} />
+                <CandidateDetails candidates={departmentDetails.contacts || []} />
             </CustomTabPanel>
         </>
     );

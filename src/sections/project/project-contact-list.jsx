@@ -14,6 +14,7 @@ import DialogContent from '@mui/material/DialogContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Iconify from 'src/components/iconify/Iconify';
+import EmptyContent from 'src/components/empty-content/empty-content';
 
 const ITEM_HEIGHT = 64;
 
@@ -61,63 +62,60 @@ export default function ProjContactDetails({
             </Box>
 
             <DialogContent sx={{ p: 0 }}>
-                {notFound ? (
-                    <>not found</>
-                ) : (
-                    <Box
-                        sx={{
-                            px: 2.5,
-                            height: ITEM_HEIGHT * 6,
-                            overflowY: 'scroll',
-                        }}
-                    >
-                        {dataFiltered.map((contact) => {
-                            const checked = assignee.includes(contact.id);
+                <Box
+                    sx={{
+                        px: 2.5,
+                        height: ITEM_HEIGHT * 6,
+                        overflowY: 'scroll',
+                    }}
+                >
+                    {(notFound || dataFiltered.length===0) && <EmptyContent title="Data not available" />}
+                    {dataFiltered.map((contact) => {
+                        const checked = assignee.includes(contact.id);
 
-                            return (
-                                <ListItem
-                                    key={contact.id}
-                                    disableGutters
-                                    secondaryAction={
-                                        <Button
-                                            size="small"
-                                            color={checked ? 'primary' : 'inherit'}
-                                            onClick={() => handleChange(contact.id, type)}
-                                            startIcon={
-                                                <Iconify
-                                                    width={16}
-                                                    icon={
-                                                        checked
-                                                            ? 'eva:checkmark-fill'
-                                                            : 'mingcute:add-line'
-                                                    }
-                                                    sx={{ mr: -0.5 }}
-                                                />
-                                            }
-                                        >
-                                            {checked ? 'Assigned' : 'Assign'}
-                                        </Button>
-                                    }
-                                    sx={{ height: ITEM_HEIGHT }}
-                                >
-                                    <ListItemAvatar>
-                                        <Avatar src={contact.avatar} />
-                                    </ListItemAvatar>
+                        return (
+                            <ListItem
+                                key={contact.id}
+                                disableGutters
+                                secondaryAction={
+                                    <Button
+                                        size="small"
+                                        color={checked ? 'primary' : 'inherit'}
+                                        onClick={() => handleChange(contact.id, type)}
+                                        startIcon={
+                                            <Iconify
+                                                width={16}
+                                                icon={
+                                                    checked
+                                                        ? 'eva:checkmark-fill'
+                                                        : 'mingcute:add-line'
+                                                }
+                                                sx={{ mr: -0.5 }}
+                                            />
+                                        }
+                                    >
+                                        {checked ? 'Assigned' : 'Assign'}
+                                    </Button>
+                                }
+                                sx={{ height: ITEM_HEIGHT }}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar src={contact.avatar} />
+                                </ListItemAvatar>
 
-                                    <ListItemText
-                                        primaryTypographyProps={{
-                                            typography: 'subtitle2',
-                                            sx: { mb: 0.25 },
-                                        }}
-                                        secondaryTypographyProps={{ typography: 'caption' }}
-                                        primary={contact.name}
-                                        secondary={contact.email}
-                                    />
-                                </ListItem>
-                            );
-                        })}
-                    </Box>
-                )}
+                                <ListItemText
+                                    primaryTypographyProps={{
+                                        typography: 'subtitle2',
+                                        sx: { mb: 0.25 },
+                                    }}
+                                    secondaryTypographyProps={{ typography: 'caption' }}
+                                    primary={contact.name}
+                                    secondary={contact.email}
+                                />
+                            </ListItem>
+                        );
+                    })}
+                </Box>
             </DialogContent>
         </Dialog>
     );

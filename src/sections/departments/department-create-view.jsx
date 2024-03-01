@@ -30,38 +30,6 @@ const StyledLabel = styled('span')(({ theme }) => ({
     fontWeight: theme.typography.fontWeightSemiBold,
 }));
 
-const temp = [
-    {
-        id: '1',
-        name: 'dummy',
-        email: 'dummy@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-    },
-    {
-        id: '2',
-        name: 'dummy',
-        email: 'dummy@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-    },
-    {
-        id: '3',
-        name: 'dummy',
-        email: 'dummy@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-    },
-    {
-        id: '4',
-        name: 'dummy',
-        email: 'dummy@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-    },
-    {
-        id: '5',
-        name: 'dummy',
-        email: 'dummy@gmail.com',
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-    },
-];
 
 export default function DepartmentCreateView() {
     const usersAssign = useBoolean();
@@ -72,8 +40,8 @@ export default function DepartmentCreateView() {
     const department = useSelector((state) => state.department);
     const { enqueueSnackbar } = useSnackbar();
     const [selectedImages, setSelectedImages] = useState(null);
-    const [users, setUsers] = useState([...temp]);
-    const [teams, setTeams] = useState([...temp]);
+    const [users, setUsers] = useState([]);
+    const [teams, setTeams] = useState([]);
     const [formData, setFormData] = useState({
         deptname: '',
         deptdesc: '',

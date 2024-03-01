@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import CustomPopover from 'src/components/custom-popover/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Button } from '@mui/material';
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/JwtContext';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
@@ -26,33 +28,47 @@ import { Button } from '@mui/material';
 export default function ProjItem({ job }) {
     const popover = usePopover();
     const confirm = useBoolean();
-    const navigate = useNavigate()
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
+    const {
+        project_id,
+        name,
+        description,
+        avatar,
+        users_count,
+        teams_count,
+        task_count,
+        created_date,
+        status,
+    } = job;
 
-    const editProject = (ProjectId) => {
+    const editProject = () => {
         navigate('/dashboard/projects/create', {
-            state: { ProjectId },
+            state: { projectId: project_id },
         });
     };
 
-    const detailsProject = (ProjectId) => {
+    const detailsProject = () => {
         navigate('/dashboard/projects/details', {
-            state: { ProjectId },
+            state: { projectId: project_id },
         });
     };
 
     return (
         <>
             <Card sx={{ width: 360, position: 'relative' }}>
-                <IconButton onClick={popover.onOpen} sx={{ position: 'absolute', top: 8, right: 8 }}>
+                <IconButton
+                    onClick={popover.onOpen}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                >
                     <Iconify icon="eva:more-vertical-fill" />
                 </IconButton>
 
                 <Stack sx={{ p: 3, pb: 2 }}>
                     <Avatar
                         alt={'asas'}
-                        src={icon}
+                        src={avatar}
                         variant="rounded"
                         sx={{ width: 48, height: 48, mb: 2 }}
                     />
@@ -69,7 +85,7 @@ export default function ProjItem({ job }) {
                                 {name}
                             </Link>
                         }
-                        secondary={`Posted date: ${date}`}
+                        secondary={`Posted date: ${created_date}`}
                         primaryTypographyProps={{
                             typography: 'subtitle1',
                             fontWeight: 600,
@@ -82,8 +98,6 @@ export default function ProjItem({ job }) {
                             color: 'text.disabled',
                         }}
                     />
-
-                    {/* <Typography>{desc}</Typography> */}
                     <Box
                         sx={{
                             maxWidth: '100%',
@@ -94,7 +108,7 @@ export default function ProjItem({ job }) {
                             WebkitLineClamp: 2,
                         }}
                     >
-                        <Typography variant="body1">{desc}</Typography>
+                        <Typography variant="body1">{description}</Typography>
                     </Box>
                 </Stack>
 
@@ -103,7 +117,7 @@ export default function ProjItem({ job }) {
                 <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
                     {[
                         {
-                            label: `${teamsize} team size`,
+                            label: `${teams_count} team size`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -113,7 +127,7 @@ export default function ProjItem({ job }) {
                             ),
                         },
                         {
-                            label: `${candidates} candidates`,
+                            label: `${users_count} candidates`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -123,7 +137,7 @@ export default function ProjItem({ job }) {
                             ),
                         },
                         {
-                            label: `${tasks} tasks`,
+                            label: `${task_count} tasks`,
                             icon: (
                                 <Iconify
                                     width={16}
@@ -168,8 +182,9 @@ export default function ProjItem({ job }) {
                 <MenuItem
                     onClick={() => {
                         popover.onClose();
-                        editProject('1');
+                        editProject();
                     }}
+                    disabled={user.role === 'user'}
                 >
                     <Iconify icon="solar:pen-bold" />
                     Edit
@@ -177,7 +192,7 @@ export default function ProjItem({ job }) {
                 <MenuItem
                     onClick={() => {
                         popover.onClose();
-                        detailsProject('1');
+                        detailsProject();
                     }}
                 >
                     <Iconify icon="clarity:details-solid" />
@@ -189,6 +204,7 @@ export default function ProjItem({ job }) {
                         confirm.onTrue();
                     }}
                     sx={{ color: 'error.main' }}
+                    disabled={user.role === 'user'}
                 >
                     <Iconify icon="solar:trash-bin-trash-bold" />
                     Delete
