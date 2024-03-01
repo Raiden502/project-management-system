@@ -19,7 +19,8 @@ import CustomPopover from 'src/components/custom-popover/custom-popover';
 import { usePopover } from 'src/components/custom-popover';
 import { useBoolean } from 'src/utils/use-boolean';
 import { useNavigate } from 'react-router-dom';
-// import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/JwtContext';
 
 // ----------------------------------------------------------------------
 
@@ -27,17 +28,18 @@ export default function TeamItem({ job }) {
     const popover = usePopover();
     const confirm = useBoolean();
     const navigate = useNavigate();
-    const { id, name, desc, icon, candidates, teamsize, tasks, date, status } = job;
+    const {user} = useContext(AuthContext);
+    const { team_id, name, description, avatar, user_count, date } = job;
 
-    const editTeams = (teamsId) => {
+    const editTeams = () => {
         navigate('/dashboard/teams/create', {
-            state: { teamsId },
+            state: { teamsId:team_id },
         });
     };
 
-    const detailsTeams = (teamsId) => {
+    const detailsTeams = () => {
         navigate('/dashboard/teams/details', {
-            state: { teamsId },
+            state: { teamsId:team_id },
         });
     };
 
@@ -54,7 +56,7 @@ export default function TeamItem({ job }) {
                 <Stack sx={{ p: 3, pb: 2 }}>
                     <Avatar
                         alt={'asas'}
-                        src={icon}
+                        src={avatar}
                         variant="rounded"
                         sx={{ width: 48, height: 48, mb: 2 }}
                     />
@@ -85,7 +87,6 @@ export default function TeamItem({ job }) {
                         }}
                     />
 
-                    {/* <Typography>{desc}</Typography> */}
                     <Box
                         sx={{
                             maxWidth: '100%',
@@ -96,69 +97,26 @@ export default function TeamItem({ job }) {
                             WebkitLineClamp: 2,
                         }}
                     >
-                        <Typography variant="body1">{desc}</Typography>
+                        <Typography variant="body1">{description}</Typography>
                     </Box>
                 </Stack>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
-                    {[
-                        {
-                            label: `${teamsize} team size`,
-                            icon: (
-                                <Iconify
-                                    width={16}
-                                    icon="ph:microsoft-teams-logo"
-                                    sx={{ flexShrink: 0 }}
-                                />
-                            ),
-                        },
-                        {
-                            label: `${candidates} candidates`,
-                            icon: (
-                                <Iconify
-                                    width={16}
-                                    icon="solar:users-group-rounded-bold"
-                                    sx={{ flexShrink: 0 }}
-                                />
-                            ),
-                        },
-                        {
-                            label: `${tasks} tasks`,
-                            icon: (
-                                <Iconify
-                                    width={16}
-                                    icon="lets-icons:subttasks"
-                                    sx={{ flexShrink: 0 }}
-                                />
-                            ),
-                        },
-                        {
-                            label: status,
-                            icon: (
-                                <Iconify
-                                    width={16}
-                                    icon="fluent:status-20-filled"
-                                    sx={{ flexShrink: 0 }}
-                                />
-                            ),
-                        },
-                    ].map((item) => (
-                        <Stack
-                            key={item.label}
-                            spacing={1}
-                            flexShrink={0}
-                            direction="row"
-                            alignItems="center"
-                            sx={{ color: 'text.disabled', minWidth: 1 }}
-                        >
-                            {item.icon}
-                            <Typography variant="caption" noWrap>
-                                {item.label}
-                            </Typography>
-                        </Stack>
-                    ))}
+                    <Stack
+                        key={`${user_count} team size`}
+                        spacing={1}
+                        flexShrink={0}
+                        direction="row"
+                        alignItems="center"
+                        sx={{ color: 'text.disabled', minWidth: 1 }}
+                    >
+                        <Iconify width={16} icon="ph:microsoft-teams-logo" sx={{ flexShrink: 0 }} />
+                        <Typography variant="caption" noWrap>
+                            {`${user_count} team size`}
+                        </Typography>
+                    </Stack>
                 </Box>
             </Card>
             <CustomPopover
@@ -170,8 +128,9 @@ export default function TeamItem({ job }) {
                 <MenuItem
                     onClick={() => {
                         popover.onClose();
-                        editTeams('1');
+                        editTeams();
                     }}
+                    disabled = {user.role==='user'}
                 >
                     <Iconify icon="solar:pen-bold" />
                     Edit
@@ -179,7 +138,7 @@ export default function TeamItem({ job }) {
                 <MenuItem
                     onClick={() => {
                         popover.onClose();
-                        detailsTeams('1');
+                        detailsTeams();
                     }}
                 >
                     <Iconify icon="clarity:details-solid" />
@@ -191,6 +150,7 @@ export default function TeamItem({ job }) {
                         confirm.onTrue();
                     }}
                     sx={{ color: 'error.main' }}
+                    disabled = {user.role==='user'}
                 >
                     <Iconify icon="solar:trash-bin-trash-bold" />
                     Delete

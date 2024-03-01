@@ -46,8 +46,6 @@ function ProjectListView() {
 
     const notFound = !dataFiltered.length && !!searchUsers;
 
-    console.log(notFound)
-
     return (
         <Stack gap={4}>
             <TextField

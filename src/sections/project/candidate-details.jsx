@@ -32,9 +32,6 @@ export default function CandidateDetails({candidates}) {
                     key={index}
                     sx={{ p: 3, position: 'relative' }}
                 >
-                    <IconButton sx={{ position: 'absolute', top: 8, right: 8 }}>
-                        <Iconify icon="eva:more-vertical-fill" />
-                    </IconButton>
 
                     <Avatar
                         alt={candidate.name}

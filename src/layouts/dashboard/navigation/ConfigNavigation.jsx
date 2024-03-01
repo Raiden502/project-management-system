@@ -91,7 +91,6 @@ export function useNavData() {
                     roles: ['admin', 'user', 'super_admin'],
                     children: [
                         { title: 'list', path: paths.dashboard.teams.list , roles: ['admin', 'user', 'super_admin'],},
-                        { title: 'details', path: paths.dashboard.teams.details, roles: ['admin', 'user', 'super_admin'], },
                         { title: 'create', path: paths.dashboard.teams.create , roles: ['admin', 'super_admin'],},
                     ],
                 },

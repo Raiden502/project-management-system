@@ -9,13 +9,14 @@ import {
     Tabs,
     Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import FullDetailsView from './full-details-view';
 import CandidateDetails from './candidate-details';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
+import { AuthContext } from 'src/auth/JwtContext';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -42,6 +43,7 @@ export default function ProjectDetailsView() {
     const [value, setValue] = useState(0);
     const department = useSelector((state) => state.department);
     const location = useLocation();
+    const {user} = useContext(AuthContext);
     const navigate = useNavigate();
     const [project, setProject] = useState({});
 
@@ -96,15 +98,9 @@ export default function ProjectDetailsView() {
                     <Typography variant="body2">Back</Typography>
                 </Button>
                 <Stack direction="row" gap={3}>
-                    <IconButton onClick={editProject}>
+                    <IconButton onClick={editProject} disabled={user.role==='user'}>
                         <Iconify icon="solar:pen-bold" />
                     </IconButton>
-                    <Button
-                        variant="contained"
-                        endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-                    >
-                        <Typography variant="body2">Publish</Typography>
-                    </Button>
                 </Stack>
             </Stack>
             <Box sx={{ mt: 3 }}>

@@ -13,9 +13,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { styled, alpha } from '@mui/material/styles';
 import { useBoolean } from 'src/utils/use-boolean';
 import Iconify from 'src/components/iconify/Iconify';
-import { useState } from 'react';
+import { useSnackbar } from 'src/components/snackbar';
+import { useContext, useEffect, useRef, useState } from 'react';
 import AvatarUploader from 'src/components/Image-uploader/avatar-uploader';
 import TeamContactDetails from './team-contact-list';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'src/redux/store';
 
 const StyledLabel = styled('span')(({ theme }) => ({
     ...theme.typography.caption,
@@ -61,12 +66,16 @@ const temp = [
 export default function TeamCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
+    const { user } = useContext(AuthContext);
     const [selectedImages, setSelectedImages] = useState(null);
-    const [users, setUsers] = useState([...temp]);
-    const [teams, setTeams] = useState([...temp]);
+    const department = useSelector((state) => state.department);
+    const location = useLocation();
+    const navigate = useNavigate()
+    const { enqueueSnackbar } = useSnackbar();
+    const [users, setUsers] = useState([]);
     const [formData, setFormData] = useState({
-        deptname: '',
-        deptdesc: '',
+        name: '',
+        description: '',
         avatar: '',
         users: [],
         teams: [],
@@ -92,11 +101,107 @@ export default function TeamCreateView() {
         }
     };
 
+    const fetchFormData = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_formdetails', {
+                team_id: location.state?.teamsId,
+            });
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setFormData(data);
+                setSelectedImages(data?.avatar);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const createDept = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_create', {
+                ...formData,
+                org_id: user.org_id,
+                dept_id:department.department_id,
+                user_id: user.user_id,
+                avatar: selectedImages,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('details saved successful', { variant: 'success' });
+                console.log(message);
+                navigate('/dashboard/teams/list');
+            } else {
+                enqueueSnackbar(' failed to saved', { variant: 'warning' });
+            }
+        } catch (err) {
+            console.log(err);
+            enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+    };
+
+    const editDept = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_edit', {
+                ...formData,
+                team_id: location.state?.teamsId,
+                avatar: selectedImages,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('details saved successful', { variant: 'success' });
+                console.log(message);
+                navigate('/dashboard/teams/list');
+            } else {
+                enqueueSnackbar(' failed to saved', { variant: 'warning' });
+            }
+        } catch (err) {
+            console.log(err);
+            enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+    };
+
+    const fetchList = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_contacts', {
+                dept_id: department.department_id,
+            });
+            const { data, errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                setUsers(data);
+                console.log(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current && department.department_id) {
+            fetchList();
+            firstRender.current = false;
+        }
+    }, [department.department_id]);
+
+    const secRender = useRef(true);
+    useEffect(() => {
+        if (secRender.current && location.state?.teamsId) {
+            fetchFormData();
+            secRender.current = false;
+        }
+    }, [location.state?.teamsId]);
+
     return (
         <Grid container spacing={3}>
-            <Grid
-                md={4}>
-                <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', p:3,}}>
+            <Grid md={4}>
+                <Card
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        p: 3,
+                    }}
+                >
                     <Stack sx={{ alignItems: 'center' }} gap={3}>
                         <AvatarUploader
                             selectedImages={selectedImages}
@@ -112,9 +217,9 @@ export default function TeamCreateView() {
                 <Card sx={{ p: 3 }}>
                     <Stack spacing={2}>
                         <TextField
-                            name="deptname"
+                            name="name"
                             label="Department Name"
-                            value={formData.deptname}
+                            value={formData.name}
                             onChange={HandleFormdata}
                             placeholder="e.g., Department Name"
                         />
@@ -123,8 +228,8 @@ export default function TeamCreateView() {
                             rows={6}
                             maxRows={10}
                             label="Description"
-                            name="deptdesc"
-                            value={formData.deptdesc}
+                            name="description"
+                            value={formData.description}
                             onChange={HandleFormdata}
                             placeholder="description"
                         />
@@ -188,68 +293,16 @@ export default function TeamCreateView() {
                                 />
                             </Stack>
                         </Stack>
-                        <Stack direction="row">
-                            <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Teams</StyledLabel>
-                            <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                                {teams
-                                    .filter((item) => formData.teams.includes(item.id))
-                                    .map((user) => (
-                                        <Box sx={{ m: 1, position: 'relative', p: 1 }}>
-                                            <Avatar
-                                                key={user.userid}
-                                                alt={user.name}
-                                                src={user.avatar}
-                                            />
-                                            <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
-                                                {user.name}
-                                            </StyledLabel>
-                                            <IconButton
-                                                onClick={() => {
-                                                    HanleOnClear(user.id, 'teams');
-                                                }}
-                                                sx={{
-                                                    top: 2,
-                                                    right: 2,
-                                                    position: 'absolute',
-                                                    backgroundColor: '#212B36',
-                                                    color: 'white',
-                                                    p: 0.5,
-                                                }}
-                                            >
-                                                <Iconify icon="ic:round-close" width={8} />
-                                            </IconButton>
-                                        </Box>
-                                    ))}
-
-                                <Tooltip title="Add assignee">
-                                    <IconButton
-                                        onClick={teamsAssign.onTrue}
-                                        sx={{
-                                            bgcolor: (theme) =>
-                                                alpha(theme.palette.grey[500], 0.08),
-                                            border: (theme) =>
-                                                `dashed 1px ${theme.palette.divider}`,
-                                        }}
-                                    >
-                                        <Iconify icon="mingcute:add-line" />
-                                    </IconButton>
-                                </Tooltip>
-
-                                <TeamContactDetails
-                                    assignee={formData.teams}
-                                    open={teamsAssign.value}
-                                    onClose={teamsAssign.onFalse}
-                                    type="teams"
-                                    handleChange={HandleUserData}
-                                    contacts={teams}
-                                />
-                            </Stack>
-                        </Stack>
                     </Stack>
                 </Card>
             </Grid>
             <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button variant="contained">Create</Button>
+                <Button
+                    onClick={location.state?.teamsId ? editDept : createDept}
+                    variant="contained"
+                >
+                    {location.state?.teamsId ? 'Save' : 'Create'}
+                </Button>
             </Grid>
         </Grid>
     );

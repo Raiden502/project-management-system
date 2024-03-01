@@ -9,11 +9,14 @@ import {
     Tabs,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import FullDetailsView from './full-details-view';
 import CandidateDetails from './candidate-details';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'src/redux/store';
+import { AuthContext } from 'src/auth/JwtContext';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -35,69 +38,13 @@ function CustomTabPanel(props) {
     );
 }
 
-const tempData = {
-    title: 'CSI Department',
-    description:
-        'In any organisation there are number of tasks which are not needed to be executed in real time like data sync, report generation, reconciliation of payments etc. These tasks can be executed in background in scheduled manner and this dramatically increases the overall performance of the system by segregating the time consuming and resource intensive processes. But these background tasks are prone to failure and thus some retrying mechanisms are needed for such jobs. Usually there are number of micro-services in a system and many of them will need these type of background jobs at some point or the other. But building this mechanism in all the services will lead to lot of boiler plate code in the services and will also require a lot of development and maintenance effort. So the need arises to build a centralised system which can handle scheduling such type of jobs in generic manner. Some of the common requirements that should be taken into consideration while building such system are:',
-    department: 'MCA DEPARTMENT',
-    organization: 'GVP COLLEGE',
-    datePosted: '12-09-67',
-    contacts: [
-        {
-            name: 'name',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name1',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name2',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name3',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name4',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name5',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name6',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-        {
-            name: 'name7',
-            avatarUrl:
-                'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-            role: 'engineer',
-        },
-    ],
-};
-
 export default function TeamDetailsView() {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
-    const [teams, setTeams] = useState({ ...tempData });
+    const department = useSelector((state) => state.department);
+    const location = useLocation();
+    const {user} = useContext(AuthContext);
+    const [teams, setTeams] = useState({});
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -109,9 +56,34 @@ export default function TeamDetailsView() {
 
     const editTeams = () => {
         navigate('/dashboard/teams/create', {
-            state: { teamId: location.state?.teamId },
+            state: { teamId: location.state?.teamsId },
         });
     };
+
+    const getTeamData = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_details', {
+                team_id: location.state?.teamsId,
+                dept_id: department.department_id,
+            });
+            const { data, errorcode, status, message } = response.data;
+            console.log(data)
+            if (errorcode === 0) {
+                setTeams(data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current && department.department_id && location.state?.teamsId) {
+            getTeamData();
+            firstRender.current = false;
+        }
+    }, [department.department_id, location.state?.teamsId]);
+
     return (
         <>
             <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -149,7 +121,7 @@ export default function TeamDetailsView() {
                 <FullDetailsView teams={teams} />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <CandidateDetails candidates={teams.contacts} />
+                <CandidateDetails candidates={teams.contacts || []} />
             </CustomTabPanel>
         </>
     );
