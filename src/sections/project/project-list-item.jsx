@@ -35,6 +35,7 @@ export default function ProjItem({ job }) {
         project_id,
         name,
         description,
+        department_id,
         avatar,
         users_count,
         teams_count,
@@ -45,13 +46,13 @@ export default function ProjItem({ job }) {
 
     const editProject = () => {
         navigate('/dashboard/projects/create', {
-            state: { projectId: project_id },
+            state: { projectId: project_id , department_id: department_id},
         });
     };
 
     const detailsProject = () => {
         navigate('/dashboard/projects/details', {
-            state: { projectId: project_id },
+            state: { projectId: project_id , department_id: department_id},
         });
     };
 

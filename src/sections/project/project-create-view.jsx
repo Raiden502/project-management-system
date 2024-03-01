@@ -137,6 +137,7 @@ export default function ProjectCreateView() {
             const response = await axiosInstance.post('/proj/proj_edit', {
                 ...formData,
                 project_id: location.state.projectId,
+                department_id: location.state.department_id,
                 avatar: selectedImages,
             });
             const { errorcode, status, message } = response.data;

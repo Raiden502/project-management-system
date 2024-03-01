@@ -63,7 +63,7 @@ export default function DepartmentDetailsView() {
     const getDepartmentData = async () => {
         try {
             const response = await axiosInstance.post('/dept/dept_details', {
-                dept_id: department.department_id,
+                dept_id: location.state?.departmentId || department.department_id
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
@@ -81,7 +81,7 @@ export default function DepartmentDetailsView() {
             getDepartmentData();
             firstRender.current = false;
         }
-    }, [department.department_id]);
+    }, [department.department_id, location.state?.departmentId]);
 
     return (
         <>

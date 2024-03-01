@@ -77,6 +77,7 @@ export default function DepartmentCreateView() {
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
+                console.log(data)
                 setFormData(data);
                 setSelectedImages(data?.avatar);
             }
@@ -138,7 +139,6 @@ export default function DepartmentCreateView() {
                 const { users, teams } = data;
                 setUsers(users);
                 setTeams(teams);
-                console.log(data);
             }
         } catch (err) {
             console.log(err);

@@ -88,7 +88,7 @@ const ChattingView = () => {
         >
             {closeNav === false ? (
                 <ChatContactView
-                    user={usersFilterData}
+                    userList={usersFilterData}
                     ChangeChatOnTap={ChangeChatOnTap}
                     localSearch={localSearch}
                     ChangeNavBar={ChangeNavBar}
