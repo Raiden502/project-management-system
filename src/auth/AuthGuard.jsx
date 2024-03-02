@@ -14,8 +14,6 @@ function AuthGuard({ children }) {
     const { pathname } = useLocation();
     const { IsAuthenticated, IsInitialized } = useContext(AuthContext);
 
-    console.log('auth guard', IsAuthenticated, IsInitialized, pathname);
-
     if (IsInitialized) {
         return <LoadingScreen />;
     }

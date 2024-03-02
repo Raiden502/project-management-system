@@ -20,22 +20,19 @@ const useCallSocket = () => {
     return socket;
 };
 
-
 const useChatSocket = () => {
     const { user } = useContext(AuthContext);
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        const newSocket = io(process.env.REACT_APP_DEV_SOCKET_API, {
-            auth: { clientID: user?.user_id },
-        });
+        if (user?.user_id) {
+            const newSocket = io(process.env.REACT_APP_DEV_SOCKET_API, {
+                auth: { clientID: user.user_id },
+            });
 
-        setSocket(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-        };
+            setSocket(newSocket);
+        }
     }, [user?.user_id]);
 
     return socket;
 };
-export {useCallSocket, useChatSocket};
+export { useCallSocket, useChatSocket };

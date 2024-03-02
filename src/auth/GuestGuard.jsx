@@ -11,8 +11,7 @@ function GuestGuard({ children }) {
     const router = useRouter();
     const theme = useTheme();
     const { IsAuthenticated, IsInitialized, user } = useContext(AuthContext);
-    console.log('guest guard', IsAuthenticated, IsInitialized);
-
+    
     if (IsInitialized) {
         return <LoadingScreen />;
     }

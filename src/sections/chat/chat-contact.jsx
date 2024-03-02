@@ -19,11 +19,10 @@ function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar 
     const {user} = useContext(AuthContext)
 
     return (
-        <Stack direction="column" gap={2} sx={{ p: 3, width: 250 }}>
+        <Stack direction="column" gap={2} sx={{ p: 3, width: 400 }}>
             <Stack
                 direction="row"
                 sx={{ alignItems: 'center' }}
-                gap={1}
                 justifyContent={'space-between'}
             >
                 <Avatar
@@ -34,11 +33,10 @@ function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar 
                     <KeyboardArrowLeftIcon fontSize="inherit" />
                 </IconButton>
             </Stack>
-            <Divider />
             <TextField
                 fullWidth
                 InputProps={{
-                    startAdornment: <SearchIcon sx={{ color: 'action.active', marginLeft: 0 }} />,
+                    startAdornment: <SearchIcon sx={{ color: 'action.active' }} />,
                 }}
                 onChange={(e) => localSearch(e.target.value)}
                 placeholder="Search contacts..."
@@ -68,7 +66,8 @@ function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar 
                             mb: 1,
                             ml: 0,
                             '&:hover': {
-                                backgroundColor: '#f5f5f5',
+                                backgroundColor: '#f7f7f7',
+                                borderRadius:1,
                                 cursor: 'pointer',
                             },
                         }}

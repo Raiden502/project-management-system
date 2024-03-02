@@ -56,11 +56,11 @@ function ChatListItem({ row, avatar, currentChat }) {
                             maxWidth: 320,
                             borderRadius: 1,
                             typography: 'body2',
-                            boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
+                            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 2px 0px',
                             bgcolor: 'background.neutral',
                             ...(row.senderid === user.user_id && {
                                 color: 'black.800',
-                                bgcolor: 'lightgreen',
+                                bgcolor: 'rgb(200, 250, 214)',
                             }),
                             ...(false && {
                                 p: 0,

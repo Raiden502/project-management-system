@@ -8,10 +8,11 @@ import React, {
 } from 'react';
 import MuiAlert from '@mui/material/Alert';
 import { AuthContext } from 'src/auth/JwtContext';
-import { Snackbar } from '@mui/material';
+import { Avatar, Box, Snackbar, SnackbarContent, Typography, IconButton } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useChatSocket} from 'src/utils/socket';
-
+import { useChatSocket } from 'src/utils/socket';
+import Iconify from 'src/components/iconify/Iconify';
+import { useLocation } from 'react-router-dom';
 
 const IntialReducerState = {
     currentChatUser: {},
@@ -99,9 +100,10 @@ ChatContext.propTypes = {
 
 export function ChatProvider({ children }) {
     const { user } = useContext(AuthContext);
-    const IoInstance = useChatSocket()
+    const IoInstance = useChatSocket();
     const [chatState, ChatDispatch] = useReducer(Reducer, IntialReducerState);
     const [notify, setNotify] = React.useState({ open: false, message: {} });
+    const {pathname} = useLocation()
 
     const NotificationChat = (receivedMessage) => {
         setNotify({ open: true, message: receivedMessage });
@@ -111,6 +113,7 @@ export function ChatProvider({ children }) {
         if (value != '') {
             IoInstance.emit('private message', {
                 recipientID: chatState.currentChatUser?.id,
+                orgId: user.org_id,
                 message: value,
                 userId: user.user_id,
                 type: chatState.currentChatUser?.type,
@@ -139,17 +142,19 @@ export function ChatProvider({ children }) {
 
     useEffect(() => {
         if (IoInstance) {
+            if (IoInstance.connected === false) {
+                IoInstance.on('connect', () => {
+                    console.log('connnect');
+                });
+            }
             const privateMessageListener = (receivedMessage) => {
-                console.log('Received private message:', chatState.currentChatUser.id);
-                if (chatState.currentChatUser.id == undefined) {
-                    console.log('currentChatUser is undefined');
-                    return;
+                if (chatState.currentChatUser.id == undefined || pathname!=='/dashboard/communication/chat') {
+                    NotificationChat(receivedMessage);
                 }
                 ChatDispatch({ type: 'LAST_MESSAGE', payload: receivedMessage });
                 if (receivedMessage.userId == chatState.currentChatUser.id) {
                     ChatDispatch({ type: 'NEW_MESSAGE', payload: receivedMessage });
                 } else {
-                    console.log('notify', chatState.currentChatUser.id);
                     NotificationChat(receivedMessage);
                 }
             };
@@ -166,7 +171,7 @@ export function ChatProvider({ children }) {
                 IoInstance.off('online-status', onlineStatusListener);
             };
         }
-    }, [IoInstance, chatState.currentChatUser]);
+    }, [IoInstance, chatState.currentChatUser, pathname]);
 
     const memoizedValue = useMemo(
         () => ({
@@ -184,16 +189,36 @@ export function ChatProvider({ children }) {
             {children}
             <Snackbar
                 open={notify.open}
-                autoHideDuration={6000}
+                autoHideDuration={5000}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 onClose={() => setNotify({ open: false, message: {} })}
             >
-                <Alert
-                    onClose={() => setNotify({ open: false, message: {} })}
-                    severity="success"
-                    sx={{ width: '100%' }}
-                >
-                    {notify.message.message}
-                </Alert>
+                <SnackbarContent
+                    style={{ backgroundColor: '#2196f3' }}
+                    message={
+                        <Box style={{ display: 'flex', alignItems: 'center' }}>
+                            <Avatar src={notify.message.avatar} alt={notify.message.username} />
+                            <Box style={{ marginLeft: '10px' }}>
+                                <Typography variant="subtitle1" style={{ color: 'white' }}>
+                                    {notify.message.username}
+                                </Typography>
+                                <Typography variant="body1" style={{ color: 'white' }}>
+                                    {notify.message.message}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    }
+                    action={
+                        <IconButton
+                            size="small"
+                            aria-label="close"
+                            color="inherit"
+                            onClick={() => setNotify((prev) => ({ ...prev, open: false }))}
+                        >
+                            <Iconify icon="mingcute:close-fill" />
+                        </IconButton>
+                    }
+                />
             </Snackbar>
         </ChatContext.Provider>
     );

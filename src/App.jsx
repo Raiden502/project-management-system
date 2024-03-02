@@ -19,13 +19,13 @@ function App() {
                     <PersistGate loading={null} persistor={persistor}>
                         <ThemeProvider>
                             <SnackbarProvider>
-                                <ChatProvider>
-                                    <BrowserRouter>
+                                <BrowserRouter>
+                                    <ChatProvider>
                                         <CallProvider>
                                             <Router />
                                         </CallProvider>
-                                    </BrowserRouter>
-                                </ChatProvider>
+                                    </ChatProvider>
+                                </BrowserRouter>
                             </SnackbarProvider>
                         </ThemeProvider>
                     </PersistGate>
