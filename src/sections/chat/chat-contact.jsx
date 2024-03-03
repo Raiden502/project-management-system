@@ -14,24 +14,26 @@ import OverlayAvatar from 'src/sections/chat/group-overlay';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/JwtContext';
+import Iconify from 'src/components/iconify/Iconify';
+import GroupComponent from './group-create';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar }) {
-    const {user} = useContext(AuthContext)
+    const { user } = useContext(AuthContext);
+    const groupOpen = useBoolean()
 
     return (
         <Stack direction="column" gap={2} sx={{ p: 3, width: 400 }}>
-            <Stack
-                direction="row"
-                sx={{ alignItems: 'center' }}
-                justifyContent={'space-between'}
-            >
-                <Avatar
-                    alt="Remy Sharp"
-                    src={user.avatar}
-                />
-                <IconButton size="small" onClick={ChangeNavBar}>
-                    <KeyboardArrowLeftIcon fontSize="inherit" />
-                </IconButton>
+            <Stack direction="row" sx={{ alignItems: 'center' }} justifyContent={'space-between'}>
+                <Avatar alt="Remy Sharp" src={user.avatar} />
+                <Stack gap={3} direction="row">
+                    <IconButton size="small" onClick={groupOpen.onTrue}>
+                        <Iconify icon="lets-icons:group-add-fill" />
+                    </IconButton>
+                    <IconButton size="small" onClick={ChangeNavBar}>
+                        <KeyboardArrowLeftIcon fontSize="inherit" />
+                    </IconButton>
+                </Stack>
             </Stack>
             <TextField
                 fullWidth
@@ -67,7 +69,7 @@ function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar 
                             ml: 0,
                             '&:hover': {
                                 backgroundColor: '#f7f7f7',
-                                borderRadius:1,
+                                borderRadius: 1,
                                 cursor: 'pointer',
                             },
                         }}
@@ -111,6 +113,7 @@ function ChatContactView({ userList, ChangeChatOnTap, localSearch, ChangeNavBar 
                     </Stack>
                 ))}
             </Box>
+            <GroupComponent open={groupOpen} />
         </Stack>
     );
 }

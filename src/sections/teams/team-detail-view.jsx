@@ -100,12 +100,6 @@ export default function TeamDetailsView() {
                     <IconButton onClick={editTeams}>
                         <Iconify icon="solar:pen-bold" />
                     </IconButton>
-                    <Button
-                        variant="contained"
-                        endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-                    >
-                        <Typography variant="body2">Publish</Typography>
-                    </Button>
                 </Stack>
             </Stack>
             <Box sx={{ mt: 3 }}>
