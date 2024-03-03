@@ -7,7 +7,18 @@ import React, {
     useContext,
     useState,
 } from 'react';
-import { Avatar, Box, IconButton, Modal, Snackbar, Stack, Typography } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Modal,
+    Snackbar,
+    Stack,
+    Typography,
+} from '@mui/material';
 import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -16,11 +27,12 @@ import { AuthContext } from 'src/auth/JwtContext';
 import PropTypes from 'prop-types';
 import AudioCallView from 'src/sections/video/AudioCallView';
 import { useCallSocket } from 'src/utils/socket';
+import Iconify from 'src/components/iconify/Iconify';
 
 const IntialReducerState = {
     accept: false,
     incoming: false,
-    outgoing:false,
+    outgoing: false,
     userInfo: {
         name: '',
         avatar: '',
@@ -53,14 +65,14 @@ const Reducer = (state, action) => {
                 ...state,
                 incoming: false,
                 accept: true,
-                outgoing:false,
+                outgoing: false,
             };
         case 'SET_DECLINE':
             return {
                 ...state,
                 incoming: false,
                 accept: false,
-                outgoing:false,
+                outgoing: false,
             };
         case 'SET_LEAVE':
             return {
@@ -73,7 +85,7 @@ const Reducer = (state, action) => {
                 type: type,
                 receiverInfo: receiverInfo,
                 userInfo: userInfo,
-                outgoing:true,
+                outgoing: true,
             };
         }
         default:
@@ -92,7 +104,7 @@ CallContext.propTypes = {
 export function CallProvider({ children }) {
     const { user } = useContext(AuthContext);
     const localSocketState = localStorage.getItem('Socket-State');
-    const IoInstance = useCallSocket()
+    const IoInstance = useCallSocket();
     const [callState, CallDispatch] = useReducer(
         Reducer,
         localSocketState ? JSON.parse(localSocketState) : IntialReducerState
@@ -132,10 +144,10 @@ export function CallProvider({ children }) {
         });
         CallDispatch({ type: 'SET_ACCEPT' });
         if (callState.type === 'video') {
-            window.open(`/dashboard/meet`, '_blank');
+            window.open(`/dashboard/communication/meet`, '_blank');
         }
         if (callState.type === 'groupvideo') {
-            window.open(`/dashboard/groupmeet`, '_blank');
+            window.open(`/dashboard/communication/groupmeet`, '_blank');
         }
     };
 
@@ -170,22 +182,28 @@ export function CallProvider({ children }) {
 
     const acceptIncomingListener = (receivedMessage) => {
         const { accept, userInfo, receiverInfo } = receivedMessage;
+        console.log('accepting', accept);
         if (accept === true) {
             CallDispatch({ type: 'SET_ACCEPT' });
             if (callState.type === 'video') {
-                window.open(`/dashboard/meet`, '_blank');
+                window.open(`/dashboard/communication/meet`, '_blank');
             }
             if (callState.type === 'groupvideo') {
-                window.open(`/dashboard/groupmeet`, '_blank');
+                window.open(`/dashboard/communication/groupmeet`, '_blank');
             }
         } else {
             CallDispatch({ type: 'SET_DECLINE' });
         }
     };
-    
+
     useEffect(() => {
         localStorage.setItem('Socket-State', JSON.stringify(callState));
         if (IoInstance) {
+            if (IoInstance.connected === false) {
+                IoInstance.on('connect', () => {
+                    console.log('connnect video');
+                });
+            }
             IoInstance.on('newcalls', newCallListener);
             IoInstance.on('accepincoming', acceptIncomingListener);
             return () => {
@@ -204,137 +222,86 @@ export function CallProvider({ children }) {
             CallDispatch,
             incomingCall: callState,
         }),
-        [
-            IoInstance,
-            callState.receiverId,
-            callState.accept,
-            callState.incoming,
-            callState.type,
-        ]
+        [IoInstance, callState.receiverId, callState.accept, callState.incoming, callState.type]
     );
     return (
         <CallContext.Provider value={memoizedValue}>
             {children}
-            <Modal
-                open={callState.incoming}
-                onClose={() => {}}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Stack
-                    gap={2}
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 200,
-                        bgcolor: 'white',
-                        borderRadius: '5px',
-                        border: '1px solid white',
-                        boxShadow: 24,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        p: 3,
-                    }}
-                >
-                    <Stack direction="column" gap={3} sx={{ alignItems: 'center' }}>
-                        <Avatar
-                            src={callState.receiverInfo.avatar}
-                            alt="UNKOEN"
-                            sx={{ width: 56, height: 56, boxShadow: 10 }}
-                        />
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            {callState.receiverInfo.name} Calling ...
-                        </Typography>
-                    </Stack>
+            <Dialog maxWidth="xs" open={callState.incoming} onClose={() => {}}>
+                <DialogTitle>{callState.type == 'phone' ? 'Audio Call' : 'Video Call'}</DialogTitle>
+                <DialogContent>
                     <Stack
+                        gap={3}
                         sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            width: 'inherit',
+                            p: 3,
                         }}
                     >
-                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: '#212B36' }}>
-                            {callState.type == 'phone' ? (
-                                <PhoneCallbackIcon color="success" />
-                            ) : (
-                                <VideocamIcon color="success" />
-                            )}
-                        </IconButton>
-                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: '#212B36' }}>
-                            {callState.type == 'phone' ? (
-                                <CallEndIcon color="error" />
-                            ) : (
-                                <MissedVideoCallIcon color="error" />
-                            )}
-                        </IconButton>
+                        <Stack direction="column" gap={3} sx={{ alignItems: 'center' }}>
+                            <Avatar
+                                src={callState.receiverInfo.avatar}
+                                alt="UNKOEN"
+                                sx={{ width: 56, height: 56, boxShadow: 10 }}
+                            />
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                {callState.receiverInfo.name} Calling ...
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                width: 'inherit',
+                            }}
+                        >
+                            <IconButton
+                                onClick={acceptIncomingCall}
+                                sx={{ backgroundColor: '#212B36', color: 'green' }}
+                            >
+                                {callState.type === 'phone' ? (
+                                    <Iconify icon="fluent:call-48-filled" />
+                                ) : (
+                                    <Iconify icon="fluent:chat-video-24-filled" />
+                                )}
+                            </IconButton>
+                            <IconButton
+                                onClick={rejectIncomingCall}
+                                sx={{ backgroundColor: '#212B36', color: 'red' }}
+                            >
+                                <Iconify icon="solar:end-call-bold" />
+                            </IconButton>
+                        </Stack>
                     </Stack>
-                </Stack>
-            </Modal>
-            <Modal
-                open={callState.outgoing}
-                onClose={() => {}}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Stack
-                    gap={2}
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 200,
-                        bgcolor: 'white',
-                        borderRadius: '5px',
-                        border: '1px solid white',
-                        boxShadow: 24,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        p: 3,
-                    }}
-                >
-                    <Stack direction="column" gap={3} sx={{ alignItems: 'center' }}>
-                        <Avatar
-                            src={callState.receiverInfo.avatar}
-                            alt="UNKOEN"
-                            sx={{ width: 56, height: 56, boxShadow: 10 }}
-                        />
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Calling {callState.receiverInfo.name} ...
-                        </Typography>
-                    </Stack>
+                </DialogContent>
+            </Dialog>
+            <Dialog maxWidth="xs" open={callState.outgoing} onClose={() => {}}>
+                <DialogTitle>{callState.type == 'phone' ? 'Audio Call' : 'Video Call'}</DialogTitle>
+                <DialogContent>
                     <Stack
+                        gap={2}
                         sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            width: 'inherit',
+                            p: 3,
                         }}
                     >
-                        <IconButton onClick={acceptIncomingCall} sx={{ backgroundColor: '#212B36' }}>
-                            {callState.type == 'phone' ? (
-                                <PhoneCallbackIcon color="success" />
-                            ) : (
-                                <VideocamIcon color="success" />
-                            )}
-                        </IconButton>
-                        <IconButton onClick={rejectIncomingCall} sx={{ backgroundColor: '#212B36' }}>
-                            {callState.type == 'phone' ? (
-                                <CallEndIcon color="error" />
-                            ) : (
-                                <MissedVideoCallIcon color="error" />
-                            )}
-                        </IconButton>
+                        <Stack direction="column" gap={3} sx={{ alignItems: 'center' }}>
+                            <Avatar
+                                src={callState.receiverInfo.avatar}
+                                alt="UNKOEN"
+                                sx={{ width: 56, height: 56, boxShadow: 10 }}
+                            />
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Calling {callState.receiverInfo.name} ...
+                            </Typography>
+                            <IconButton
+                                onClick={rejectIncomingCall}
+                                sx={{ backgroundColor: '#212B36', color: 'red' }}
+                            >
+                                <Iconify icon="solar:end-call-bold" />
+                            </IconButton>
+                        </Stack>
                     </Stack>
-                </Stack>
-            </Modal>
+                </DialogContent>
+            </Dialog>
             {memoizedValue.incomingCall.accept && memoizedValue.incomingCall.type === 'phone' && (
                 <AudioCallView />
             )}

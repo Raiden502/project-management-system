@@ -22,12 +22,15 @@ import OverlayAvatar from 'src/sections/chat/group-overlay';
 import { AuthContext } from 'src/auth/JwtContext';
 import { CallContext } from 'src/providers/socket/CallProviders';
 import Iconify from 'src/components/iconify/Iconify';
+import GroupComponent from './group-create';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function ChatDashboard({ messageArray, currentChat, SendMessage }) {
     const chatContainerRef = useRef(null);
     const { user } = useContext(AuthContext);
     const { requestCall, CallDispatch } = useContext(CallContext);
     const [currentMessage, setCurrentMessage] = useState('');
+    const groupOpen = useBoolean();
 
     const send = useCallback((event) => {
         if (event.key === 'Enter') {
@@ -60,37 +63,47 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
                     <Typography>{currentChat.name}</Typography>
                 </Stack>
 
-                <Stack direction="row" gap={2} sx={{ alignItems: 'center', mr:3 }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => {
-                            requestCall(
-                                {
-                                    name: currentChat.name,
-                                    avatar: currentChat.avatar,
-                                    id: currentChat.id,
-                                },
-                                'video'
-                            );
-                        }}
-                    >
-                        <Iconify icon="basil:video-solid" />
-                    </IconButton>
-                    <IconButton
-                        size="small"
-                        onClick={() => {
-                            requestCall(
-                                {
-                                    name: currentChat.name,
-                                    avatar: currentChat.avatar,
-                                    id: currentChat.id,
-                                },
-                                'phone'
-                            );
-                        }}
-                    >
-                        <Iconify icon="fluent:call-28-filled" />
-                    </IconButton>
+                <Stack direction="row" gap={2} sx={{ alignItems: 'center', mr: 3 }}>
+                    {currentChat.type === 'normal' && (
+                        <>
+                            <IconButton
+                                size="small"
+                                onClick={() => {
+                                    requestCall(
+                                        {
+                                            name: currentChat.name,
+                                            avatar: currentChat.avatar,
+                                            id: currentChat.id,
+                                        },
+                                        'video'
+                                    );
+                                }}
+                            >
+                                <Iconify icon="basil:video-solid" />
+                            </IconButton>
+                            <IconButton
+                                size="small"
+                                onClick={() => {
+                                    requestCall(
+                                        {
+                                            name: currentChat.name,
+                                            avatar: currentChat.avatar,
+                                            id: currentChat.id,
+                                        },
+                                        'phone'
+                                    );
+                                }}
+                            >
+                                <Iconify icon="fluent:call-28-filled" />
+                            </IconButton>
+                        </>
+                    )}
+
+                    {currentChat.type !== 'normal' && (
+                        <IconButton onClick={groupOpen.onTrue}>
+                            <Iconify icon="solar:pen-bold" />
+                        </IconButton>
+                    )}
                 </Stack>
             </Stack>
             <Divider />
@@ -159,37 +172,7 @@ function ChatDashboard({ messageArray, currentChat, SendMessage }) {
 
             <input type="file" style={{ display: 'none' }} />
 
-            {/* <Stack direction="row" sx={{ mt: 1 }}>
-                <TextField
-                    fullWidth
-                    placeholder="write message"
-                    sx={{}}
-                    onChange={(e) => {
-                        setCurrentMessage(e.target.value);
-                    }}
-                    value={currentMessage}
-                    InputProps={{
-                        startAdornment: (
-                            <IconButton size="small">
-                                <EmojiEmotionsIcon
-                                    sx={{ color: 'action.active', marginRight: 1 }}
-                                />
-                            </IconButton>
-                        ),
-                    }}
-                ></TextField>
-                <Stack direction="row" gap={2} sx={{ p: 2 }}>
-                    <IconButton size="small" onClick={send}>
-                        <SendIcon fontSize="inherit" />
-                    </IconButton>
-                    <IconButton size="small">
-                        <InsertPhotoIcon fontSize="inherit" />
-                    </IconButton>
-                    <IconButton size="small">
-                        <KeyboardVoiceIcon fontSize="inherit" />
-                    </IconButton>
-                </Stack>
-            </Stack> */}
+            <GroupComponent open={groupOpen} group_id={currentChat.id} />
         </Stack>
     );
 }

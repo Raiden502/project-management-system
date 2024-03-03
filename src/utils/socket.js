@@ -7,14 +7,12 @@ const useCallSocket = () => {
     const { user } = useContext(AuthContext);
     const [socket, setSocket] = useState(null);
     useEffect(() => {
-        const newSocket = io(process.env.REACT_APP_DEV_VIDEO_SOCKET_API, {
-            auth: { clientID: user?.user_id },
-        });
-        setSocket(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-        };
+        if (user?.user_id) {
+            const newSocket = io(process.env.REACT_APP_DEV_VIDEO_SOCKET_API, {
+                auth: { clientID: user?.user_id },
+            });
+            setSocket(newSocket);
+        }
     }, [user?.user_id]);
 
     return socket;

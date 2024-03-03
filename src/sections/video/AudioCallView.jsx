@@ -7,6 +7,7 @@ import CallIcon from '@mui/icons-material/Call';
 import MicIcon from '@mui/icons-material/Mic';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCallSocket } from 'src/utils/socket';
+import { useTheme } from '@emotion/react';
 
 const servers = {
     iceServers: [
@@ -17,6 +18,7 @@ const servers = {
 };
 
 function AudioCallView() {
+    const theme = useTheme();
     const { CallDispatch, incomingCall } = useContext(CallContext);
     const IoInstance = useCallSocket();
     const peerConnection = new RTCPeerConnection(servers);
@@ -153,16 +155,17 @@ function AudioCallView() {
         <Box
             sx={{
                 position: 'absolute',
-                top: '10px',
-                right: '10px',
+                top: '100px',
+                right: '20px',
                 backgroundColor: '#212B36',
                 p: 0.5,
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'end',
                 borderRadius: close ? '50px' : '10px',
-                width: close ? '40px' : 'auto',
+                width: 'auto',
                 transition: 'width 2s linear 1s',
+                zIndex: theme.zIndex.appBar + 1,
             }}
         >
             <audio ref={remoteAudioRef} autoPlay></audio>
