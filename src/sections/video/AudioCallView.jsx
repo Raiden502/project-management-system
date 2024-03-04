@@ -6,7 +6,6 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import CallIcon from '@mui/icons-material/Call';
 import MicIcon from '@mui/icons-material/Mic';
 import CloseIcon from '@mui/icons-material/Close';
-import { useCallSocket } from 'src/utils/socket';
 import { useTheme } from '@emotion/react';
 
 const servers = {
@@ -19,8 +18,7 @@ const servers = {
 
 function AudioCallView() {
     const theme = useTheme();
-    const { CallDispatch, incomingCall } = useContext(CallContext);
-    const IoInstance = useCallSocket();
+    const { CallDispatch, incomingCall, IoInstance } = useContext(CallContext);
     const peerConnection = new RTCPeerConnection(servers);
     const [actions, setActions] = useState({ audio: false });
     const [timeRemaining, setTimeRemaining] = useState(0);
@@ -28,19 +26,6 @@ function AudioCallView() {
     const localStreamRef = useRef(null);
     const localAudioRef = useRef(null);
     const remoteAudioRef = useRef(null);
-
-    const callButton = () => {
-        peerConnection
-            .createOffer()
-            .then((offer) => {
-                peerConnection.setLocalDescription(offer);
-                IoInstance.current.emit('offer', {
-                    payload: offer,
-                    receiverId: incomingCall.receiverInfo.id,
-                });
-            })
-            .catch((error) => console.error('Error creating offer:', error));
-    };
 
     const muteAudioButton = () => {
         const audioTracks = localStreamRef.current.getAudioTracks();
@@ -50,8 +35,8 @@ function AudioCallView() {
         setActions({ ...actions, audio: !actions.audio });
     };
 
-    const leaveButton = () => {
-        localStreamRef.current.getTracks().forEach((track) => track.stop());
+    const leaveButton = async () => {
+        await localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
         IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
@@ -59,22 +44,28 @@ function AudioCallView() {
         });
         CallDispatch({ type: 'SET_LEAVE' });
     };
-    const startCall = () => {
-        navigator.mediaDevices
-            .getUserMedia({
+    const startCall = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
                 video: false,
                 audio: true,
-            })
-            .then((stream) => {
-                localStreamRef.current = stream;
-                localAudioRef.current.srcObject = localStreamRef.current;
-                localStreamRef.current
-                    .getAudioTracks()
-                    .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
+            });
 
-                callButton();
-            })
-            .catch((error) => console.error('Error accessing media devices:', error));
+            localStreamRef.current = stream;
+            localAudioRef.current.srcObject = localStreamRef.current;
+            localStreamRef.current
+                .getAudioTracks()
+                .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            IoInstance.current.emit('offer', {
+                payload: offer,
+                receiverId: incomingCall.receiverInfo.id,
+            });
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     peerConnection.onicecandidate = (event) => {
@@ -90,32 +81,33 @@ function AudioCallView() {
         remoteAudioRef.current.srcObject = event.stream;
     };
 
-    const offerListener = (receivedMessage) => {
+    const offerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        peerConnection
-            .setRemoteDescription(new RTCSessionDescription(payload))
-            .then(() => peerConnection.createAnswer())
-            .then((answer) => {
-                peerConnection.setLocalDescription(answer);
-                IoInstance.current.emit('answer', {
-                    payload: answer,
-                    receiverId: incomingCall.receiverInfo.id,
-                });
-            })
-            .catch((error) => console.error('Error creating answer:', error));
-    };
-    const answerListener = (receivedMessage) => {
-        const { payload } = receivedMessage;
-        peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
-    };
-    const candidateListener = (receivedMessage) => {
-        const { payload } = receivedMessage;
-        peerConnection.addIceCandidate(new RTCIceCandidate(payload));
-    };
 
-    const leaveListner = (receivedMessage) => {
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+
+            IoInstance.current.emit('answer', {
+                payload: answer,
+                receiverId: incomingCall.receiverInfo.id,
+            });
+        } catch (error) {
+            console.error('Error creating answer:', error);
+        }
+    };
+    const answerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        localStreamRef.current.getTracks().forEach((track) => track.stop());
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+    };
+    const candidateListener = async (receivedMessage) => {
+        const { payload } = receivedMessage;
+        await peerConnection.addIceCandidate(new RTCIceCandidate(payload));
+    };
+    const leaveListner = async (receivedMessage) => {
+        const { payload } = receivedMessage;
+        await localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
         CallDispatch({ type: 'SET_LEAVE' });
     };
@@ -151,6 +143,7 @@ function AudioCallView() {
             };
         }
     }, [incomingCall.accept]);
+    
     return (
         <Box
             sx={{

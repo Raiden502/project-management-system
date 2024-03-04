@@ -5,12 +5,14 @@ import React, {
     useCallback,
     useMemo,
     useContext,
+    useState,
+    useRef,
 } from 'react';
 import MuiAlert from '@mui/material/Alert';
+import { Socket, io } from 'socket.io-client';
 import { AuthContext } from 'src/auth/JwtContext';
 import { Avatar, Box, Snackbar, SnackbarContent, Typography, IconButton } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useChatSocket } from 'src/utils/socket';
 import Iconify from 'src/components/iconify/Iconify';
 import { useLocation } from 'react-router-dom';
 
@@ -100,7 +102,8 @@ ChatContext.propTypes = {
 
 export function ChatProvider({ children }) {
     const { user } = useContext(AuthContext);
-    const IoInstance = useChatSocket();
+    const [connected, setConnected] = useState(false);
+    const IoInstance = useRef(null);
     const [chatState, ChatDispatch] = useReducer(Reducer, IntialReducerState);
     const [notify, setNotify] = React.useState({ open: false, message: {} });
     const { pathname } = useLocation();
@@ -160,11 +163,35 @@ export function ChatProvider({ children }) {
     };
 
     useEffect(() => {
-        if (IoInstance.current) {
+        if (!IoInstance.current && user?.user_id) {
+            IoInstance.current = io(process.env.REACT_APP_DEV_SOCKET_API, {
+                auth: { clientID: user?.user_id },
+                reconnectionDelay: 1000,
+                reconnection: true,
+                reconnectionAttempts: Infinity,
+                agent: false,
+                upgrade: false,
+                rejectUnauthorized: false,
+            });
             IoInstance.current.on('connect', () => {
-                console.log('connnect chat');
+                console.log('Chat socket connected');
+                setConnected(true);
             });
 
+            IoInstance.current.on('disconnect', (reason) => {
+                console.log('Char socket disconnected:', reason);
+                setConnected(false);
+            });
+            return () => {
+                // Cleanup: Remove the old listeners when the component unmounts or when IoInstance.current changes.
+                IoInstance.current.off('connect');
+                IoInstance.current.off('disconnect');
+            };
+        }
+    }, [user?.user_id]);
+
+    useEffect(() => {
+        if (IoInstance.current) {
             IoInstance.current.on('private message', privateMessageListener);
             IoInstance.current.on('online-status', onlineStatusListener);
             return () => {

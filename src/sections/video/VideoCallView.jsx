@@ -6,7 +6,6 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import MicIcon from '@mui/icons-material/Mic';
-import { useCallSocket } from 'src/utils/socket';
 import { useTheme } from '@emotion/react';
 
 const servers = {
@@ -18,26 +17,12 @@ const servers = {
 };
 
 function VideoCallView() {
-    const { CallDispatch, incomingCall } = useContext(CallContext);
-    const IoInstance = useCallSocket();
+    const { CallDispatch, incomingCall, IoInstance } = useContext(CallContext);
     const [actions, setActions] = useState({ audio: false, video: true });
     const peerConnection = new RTCPeerConnection(servers);
     const localStreamRef = useRef(null);
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
-
-    const callButton = () => {
-        peerConnection
-            .createOffer()
-            .then((offer) => {
-                peerConnection.setLocalDescription(offer);
-                IoInstance.current.emit('offer', {
-                    payload: offer,
-                    receiverId: incomingCall.receiverInfo.id,
-                });
-            })
-            .catch((error) => console.error('Error creating offer:', error));
-    };
 
     const muteAudioButton = () => {
         const audioTracks = localStreamRef.current.getAudioTracks();
@@ -55,8 +40,8 @@ function VideoCallView() {
         setActions({ ...actions, video: !actions.video });
     };
 
-    const leaveButton = () => {
-        localStreamRef.current.getTracks().forEach((track) => track.stop());
+    const leaveButton = async () => {
+        await localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
         IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
@@ -64,30 +49,39 @@ function VideoCallView() {
         });
         CallDispatch({ type: 'SET_LEAVE' });
     };
-    const startCall = () => {
-        navigator.mediaDevices
-            .getUserMedia({
+    const startCall = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    // width: { ideal: 320 },
-                    // height: { ideal: 180 },
+                    width: { ideal: 320 },
+                    height: { ideal: 240 },
                     frameRate: { ideal: 24 },
                 },
                 audio: true,
-            })
-            .then((stream) => {
-                localStreamRef.current = stream;
-                localVideoRef.current.srcObject = localStreamRef.current;
-                localStreamRef.current
-                    .getTracks()
-                    .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
+            });
 
-                const audioTracks = localStreamRef.current.getAudioTracks();
-                audioTracks.forEach((track) => {
-                    track.enabled = false;
-                });
-                callButton();
-            })
-            .catch((error) => console.error('Error accessing media devices:', error));
+            localStreamRef.current = stream;
+            localVideoRef.current.srcObject = localStreamRef.current;
+            localStreamRef.current
+                .getTracks()
+                .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
+
+            const audioTracks = localStreamRef.current.getAudioTracks();
+            audioTracks.forEach((track) => {
+                track.enabled = false;
+            });
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            IoInstance.current.emit('offer', {
+                payload: offer,
+                receiverId: incomingCall.receiverInfo.id,
+            });
+            
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     peerConnection.onicecandidate = (event) => {
@@ -103,35 +97,36 @@ function VideoCallView() {
         remoteVideoRef.current.srcObject = event.stream;
     };
 
-    const offerListener = (receivedMessage) => {
+    const offerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        peerConnection
-            .setRemoteDescription(new RTCSessionDescription(payload))
-            .then(() => peerConnection.createAnswer())
-            .then((answer) => {
-                peerConnection.setLocalDescription(answer);
-                IoInstance.current.emit('answer', {
-                    payload: answer,
-                    receiverId: incomingCall.receiverInfo.id,
-                });
-            })
-            .catch((error) => console.error('Error creating answer:', error));
+
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+
+            IoInstance.current.emit('answer', {
+                payload: answer,
+                receiverId: incomingCall.receiverInfo.id,
+            });
+        } catch (error) {
+            console.error('Error creating answer:', error);
+        }
     };
-    const answerListener = (receivedMessage) => {
+    const answerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
     };
-    const candidateListener = (receivedMessage) => {
+    const candidateListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        peerConnection.addIceCandidate(new RTCIceCandidate(payload));
+        await peerConnection.addIceCandidate(new RTCIceCandidate(payload));
     };
 
-    const leaveListner = (receivedMessage) => {
+    const leaveListner = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        localStreamRef.current.getTracks().forEach((track) => track.stop());
+        await localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
         CallDispatch({ type: 'SET_LEAVE' });
-        window.close();
     };
 
     useEffect(() => {

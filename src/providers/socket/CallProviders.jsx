@@ -3,32 +3,30 @@ import React, {
     useEffect,
     useReducer,
     useCallback,
+    useRef,
     useMemo,
     useContext,
     useState,
 } from 'react';
 import {
     Avatar,
-    Box,
     Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
-    Modal,
-    Snackbar,
     Stack,
     Typography,
 } from '@mui/material';
-import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
-import CallEndIcon from '@mui/icons-material/CallEnd';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import MissedVideoCallIcon from '@mui/icons-material/MissedVideoCall';
-import { AuthContext } from 'src/auth/JwtContext';
+// useSocket.js
+import { Socket, io } from 'socket.io-client';
 import PropTypes from 'prop-types';
+
+import { AuthContext } from 'src/auth/JwtContext';
 import AudioCallView from 'src/sections/video/AudioCallView';
-import { useCallSocket } from 'src/utils/socket';
+// import { useCallSocket } from 'src/utils/socket';
 import Iconify from 'src/components/iconify/Iconify';
 import RenderVideoCallComponent from 'src/pages/dashboard/communication/RenderVideoCall';
+
 const IntialReducerState = {
     accept: false,
     incoming: false,
@@ -103,11 +101,10 @@ CallContext.propTypes = {
 
 export function CallProvider({ children }) {
     const { user } = useContext(AuthContext);
-    const IoInstance = useCallSocket();
-    const [callState, CallDispatch] = useReducer(
-        Reducer,
-        IntialReducerState
-    );
+    const [connected, setConnected] = useState(false);
+    const IoInstance = useRef(null);
+    const [callState, CallDispatch] = useReducer(Reducer, IntialReducerState);
+
     const requestCall = (receiverInfo, type) => {
         console.log(user, 'requestcall');
         IoInstance.current.emit('newcalls', {
@@ -150,13 +147,12 @@ export function CallProvider({ children }) {
             accept: false,
             receiverInfo: callState.receiverInfo,
         });
-        // CallDispatch({ type: 'SET_DECLINE' });
         CallDispatch({ type: 'SET_LEAVE' });
     };
 
     const newCallListener = (receivedMessage) => {
         const { receiverInfo, userInfo, type } = receivedMessage;
-        console.log("newcalls")
+        console.log('newcalls');
         if (callState.sessionState === false) {
             CallDispatch({
                 type: 'SET_INCOMMING',
@@ -182,21 +178,42 @@ export function CallProvider({ children }) {
             CallDispatch({ type: 'SET_DECLINE' });
         }
     };
+
     useEffect(() => {
-        if (IoInstance.current) {
-            console.log("ico", IoInstance.current)
-            IoInstance.current.on('connect', () => {
-                console.log('connnect video');
+        if (!IoInstance.current && user?.user_id) {
+            IoInstance.current = io(process.env.REACT_APP_DEV_VIDEO_SOCKET_API, {
+                auth: { clientID: user?.user_id },
+                reconnectionDelay: 1000,
+                reconnection: true,
+                reconnectionAttempts: Infinity,
+                agent: false,
+                upgrade: false,
+                rejectUnauthorized: false,
             });
+
+            IoInstance.current.on('connect', () => {
+                console.log('Video socket connected');
+                setConnected(true);
+            });
+
+            IoInstance.current.on('disconnect', (reason) => {
+                console.log('Video socket disconnected:', reason);
+                setConnected(false);
+            });
+
             IoInstance.current.on('newcalls', newCallListener);
             IoInstance.current.on('accepincoming', acceptIncomingListener);
             return () => {
                 // Cleanup: Remove the old listeners when the component unmounts or when IoInstance.current changes.
+                IoInstance.current.off('connect');
+                IoInstance.current.off('disconnect');
                 IoInstance.current.off('newcalls', newCallListener);
                 IoInstance.current.off('accepincoming', acceptIncomingListener);
             };
         }
-    }, [callState.sessionState, user]);
+    }, [callState.sessionState,  user?.user_id ]);
+
+    console.log('video connection state', connected);
 
     const memoizedValue = useMemo(
         () => ({
@@ -205,8 +222,15 @@ export function CallProvider({ children }) {
             requestCall,
             CallDispatch,
             incomingCall: callState,
+            IoInstance:IoInstance
         }),
-        [IoInstance.current, callState.receiverId, callState.accept, callState.incoming, callState.type, user]
+        [
+            IoInstance.current,
+            callState.receiverId,
+            callState.accept,
+            callState.incoming,
+            callState.type,
+        ]
     );
     return (
         <CallContext.Provider value={memoizedValue}>
