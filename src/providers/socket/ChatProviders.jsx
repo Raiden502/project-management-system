@@ -103,7 +103,7 @@ export function ChatProvider({ children }) {
     const IoInstance = useChatSocket();
     const [chatState, ChatDispatch] = useReducer(Reducer, IntialReducerState);
     const [notify, setNotify] = React.useState({ open: false, message: {} });
-    const {pathname} = useLocation()
+    const { pathname } = useLocation();
 
     const NotificationChat = (receivedMessage) => {
         setNotify({ open: true, message: receivedMessage });
@@ -111,7 +111,7 @@ export function ChatProvider({ children }) {
 
     const SendMessage = (value) => {
         if (value != '') {
-            IoInstance.emit('private message', {
+            IoInstance.current.emit('private message', {
                 recipientID: chatState.currentChatUser?.id,
                 orgId: user.org_id,
                 message: value,
@@ -140,38 +140,40 @@ export function ChatProvider({ children }) {
         }
     };
 
+    const privateMessageListener = (receivedMessage) => {
+        if (
+            chatState.currentChatUser.id == undefined ||
+            pathname !== '/dashboard/communication/chat'
+        ) {
+            NotificationChat(receivedMessage);
+        }
+        ChatDispatch({ type: 'LAST_MESSAGE', payload: receivedMessage });
+        if (receivedMessage.userId == chatState.currentChatUser.id) {
+            ChatDispatch({ type: 'NEW_MESSAGE', payload: receivedMessage });
+        } else {
+            NotificationChat(receivedMessage);
+        }
+    };
+
+    const onlineStatusListener = (receivedMessage) => {
+        ChatDispatch({ type: 'ONLINE_STATUS', payload: receivedMessage });
+    };
+
     useEffect(() => {
-        if (IoInstance) {
-            if (IoInstance.connected === false) {
-                IoInstance.on('connect', () => {
-                    console.log('connnect');
-                });
-            }
-            const privateMessageListener = (receivedMessage) => {
-                if (chatState.currentChatUser.id == undefined || pathname!=='/dashboard/communication/chat') {
-                    NotificationChat(receivedMessage);
-                }
-                ChatDispatch({ type: 'LAST_MESSAGE', payload: receivedMessage });
-                if (receivedMessage.userId == chatState.currentChatUser.id) {
-                    ChatDispatch({ type: 'NEW_MESSAGE', payload: receivedMessage });
-                } else {
-                    NotificationChat(receivedMessage);
-                }
-            };
+        if (IoInstance.current) {
+            IoInstance.current.on('connect', () => {
+                console.log('connnect chat');
+            });
 
-            const onlineStatusListener = (receivedMessage) => {
-                ChatDispatch({ type: 'ONLINE_STATUS', payload: receivedMessage });
-            };
-
-            IoInstance.on('private message', privateMessageListener);
-            IoInstance.on('online-status', onlineStatusListener);
+            IoInstance.current.on('private message', privateMessageListener);
+            IoInstance.current.on('online-status', onlineStatusListener);
             return () => {
-                // Cleanup: Remove the old listeners when the component unmounts or when IoInstance changes.
-                IoInstance.off('private message', privateMessageListener);
-                IoInstance.off('online-status', onlineStatusListener);
+                // Cleanup: Remove the old listeners when the component unmounts or when IoInstance.current changes.
+                IoInstance.current.off('private message', privateMessageListener);
+                IoInstance.current.off('online-status', onlineStatusListener);
             };
         }
-    }, [IoInstance, chatState.currentChatUser, pathname]);
+    }, [chatState.currentChatUser.id, pathname]);
 
     const memoizedValue = useMemo(
         () => ({

@@ -61,10 +61,6 @@ export const UserChatting = Loadable(
     lazy(() => import('src/pages/dashboard/communication/chat.jsx'))
 );
 
-export const SingleVideoCall = Loadable(
-    lazy(() => import('src/pages/dashboard/communication/SingleVideoCall.jsx'))
-);
-
 // dashboard-tasks
 export const TasksList = Loadable(lazy(() => import('src/pages/dashboard/tasks/list.jsx')));
 

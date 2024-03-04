@@ -7,6 +7,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import MicIcon from '@mui/icons-material/Mic';
 import { useCallSocket } from 'src/utils/socket';
+import { useTheme } from '@emotion/react';
 
 const servers = {
     iceServers: [
@@ -30,7 +31,7 @@ function VideoCallView() {
             .createOffer()
             .then((offer) => {
                 peerConnection.setLocalDescription(offer);
-                IoInstance.emit('offer', {
+                IoInstance.current.emit('offer', {
                     payload: offer,
                     receiverId: incomingCall.receiverInfo.id,
                 });
@@ -57,12 +58,11 @@ function VideoCallView() {
     const leaveButton = () => {
         localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
-        IoInstance.emit('leave', {
+        IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
             payload: null,
         });
         CallDispatch({ type: 'SET_LEAVE' });
-        window.close();
     };
     const startCall = () => {
         navigator.mediaDevices
@@ -92,7 +92,7 @@ function VideoCallView() {
 
     peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
-            IoInstance.emit('candidate', {
+            IoInstance.current.emit('candidate', {
                 payload: event.candidate,
                 receiverId: incomingCall.receiverInfo.id,
             });
@@ -110,7 +110,7 @@ function VideoCallView() {
             .then(() => peerConnection.createAnswer())
             .then((answer) => {
                 peerConnection.setLocalDescription(answer);
-                IoInstance.emit('answer', {
+                IoInstance.current.emit('answer', {
                     payload: answer,
                     receiverId: incomingCall.receiverInfo.id,
                 });
@@ -135,81 +135,67 @@ function VideoCallView() {
     };
 
     useEffect(() => {
-        if (IoInstance) {
+        if (IoInstance.current) {
             if (incomingCall.accept) {
                 startCall();
             }
-            IoInstance.on('offer', offerListener);
-            IoInstance.on('answer', answerListener);
-            IoInstance.on('candidate', candidateListener);
-            IoInstance.on('leave', leaveListner);
+            IoInstance.current.on('offer', offerListener);
+            IoInstance.current.on('answer', answerListener);
+            IoInstance.current.on('candidate', candidateListener);
+            IoInstance.current.on('leave', leaveListner);
 
             return () => {
-                IoInstance.off('offer', offerListener);
-                IoInstance.off('answer', answerListener);
-                IoInstance.off('candidate', candidateListener);
-                IoInstance.off('leave', leaveListner);
+                IoInstance.current.off('offer', offerListener);
+                IoInstance.current.off('answer', answerListener);
+                IoInstance.current.off('candidate', candidateListener);
+                IoInstance.current.off('leave', leaveListner);
             };
         }
-    }, [IoInstance, incomingCall.accept]);
+    }, [incomingCall.accept]);
     return (
-        <Box
+        <Stack
+            direction="column"
+            gap={3}
             sx={{
                 backgroundColor: '#212B36',
-                height: '90vh', // Full viewport height
-                display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'space-between',
                 position: 'relative',
+                width: 700,
+                p: 3,
+                borderRadius: 1,
             }}
         >
             <Stack
+                direction="row"
+                gap={3}
                 sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-evenly',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     backgroundColor: '#212B36',
-                    width: '100%',
-                    height: '100%', // Adjust as needed
                 }}
             >
                 <video
                     ref={remoteVideoRef}
-                    width="1280"
-                    height="420"
+                    width="320"
+                    height="240"
                     autoPlay
-                    style={{ borderRadius: '15px' }}
+                    style={{ borderRadius: '10px' }}
                 ></video>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        bottom: '10px',
-                        right: '10px',
-                        backgroundColor: 'transparent',
-                    }}
-                >
-                    <video
-                        ref={localVideoRef}
-                        width="320"
-                        height="240"
-                        autoPlay
-                        style={{ borderRadius: '10px' }}
-                    ></video>
-                </Box>
+                <video
+                    ref={localVideoRef}
+                    width="320"
+                    height="240"
+                    autoPlay
+                    style={{ borderRadius: '10px' }}
+                ></video>
             </Stack>
             <Stack
+                direction="row"
                 sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    position: 'absolute',
                     justifyContent: 'space-evenly',
                     p: 1,
-                    bottom: '10px',
                     backgroundColor: '#454545',
                     borderRadius: '15px',
-                    width: '15%',
                 }}
                 gap={3}
             >
@@ -231,7 +217,7 @@ function VideoCallView() {
                     )}
                 </IconButton>
             </Stack>
-        </Box>
+        </Stack>
     );
 }
 export default VideoCallView;

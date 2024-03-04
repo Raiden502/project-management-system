@@ -28,7 +28,7 @@ import PropTypes from 'prop-types';
 import AudioCallView from 'src/sections/video/AudioCallView';
 import { useCallSocket } from 'src/utils/socket';
 import Iconify from 'src/components/iconify/Iconify';
-
+import RenderVideoCallComponent from 'src/pages/dashboard/communication/RenderVideoCall';
 const IntialReducerState = {
     accept: false,
     incoming: false,
@@ -103,16 +103,14 @@ CallContext.propTypes = {
 
 export function CallProvider({ children }) {
     const { user } = useContext(AuthContext);
-    const localSocketState = localStorage.getItem('Socket-State');
     const IoInstance = useCallSocket();
     const [callState, CallDispatch] = useReducer(
         Reducer,
-        localSocketState ? JSON.parse(localSocketState) : IntialReducerState
+        IntialReducerState
     );
-
     const requestCall = (receiverInfo, type) => {
-        console.log(receiverInfo, 'requestcall');
-        IoInstance.emit('newcalls', {
+        console.log(user, 'requestcall');
+        IoInstance.current.emit('newcalls', {
             receiverInfo: receiverInfo,
             userInfo: {
                 name: user.user_name,
@@ -137,23 +135,17 @@ export function CallProvider({ children }) {
 
     const acceptIncomingCall = () => {
         console.log(callState, 'acceptcall');
-        IoInstance.emit('accepincoming', {
+        IoInstance.current.emit('accepincoming', {
             userInfo: callState.userInfo,
             accept: true,
             receiverInfo: callState.receiverInfo,
         });
         CallDispatch({ type: 'SET_ACCEPT' });
-        if (callState.type === 'video') {
-            window.open(`/dashboard/communication/meet`, '_blank');
-        }
-        if (callState.type === 'groupvideo') {
-            window.open(`/dashboard/communication/groupmeet`, '_blank');
-        }
     };
 
     const rejectIncomingCall = () => {
         console.log(callState, 'reject');
-        IoInstance.emit('accepincoming', {
+        IoInstance.current.emit('accepincoming', {
             userInfo: callState.userInfo,
             accept: false,
             receiverInfo: callState.receiverInfo,
@@ -164,6 +156,7 @@ export function CallProvider({ children }) {
 
     const newCallListener = (receivedMessage) => {
         const { receiverInfo, userInfo, type } = receivedMessage;
+        console.log("newcalls")
         if (callState.sessionState === false) {
             CallDispatch({
                 type: 'SET_INCOMMING',
@@ -185,34 +178,25 @@ export function CallProvider({ children }) {
         console.log('accepting', accept);
         if (accept === true) {
             CallDispatch({ type: 'SET_ACCEPT' });
-            if (callState.type === 'video') {
-                window.open(`/dashboard/communication/meet`, '_blank');
-            }
-            if (callState.type === 'groupvideo') {
-                window.open(`/dashboard/communication/groupmeet`, '_blank');
-            }
         } else {
             CallDispatch({ type: 'SET_DECLINE' });
         }
     };
-
     useEffect(() => {
-        localStorage.setItem('Socket-State', JSON.stringify(callState));
-        if (IoInstance) {
-            if (IoInstance.connected === false) {
-                IoInstance.on('connect', () => {
-                    console.log('connnect video');
-                });
-            }
-            IoInstance.on('newcalls', newCallListener);
-            IoInstance.on('accepincoming', acceptIncomingListener);
+        if (IoInstance.current) {
+            console.log("ico", IoInstance.current)
+            IoInstance.current.on('connect', () => {
+                console.log('connnect video');
+            });
+            IoInstance.current.on('newcalls', newCallListener);
+            IoInstance.current.on('accepincoming', acceptIncomingListener);
             return () => {
-                // Cleanup: Remove the old listeners when the component unmounts or when IoInstance changes.
-                IoInstance.off('newcalls', newCallListener);
-                IoInstance.off('accepincoming', acceptIncomingListener);
+                // Cleanup: Remove the old listeners when the component unmounts or when IoInstance.current changes.
+                IoInstance.current.off('newcalls', newCallListener);
+                IoInstance.current.off('accepincoming', acceptIncomingListener);
             };
         }
-    }, [IoInstance, callState]);
+    }, [callState.sessionState, user]);
 
     const memoizedValue = useMemo(
         () => ({
@@ -222,7 +206,7 @@ export function CallProvider({ children }) {
             CallDispatch,
             incomingCall: callState,
         }),
-        [IoInstance, callState.receiverId, callState.accept, callState.incoming, callState.type]
+        [IoInstance.current, callState.receiverId, callState.accept, callState.incoming, callState.type, user]
     );
     return (
         <CallContext.Provider value={memoizedValue}>
@@ -305,6 +289,11 @@ export function CallProvider({ children }) {
             {memoizedValue.incomingCall.accept && memoizedValue.incomingCall.type === 'phone' && (
                 <AudioCallView />
             )}
+            <RenderVideoCallComponent
+                isOpen={
+                    memoizedValue.incomingCall.accept && memoizedValue.incomingCall.type !== 'phone'
+                }
+            />
         </CallContext.Provider>
     );
 }

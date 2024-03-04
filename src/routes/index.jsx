@@ -15,7 +15,6 @@ import {
 
     // communication
     UserChatting,
-    SingleVideoCall,
 
     // users
     UsersCreate,
@@ -198,10 +197,6 @@ function Router() {
                         {
                             path: 'chat',
                             element: <UserChatting />,
-                        },
-                        {
-                            path: 'meet',
-                            element: <SingleVideoCall />,
                         },
                     ],
                 },

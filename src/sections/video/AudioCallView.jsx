@@ -34,7 +34,7 @@ function AudioCallView() {
             .createOffer()
             .then((offer) => {
                 peerConnection.setLocalDescription(offer);
-                IoInstance.emit('offer', {
+                IoInstance.current.emit('offer', {
                     payload: offer,
                     receiverId: incomingCall.receiverInfo.id,
                 });
@@ -53,7 +53,7 @@ function AudioCallView() {
     const leaveButton = () => {
         localStreamRef.current.getTracks().forEach((track) => track.stop());
         peerConnection.close();
-        IoInstance.emit('leave', {
+        IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
             payload: null,
         });
@@ -79,7 +79,7 @@ function AudioCallView() {
 
     peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
-            IoInstance.emit('candidate', {
+            IoInstance.current.emit('candidate', {
                 payload: event.candidate,
                 receiverId: incomingCall.receiverInfo.id,
             });
@@ -97,7 +97,7 @@ function AudioCallView() {
             .then(() => peerConnection.createAnswer())
             .then((answer) => {
                 peerConnection.setLocalDescription(answer);
-                IoInstance.emit('answer', {
+                IoInstance.current.emit('answer', {
                     payload: answer,
                     receiverId: incomingCall.receiverInfo.id,
                 });
@@ -134,23 +134,23 @@ function AudioCallView() {
     };
 
     useEffect(() => {
-        if (IoInstance) {
+        if (IoInstance.current) {
             if (incomingCall.accept) {
                 startCall();
             }
-            IoInstance.on('offer', offerListener);
-            IoInstance.on('answer', answerListener);
-            IoInstance.on('candidate', candidateListener);
-            IoInstance.on('leave', leaveListner);
+            IoInstance.current.on('offer', offerListener);
+            IoInstance.current.on('answer', answerListener);
+            IoInstance.current.on('candidate', candidateListener);
+            IoInstance.current.on('leave', leaveListner);
 
             return () => {
-                IoInstance.off('offer', offerListener);
-                IoInstance.off('answer', answerListener);
-                IoInstance.off('candidate', candidateListener);
-                IoInstance.off('leave', leaveListner);
+                IoInstance.current.off('offer', offerListener);
+                IoInstance.current.off('answer', answerListener);
+                IoInstance.current.off('candidate', candidateListener);
+                IoInstance.current.off('leave', leaveListner);
             };
         }
-    }, [IoInstance, incomingCall.accept]);
+    }, [incomingCall.accept]);
     return (
         <Box
             sx={{
