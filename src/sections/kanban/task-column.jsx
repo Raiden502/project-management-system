@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Stack, Typography, Button, Paper } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import { useSnackbar } from 'src/components/snackbar';
 import { useBoolean } from 'src/utils/use-boolean';
 import TaskItem from './task-items';
 import { useKanban } from './hooks';
@@ -10,7 +9,7 @@ import TaskAdd from './task-row-add';
 import TaskColumnToolBar from './task-column-toolbar';
 
 export default function TaskColumn({ column, index, tasks }) {
-    const { enqueueSnackbar } = useSnackbar();
+
     const { onUpdateColumn, onDeleteColumn, onAddTask, onDeleteTask } = useKanban();
 
     const addTask = useBoolean();
@@ -21,7 +20,6 @@ export default function TaskColumn({ column, index, tasks }) {
                 taskId,
                 columnId: column.id,
             });
-            enqueueSnackbar('Delete success!');
         },
 
         [column.id, onDeleteTask]
@@ -35,7 +33,6 @@ export default function TaskColumn({ column, index, tasks }) {
                         ...column,
                         name: newName,
                     });
-                    enqueueSnackbar('Update success!');
                 }
             } catch (error) {
                 console.error(error);
@@ -48,7 +45,6 @@ export default function TaskColumn({ column, index, tasks }) {
     const handleDeleteColumn = useCallback(async () => {
         try {
             onDeleteColumn(column.id);
-            enqueueSnackbar('Delete success!');
         } catch (error) {
             console.error(error);
         }
@@ -58,7 +54,7 @@ export default function TaskColumn({ column, index, tasks }) {
         addTask.onFalse();
         onAddTask({
             task,
-            columnId: column.id,
+            type_id: column.id,
         });
     }, []);
 
@@ -66,7 +62,6 @@ export default function TaskColumn({ column, index, tasks }) {
         <Stack spacing={2} sx={{ pb: 3 }}>
             {addTask.value && (
                 <TaskAdd
-                    status={column.name}
                     onAddTask={handleAddTask}
                     onCloseAddTask={addTask.onFalse}
                 />
@@ -111,7 +106,7 @@ export default function TaskColumn({ column, index, tasks }) {
                                     spacing={2}
                                     sx={{ width: 280, py: 3 }}
                                 >
-                                    {column.taskIds.map((taskId, taskIndex) => (
+                                    {column?.taskIds?.map((taskId, taskIndex) => (
                                         <TaskItem
                                             key={taskId}
                                             index={taskIndex}

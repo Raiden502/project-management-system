@@ -4,32 +4,18 @@ import { useState, useCallback, useMemo } from 'react';
 import Paper from '@mui/material/Paper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
-// utils
-import uuidv4 from 'src/utils/uuidv4';
 
 // ----------------------------------------------------------------------
 
-export default function TaskAdd({ status, onAddTask, onCloseAddTask }) {
+export default function TaskAdd({onAddTask, onCloseAddTask }) {
     const [name, setName] = useState('');
 
     const defaultTask = useMemo(
         () => ({
-            id: uuidv4(),
-            status,
             name: name.trim(),
-            priority: 'medium',
-            attachments: [],
-            labels: [],
-            comments: [],
-            assignee: [],
-            due: [null, null],
-            reporter: {
-                id: '',
-                name: '',
-                avatarUrl: '',
-            },
+            priority: 'low',
         }),
-        [name, status]
+        [name]
     );
 
     const handleKeyUpAddTask = useCallback(
@@ -87,5 +73,4 @@ export default function TaskAdd({ status, onAddTask, onCloseAddTask }) {
 TaskAdd.propTypes = {
     onAddTask: PropTypes.func,
     onCloseAddTask: PropTypes.func,
-    status: PropTypes.string,
 };

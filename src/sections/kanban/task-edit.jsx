@@ -52,7 +52,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
         setPriority(newValue);
     }, []);
 
-    
+
     return (
         <Drawer
             open={openDetails}
@@ -115,14 +115,14 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
 
                     <Stack direction="row" alignItems="center">
                         <StyledLabel>Reporter</StyledLabel>
-                        <Avatar alt={task.reporter.name} src={task.reporter.avatarUrl} />
+                        <Avatar alt={'DUMM'} src={task.reporter?.avatarUrl} />
                     </Stack>
 
                     <Stack direction="row">
                         <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Assignee</StyledLabel>
 
                         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                            {task.assignee.map((user) => (
+                            {task?.assignee &&  task.assignee.map((user) => (
                                 <Avatar key={user.userid} alt={user.name} src={user.avatar} />
                             ))}
 
@@ -139,7 +139,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             </Tooltip>
 
                             <TaskContactDetails
-                                assignee={task.assigne}
+                                assignee={task?.assignee}
                                 open={contacts.value}
                                 onClose={contacts.onFalse}
                             />
@@ -148,20 +148,17 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
 
                     <Stack direction="row">
                         <StyledLabel sx={{ height: 24, lineHeight: '24px' }}>Labels</StyledLabel>
-
-                        {!!task.labels.length && (
-                            <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                                {task.labels.map((label) => (
-                                    <Chip
-                                        key={label}
-                                        color="info"
-                                        label={<Typography variant="body2">{label}</Typography>}
-                                        size="small"
-                                        variant="soft"
-                                    />
-                                ))}
-                            </Stack>
-                        )}
+                        <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
+                            {task?.labels?.map((label) => (
+                                <Chip
+                                    key={label}
+                                    color="info"
+                                    label={<Typography variant="body2">{label}</Typography>}
+                                    size="small"
+                                    variant="soft"
+                                />
+                            ))}
+                        </Stack>
                     </Stack>
 
                     <Stack direction="row" alignItems="center">
@@ -209,7 +206,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                     </Stack>
                 </Stack>
 
-                {!!task.comments.length && <TaskDetailsCommentList comments={task.comments} />}
+                {task?.comments && <TaskDetailsCommentList comments={task.comments} />}
             </Box>
 
             <TaskDetailsCommentInput />

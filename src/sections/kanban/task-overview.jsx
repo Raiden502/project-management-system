@@ -1,31 +1,43 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Stack, Typography, Button, Paper } from '@mui/material';
+import { Stack, Typography, Button, Paper, TextField, MenuItem } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import { useDispatch } from 'src/redux/store';
-import { getBoard } from 'src/redux/slices/Kanban';
+import { useDispatch, useSelector } from 'src/redux/store';
 import { hideScroll } from 'src/theme/css';
 import { useKanban } from './hooks';
 import TaskColumn from './task-column';
 import TaskColumnAdd from './task-column-add';
-
-function useInitial() {
-    const dispatch = useDispatch();
-
-    const getBoardCallback = useCallback(() => {
-        dispatch(getBoard());
-    }, [dispatch]);
-
-    useEffect(() => {
-        getBoardCallback();
-    }, [getBoardCallback]);
-
-    return null;
-}
+import EmptyContent from 'src/components/empty-content/empty-content';
 
 export default function TaskKanbanView() {
-    useInitial();
-    const { tasks, columns, ordered, updateOrdered, updateColumns, boardStatus } = useKanban();
+    const dispatch = useDispatch();
+    const firstRender = useRef(true);
+    const department = useSelector((state) => state.department);
+    const {
+        tasks,
+        columns,
+        ordered,
+        updateOrdered,
+        updateColumns,
+        boardStatus,
+        currentProject,
+        projects,
+        onBoardChange,
+        onChangeProject,
+        fetchProjects,
+    } = useKanban();
+
+    const getProjectCallback = () => {
+        dispatch(fetchProjects());
+        onBoardChange();
+    };
+
+    useEffect(() => {
+        if (firstRender.current && department?.department_id) {
+            getProjectCallback();
+            firstRender.current = false;
+        }
+    }, [getProjectCallback, department.department_id]);
 
     const onDragEnd = useCallback(
         (result) => {
@@ -90,46 +102,67 @@ export default function TaskKanbanView() {
         },
         [columns, ordered, updateColumns, updateOrdered]
     );
-
+    
+    console.log(currentProject)
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="board" type="COLUMN" direction="horizontal">
-                {(provided) => (
-                    <Stack
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        sx={{
-                            width: 1150,
-                            py: 3,
-                            overflowY: 'hidden', // Initially hide the scrollbar
-                            '&:hover': {
-                                overflowY: 'auto', // Show the scrollbar on hover
-                            },
-                            '&::-webkit-scrollbar': {
-                                width: '8px',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                backgroundColor: '#D5CECC',
-                                borderRadius: '4px',
-                                height: '10px',
-                            },
-                        }}
-                        direction="row"
-                        spacing={3}
-                    >
-                        {ordered.map((columnId, index) => (
-                            <TaskColumn
-                                index={index}
-                                key={columnId}
-                                column={columns[columnId]}
-                                tasks={tasks}
-                            />
-                        ))}
-                        {provided.placeholder}
-                        <TaskColumnAdd />
-                    </Stack>
-                )}
-            </Droppable>
-        </DragDropContext>
+        <>
+            <TextField
+                fullWidth
+                select
+                label="Projects"
+                name="Projects"
+                value={currentProject}
+                onChange={onChangeProject}
+                sx={{ maxWidth: '300px' }}
+            >
+                {projects.map((item) => (
+                    <MenuItem key={item.project_idem} value={item.project_id}>
+                        {item.name}
+                    </MenuItem>
+                ))}
+            </TextField>
+            {currentProject===null && <EmptyContent title="No Data" />}
+            {currentProject && (
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="board" type="COLUMN" direction="horizontal">
+                        {(provided) => (
+                            <Stack
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                sx={{
+                                    width: 1150,
+                                    py: 3,
+                                    overflowY: 'hidden', // Initially hide the scrollbar
+                                    '&:hover': {
+                                        overflowY: 'auto', // Show the scrollbar on hover
+                                    },
+                                    '&::-webkit-scrollbar': {
+                                        width: '8px',
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        backgroundColor: '#D5CECC',
+                                        borderRadius: '4px',
+                                        height: '10px',
+                                    },
+                                }}
+                                direction="row"
+                                spacing={3}
+                            >
+                                {ordered.map((columnId, index) => (
+                                    <TaskColumn
+                                        index={index}
+                                        key={columnId}
+                                        column={columns[columnId]}
+                                        tasks={tasks}
+                                    />
+                                ))}
+                                {provided.placeholder}
+                                <TaskColumnAdd />
+                            </Stack>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            )}
+        </>
     );
 }

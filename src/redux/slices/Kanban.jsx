@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import omit from 'lodash/omit';
 import keyBy from 'lodash/keyBy';
-import axiosInstance from 'src/utils/axios';
-import uuidv4 from 'src/utils/uuidv4';
 
 const initialState = {
+    projects: [],
+    currentProject: null,
     board: {
         tasks: {},
         columns: {},
@@ -45,10 +45,16 @@ const slice = createSlice({
             };
         },
 
+        setProjects(state, action) {
+            state.projects = action.payload;
+        },
+
+        changeProject(state, action) {
+            state.currentProject = action.payload;
+        },
+
         createColumnSuccess(state, action) {
             const column = action.payload;
-            console.log("column",column )
-
             state.board.columns = {
                 ...state.board.columns,
                 [column.id]: column,
@@ -66,14 +72,16 @@ const slice = createSlice({
         },
 
         addTask(state, action) {
-            const { task, columnId } = action.payload;
+            const task = action.payload;
             state.board.tasks[task.id] = task;
-            state.board.columns[columnId].taskIds.push(task.id);
+            if (state.board.columns[task.type_id].taskIds === null) {
+                state.board.columns[task.type_id].taskIds = [task.id];
+            } else {
+                state.board.columns[task.type_id].taskIds.push(task.id);
+            }
         },
 
-        updateTasks(state, action){
-
-        },
+        updateTasks(state, action) {},
 
         deleteTask(state, action) {
             const { taskId, columnId } = action.payload;
@@ -99,133 +107,18 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
-export const { setOrdered, setColumns} = slice.actions;
-
-export function getBoard() {
-    return async (dispatch) => {
-        dispatch(slice.actions.getBoardStart());
-        try {
-            const response = await axiosInstance.get(API_ENDPOINTS.kanban);
-            dispatch(slice.actions.getBoardSuccess(response.data.board));
-        } catch (error) {
-            dispatch(slice.actions.getBoardFailure(error));
-        }
-    };
-}
-
-export function createColumn(newData) {
-    return async (dispatch) => {
-        try {
-            const data = newData;
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'create',
-            //     },
-            // });
-            dispatch(
-                slice.actions.createColumnSuccess({
-                    id: `${uuidv4()}`,
-                    name: newData.name,
-                    taskIds: [],
-                })
-            );
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-export function updateColumn(columnId, newData) {
-    return async (dispatch) => {
-        try {
-            const data = {
-                columnId,
-                newData,
-            };
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'update',
-            //     },
-            // });
-            dispatch(slice.actions.updateColumnSuccess(newData));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-export function deleteColumn(columnId) {
-    return async (dispatch) => {
-        try {
-            const data = {
-                columnId,
-            };
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'delete',
-            //     },
-            // });
-            dispatch(slice.actions.deleteColumnSuccess(columnId));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-
-export function createTaskApi(newData) {
-    return async (dispatch) => {
-        try {
-            const data = newData;
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'create',
-            //     },
-            // });
-            dispatch(
-                slice.actions.addTask(newData)
-            );
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-export function updateTaskApi(columnId, newData) {
-    return async (dispatch) => {
-        try {
-            const data = {
-                columnId,
-                newData,
-            };
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'update',
-            //     },
-            // });
-            dispatch(slice.actions.updateTasks(newData));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-export function deleteTaskApi(columnId) {
-    return async (dispatch) => {
-        try {
-            const data = {
-                columnId,
-            };
-            // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-            //     params: {
-            //         endpoint: 'delete',
-            //     },
-            // });
-            dispatch(slice.actions.deleteTask(columnId));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-
+export const {
+    setOrdered,
+    setColumns,
+    changeProject,
+    deleteTask,
+    updateTasks,
+    addTask,
+    createColumnSuccess,
+    updateColumnSuccess,
+    deleteColumnSuccess,
+    setProjects,
+    getBoardStart,
+    getBoardFailure,
+    getBoardSuccess,
+} = slice.actions;

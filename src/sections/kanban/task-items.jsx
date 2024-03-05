@@ -31,26 +31,26 @@ export default function TaskItem({ task, onDeleteTask, index }) {
             }}
         />
     );
-    const renderImg = (
-        <Box
-            sx={{
-                p: (theme) => theme.spacing(1, 1, 0, 1),
-            }}
-        >
-            <Image
-                disabledEffect
-                alt={task.attachments[0]}
-                src={task.attachments[0]}
-                ratio="4/3"
-                sx={{
-                    borderRadius: 1.5,
-                    ...(details.value && {
-                        opacity: 0.8,
-                    }),
-                }}
-            />
-        </Box>
-    );
+    // const renderImg = (
+    //     <Box
+    //         sx={{
+    //             p: (theme) => theme.spacing(1, 1, 0, 1),
+    //         }}
+    //     >
+    //         <Image
+    //             disabledEffect
+    //             alt={task?.attachments[0]}
+    //             src={task?.attachments[0]}
+    //             ratio="4/3"
+    //             sx={{
+    //                 borderRadius: 1.5,
+    //                 ...(details.value && {
+    //                     opacity: 0.8,
+    //                 }),
+    //             }}
+    //         />
+    //     </Box>
+    // );
 
     const renderInfo = (
         <Stack direction="row" alignItems="center">
@@ -65,11 +65,11 @@ export default function TaskItem({ task, onDeleteTask, index }) {
             >
                 <Iconify width={16} icon="solar:chat-round-dots-bold" sx={{ mr: 0.25 }} />
                 <Box component="span" sx={{ mr: 1 }}>
-                    {task.comments.length}
+                    {(task?.comments) ? task.comments.length: 0}
                 </Box>
 
                 <Iconify width={16} icon="eva:attach-2-fill" sx={{ mr: 0.25 }} />
-                <Box component="span">{task.attachments.length}</Box>
+                <Box component="span">{task?.attachments?task.attachments.length:0}</Box>
             </Stack>
 
             <AvatarGroup
@@ -80,7 +80,7 @@ export default function TaskItem({ task, onDeleteTask, index }) {
                     },
                 }}
             >
-                {task.assignee.map((user) => (
+                {task?.assignee && task.assignee.map((user) => (
                     <Avatar key={user.id} alt={user.name} src={user.avatarUrl} />
                 ))}
             </AvatarGroup>
@@ -109,7 +109,7 @@ export default function TaskItem({ task, onDeleteTask, index }) {
                             }),
                         }}
                     >
-                        {!!task.attachments.length && renderImg}
+                        {/* {!!task?.attachments?.length && renderImg} */}
 
                         <Stack spacing={2} sx={{ px: 2, py: 2.5, position: 'relative' }}>
                             {renderPriority}

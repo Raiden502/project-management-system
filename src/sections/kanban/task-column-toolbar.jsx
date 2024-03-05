@@ -59,6 +59,7 @@ export default function TaskColumnToolBar({ columnName, onDelete, onUpdate }) {
                     inputRef={renameRef}
                     placeholder="Section name"
                     value={value}
+                    disabled={value==="Done"}
                     onChange={handleChangeColumnName}
                     onKeyUp={handleUpdateColumn}
                 />

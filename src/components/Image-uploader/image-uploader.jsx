@@ -49,7 +49,6 @@ const ImageUploader = ({
 
     const handleImageChange = (event) => {
         const files = Array.from(event.target.files);
-        console.log(files);
         files.forEach((file) => {
             if (file.size > maxImageSize || !allowedTypes.includes(file.type) || totalImage == 0) {
                 return;
