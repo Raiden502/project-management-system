@@ -72,7 +72,7 @@ export default function TaskColumnAdd() {
                     startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
                     onClick={addSection.onTrue}
                 >
-                    Add Section
+                    Add Stages
                 </Button>
             )}
         </Paper>

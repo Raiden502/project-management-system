@@ -133,18 +133,20 @@ export default function useKanban() {
         };
     };
 
-    const deleteColumn = (columnId) => {
+    const deleteColumn = (columnId, currentProject) => {
         return async (dispatch) => {
             try {
-                const data = {
-                    columnId,
-                };
-                // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-                //     params: {
-                //         endpoint: 'delete',
-                //     },
-                // });
-                dispatch(deleteColumnSuccess(columnId));
+                const response = await axiosInstance.post('/tasks/delete_column', {
+                    type_id: columnId,
+                    proj_id: currentProject,
+                });
+                const { errorcode, data, message } = response.data;
+                if (errorcode === 0) {
+                    dispatch(deleteColumnSuccess(columnId));
+                    enqueueSnackbar('column deleted successful', { variant: 'success' });
+                } else {
+                    enqueueSnackbar('Unable to delete', { variant: 'warning' });
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -188,20 +190,20 @@ export default function useKanban() {
         };
     };
 
-    const deleteTaskApi = (columnId) => {
+    const deleteTaskApi = (data) => {
         return async (dispatch) => {
             try {
-                const data = {
-                    columnId,
-                };
-                // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-                //     params: {
-                //         endpoint: 'delete',
-                //     },
-                // });
-                dispatch(deleteTask(columnId));
+                const response = await axiosInstance.post('/tasks/delete_task', data);
+                const { errorcode, message } = response.data;
+                if (errorcode === 0) {
+                    dispatch(deleteTask(data));
+                    enqueueSnackbar('task deleted successful', { variant: 'success' });
+                } else {
+                    enqueueSnackbar('Unable to delete', { variant: 'warning' });
+                }
             } catch (error) {
                 console.error(error);
+                enqueueSnackbar('failed to delete', { variant: 'error' });
             }
         };
     };
@@ -243,9 +245,16 @@ export default function useKanban() {
 
     const onDeleteTask = useCallback(
         ({ taskId, columnId }) => {
-            dispatch(deleteTaskApi({ taskId, columnId }));
+            dispatch(
+                deleteTaskApi({
+                    taskId,
+                    columnId,
+                    proj_id: currentProject,
+                    dept_id: department.department_id,
+                })
+            );
         },
-        [dispatch]
+        [dispatch, currentProject, department.department_id]
     );
 
     const onUpdateTask = useCallback(
@@ -285,9 +294,9 @@ export default function useKanban() {
 
     const onDeleteColumn = useCallback(
         (columnId) => {
-            dispatch(deleteColumn(columnId));
+            dispatch(deleteColumn(columnId, currentProject));
         },
-        [dispatch]
+        [dispatch, currentProject]
     );
 
     const onChangeProject = useCallback(

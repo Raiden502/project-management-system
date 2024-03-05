@@ -100,7 +100,7 @@ const slice = createSlice({
             const columnId = action.payload;
             const deletedColumn = state.board.columns[columnId];
             state.board.columns = omit(state.board.columns, [columnId]);
-            state.board.tasks = omit(state.board.tasks, [...deletedColumn.taskIds]);
+            state.board.tasks = omit(state.board.tasks, deletedColumn.taskIds && [ ...deletedColumn.taskIds]);
             state.board.ordered = state.board.ordered.filter((id) => id !== columnId);
         },
     },
