@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import dayjs from 'dayjs';
+import { format, parse } from 'date-fns';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
@@ -11,7 +13,7 @@ import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-import { Box, Typography } from '@mui/material';
+import { Autocomplete, Box, Typography } from '@mui/material';
 
 import Iconify from 'src/components/iconify/Iconify';
 import { useBoolean } from 'src/utils/use-boolean';
@@ -21,6 +23,10 @@ import TaskDetailsCommentList from './task-details-comments';
 import TaskDetailsCommentInput from './task-comment-input';
 import TaskInputName from './task-input-name';
 import TaskDetailsToolbar from './task-item-toolbar';
+import { DatePicker } from '@mui/x-date-pickers';
+import Label from 'src/components/label/label';
+import { useKanban } from './hooks';
+import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -34,11 +40,21 @@ const StyledLabel = styled('span')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function TaskDetails({ task, openDetails, onCloseDetails, onDeleteTask }) {
-    const [priority, setPriority] = useState(task.priority);
-    const [taskName, setTaskName] = useState(task.name);
-    const contacts = useBoolean();
-    const [taskDescription, setTaskDescription] = useState(task.description);
+export default function TaskDetails({ task, openDetails, onCloseDetails, onDeleteTask, column }) {
+    const { onUpdateTask, users_list, team_list } = useKanban();
+    const contactsUser = useBoolean();
+    const contactsTeams = useBoolean();
+    const contactsReporter = useBoolean();
+    const [priority, setPriority] = useState(task?.priority);
+    const [taskName, setTaskName] = useState(task?.name || '');
+    const [taskDescription, setTaskDescription] = useState(task?.description || '');
+    const [dueDate, setDueDate] = useState(task.due_date && new Date(task.due_date));
+    const [startDate, setStartDate] = useState(task.start_date && new Date(task.start_date));
+    const [reporter, setReporter] = useState(task?.reporter ? [task.reporter] : []);
+    const [labels, setLabels] = useState(task?.labels ? task.labels : []);
+    const [teams, setTeams] = useState(task?.teams ? task.teams : []);
+    const [users, setUsers] = useState(task?.users ? task.users : []);
+    const [comments, setNewComments] = useState(task?.comments ? task.comments : []);
 
     const handleChangeTaskName = useCallback((event) => {
         setTaskName(event.target.value);
@@ -52,6 +68,21 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
         setPriority(newValue);
     }, []);
 
+    const save_details = () => {
+        onUpdateTask({
+            priority,
+            name: taskName,
+            description: taskDescription,
+            due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
+            start_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
+            reporter: reporter[0],
+            labels,
+            teams,
+            users,
+            id: task.id,
+            column,
+        });
+    };
 
     return (
         <Drawer
@@ -73,6 +104,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
             <TaskDetailsToolbar
                 taskName={task.name}
                 onDelete={onDeleteTask}
+                onSave={save_details}
                 taskStatus={task.status}
                 onCloseDetails={onCloseDetails}
             />
@@ -115,20 +147,71 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
 
                     <Stack direction="row" alignItems="center">
                         <StyledLabel>Reporter</StyledLabel>
-                        <Avatar alt={'DUMM'} src={task.reporter?.avatarUrl} />
+                        {reporter.length === 0 ? (
+                            <Tooltip title="Add Reporter">
+                                <IconButton
+                                    onClick={contactsReporter.onTrue}
+                                    sx={{
+                                        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+                                        border: (theme) => `dashed 1px ${theme.palette.divider}`,
+                                    }}
+                                >
+                                    <Iconify icon="mingcute:add-line" />
+                                </IconButton>
+                            </Tooltip>
+                        ) : (
+                            <>
+                                {users_list
+                                    .filter((item) => item.id === reporter[0])
+                                    .map((item) => (
+                                        <Box sx={{ m: 1, position: 'relative', p: 1 }}>
+                                            <Avatar alt={item.name} src={item.avatar} />
+                                            <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
+                                                {item.name}
+                                            </StyledLabel>
+                                            <IconButton
+                                                // onClick={() => {
+                                                //     HanleOnClear(user.id, 'users');
+                                                // }}
+                                                sx={{
+                                                    top: 2,
+                                                    right: 2,
+                                                    position: 'absolute',
+                                                    backgroundColor: '#212B36',
+                                                    color: 'white',
+                                                    p: 0.5,
+                                                }}
+                                            >
+                                                <Iconify icon="ic:round-close" width={8} />
+                                            </IconButton>
+                                        </Box>
+                                    ))}
+                            </>
+                        )}
+                        <TaskContactDetails
+                            assignee={reporter}
+                            contact={users_list.filter((item) => item.role !== 'user')}
+                            handleChange={(id) => {
+                                setReporter([id]);
+                            }}
+                            open={contactsReporter.value}
+                            onClose={contactsReporter.onFalse}
+                        />
                     </Stack>
 
                     <Stack direction="row">
-                        <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Assignee</StyledLabel>
+                        <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Users</StyledLabel>
 
                         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                            {task?.assignee &&  task.assignee.map((user) => (
-                                <Avatar key={user.userid} alt={user.name} src={user.avatar} />
-                            ))}
+                            {users_list
+                                .filter((item) => users.includes(item.id))
+                                .map((user) => (
+                                    <Avatar key={user.userid} alt={user.name} src={user.avatar} />
+                                ))}
 
                             <Tooltip title="Add assignee">
                                 <IconButton
-                                    onClick={contacts.onTrue}
+                                    onClick={contactsUser.onTrue}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,
@@ -139,41 +222,98 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             </Tooltip>
 
                             <TaskContactDetails
-                                assignee={task?.assignee}
-                                open={contacts.value}
-                                onClose={contacts.onFalse}
+                                assignee={users}
+                                contact={users_list}
+                                handleChange={(id) => {
+                                    let temp = [...users];
+                                    temp.includes(id)
+                                        ? (temp = temp.filter((item) => item !== id))
+                                        : temp.push(id);
+                                    setUsers(temp);
+                                }}
+                                open={contactsUser.value}
+                                onClose={contactsUser.onFalse}
+                            />
+                        </Stack>
+                    </Stack>
+
+                    <Stack direction="row">
+                        <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Teams</StyledLabel>
+
+                        <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
+                            {team_list
+                                .filter((item) => teams.includes(item.id))
+                                .map((user) => (
+                                    <Avatar key={user.userid} alt={user.name} src={user.avatar} />
+                                ))}
+
+                            <Tooltip title="Add assignee">
+                                <IconButton
+                                    onClick={contactsTeams.onTrue}
+                                    sx={{
+                                        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+                                        border: (theme) => `dashed 1px ${theme.palette.divider}`,
+                                    }}
+                                >
+                                    <Iconify icon="mingcute:add-line" />
+                                </IconButton>
+                            </Tooltip>
+
+                            <TaskContactDetails
+                                assignee={teams}
+                                contact={team_list}
+                                handleChange={(id) => {
+                                    let temp = [...teams];
+                                    temp.includes(id)
+                                        ? (temp = temp.filter((item) => item !== id))
+                                        : temp.push(id);
+                                    setTeams(temp);
+                                }}
+                                open={contactsTeams.value}
+                                onClose={contactsTeams.onFalse}
                             />
                         </Stack>
                     </Stack>
 
                     <Stack direction="row">
                         <StyledLabel sx={{ height: 24, lineHeight: '24px' }}>Labels</StyledLabel>
-                        <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                            {task?.labels?.map((label) => (
-                                <Chip
-                                    key={label}
-                                    color="info"
-                                    label={<Typography variant="body2">{label}</Typography>}
-                                    size="small"
-                                    variant="soft"
-                                />
-                            ))}
-                        </Stack>
+                        <Autocomplete
+                            multiple
+                            options={[]}
+                            freeSolo
+                            onChange={(e, newValue) => setLabels(newValue)}
+                            value={labels}
+                            renderInput={(params) => <TextField {...params} />}
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => (
+                                    <Label color="info" mr={1}>
+                                        <Typography variant="body2" fontSize={12} fontWeight="bold">
+                                            {option}
+                                        </Typography>
+                                    </Label>
+                                ))
+                            }
+                        />
+                    </Stack>
+
+                    <Stack direction="row" alignItems="center">
+                        <StyledLabel> Start date </StyledLabel>
+                        <DatePicker
+                            value={startDate}
+                            views={['year', 'month', 'day']}
+                            onChange={(newValue) => setStartDate(newValue)}
+                            dateFormat="MM/dd/yyyy"
+                        />
                     </Stack>
 
                     <Stack direction="row" alignItems="center">
                         <StyledLabel> Due date </StyledLabel>
-                        <Tooltip title="Add due date">
-                            <IconButton
-                                // onClick={}
-                                sx={{
-                                    bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-                                    border: (theme) => `dashed 1px ${theme.palette.divider}`,
-                                }}
-                            >
-                                <Iconify icon="mingcute:add-line" />
-                            </IconButton>
-                        </Tooltip>
+                        <DatePicker
+                            value={dueDate}
+                            views={['year', 'month', 'day']}
+                            onChange={(newValue) => setDueDate(newValue)}
+                            dateFormat="MM/dd/yyyy"
+                        />
                     </Stack>
 
                     <Stack direction="row" alignItems="center">

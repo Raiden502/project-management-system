@@ -12,6 +12,7 @@ import EmptyContent from 'src/components/empty-content/empty-content';
 export default function TaskKanbanView() {
     const dispatch = useDispatch();
     const firstRender = useRef(true);
+    const secondRender = useRef(true);
     const department = useSelector((state) => state.department);
     const {
         tasks,
@@ -29,7 +30,6 @@ export default function TaskKanbanView() {
 
     const getProjectCallback = () => {
         dispatch(fetchProjects());
-        onBoardChange();
     };
 
     useEffect(() => {
@@ -38,6 +38,13 @@ export default function TaskKanbanView() {
             firstRender.current = false;
         }
     }, [getProjectCallback, department.department_id]);
+
+    useEffect(() => {
+        if (secondRender.current && currentProject) {
+            onBoardChange();
+            secondRender.current = false;
+        }
+    }, [getProjectCallback, currentProject]);
 
     const onDragEnd = useCallback(
         (result) => {
@@ -102,8 +109,6 @@ export default function TaskKanbanView() {
         },
         [columns, ordered, updateColumns, updateOrdered]
     );
-    
-    console.log(currentProject)
     return (
         <>
             <TextField
@@ -116,13 +121,13 @@ export default function TaskKanbanView() {
                 sx={{ maxWidth: '300px' }}
             >
                 {projects.map((item) => (
-                    <MenuItem key={item.project_idem} value={item.project_id}>
+                    <MenuItem key={item.project_id} value={item.project_id}>
                         {item.name}
                     </MenuItem>
                 ))}
             </TextField>
-            {currentProject===null && <EmptyContent title="No Data" />}
-            {currentProject && (
+            {(currentProject === null || ordered.length === 0) && <EmptyContent title="No Data" />}
+            {currentProject && ordered.length !== 0 && (
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="board" type="COLUMN" direction="horizontal">
                         {(provided) => (

@@ -14,12 +14,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Iconify from 'src/components/iconify/Iconify';
 import { RouterLink } from 'src/routes/components';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useSnackbar } from 'src/components/snackbar';
 import { useBoolean } from 'src/utils/use-boolean';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
@@ -27,6 +29,7 @@ import { AuthContext } from 'src/auth/JwtContext';
 export default function DepartmentItem({ department }) {
     const popover = usePopover();
     const confirm = useBoolean();
+    const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const {
@@ -54,6 +57,24 @@ export default function DepartmentItem({ department }) {
         navigate('/dashboard/departments/details', {
             state: { departmentId },
         });
+    };
+
+    const delete_dept = async () => {
+        try {
+            const response = await axiosInstance.post('/dept/dept_delete', {
+                dept_id: department_id,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('delete successful', { variant: 'success' });
+            } else {
+                enqueueSnackbar('delete unsuccesful', { variant: 'warning' });
+            }
+        } catch (err) {
+            enqueueSnackbar('Failed to delete', { variant: 'error' });
+        } finally {
+            confirm.onFalse();
+        }
     };
 
     return (
@@ -219,7 +240,7 @@ export default function DepartmentItem({ department }) {
                 title="Delete"
                 content="Are you sure want to delete?"
                 action={
-                    <Button variant="contained" color="error" onClick={() => {}}>
+                    <Button variant="contained" color="error" onClick={delete_dept}>
                         Delete
                     </Button>
                 }

@@ -20,8 +20,8 @@ export default function TaskDetailsToolbar({
     onDelete,
     taskStatus,
     onCloseDetails,
+    onSave,
 }) {
-
     const confirm = useBoolean();
     const popover = usePopover();
     const [status, setStatus] = useState([taskStatus]);
@@ -43,15 +43,7 @@ export default function TaskDetailsToolbar({
                     p: (theme) => theme.spacing(2.5, 1, 2.5, 2.5),
                 }}
             >
-                {/* {!smUp && (
-                    <Tooltip title="Back">
-                        <IconButton onClick={onCloseDetails} sx={{ mr: 1 }}>
-                            <Iconify icon="eva:arrow-ios-back-fill" />
-                        </IconButton>
-                    </Tooltip>
-                )} */}
-
-                <Button
+                {/* <Button
                     size="small"
                     variant="soft"
                     endIcon={
@@ -60,7 +52,7 @@ export default function TaskDetailsToolbar({
                     onClick={popover.onOpen}
                 >
                     {status}
-                </Button>
+                </Button> */}
 
                 <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
                     <Tooltip title="Delete task">
@@ -69,8 +61,8 @@ export default function TaskDetailsToolbar({
                         </IconButton>
                     </Tooltip>
 
-                    <IconButton>
-                        <Iconify icon="eva:more-vertical-fill" />
+                    <IconButton onClick={onSave}>
+                        <Iconify icon="fluent:save-24-filled" />
                     </IconButton>
                 </Stack>
             </Stack>
@@ -112,10 +104,3 @@ export default function TaskDetailsToolbar({
         </>
     );
 }
-
-TaskDetailsToolbar.propTypes = {
-    onCloseDetails: PropTypes.func,
-    onDelete: PropTypes.func,
-    taskName: PropTypes.string,
-    taskStatus: PropTypes.string,
-};

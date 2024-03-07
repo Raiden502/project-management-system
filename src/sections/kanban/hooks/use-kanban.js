@@ -11,6 +11,7 @@ import {
     updateColumnSuccess,
     deleteColumnSuccess,
     setProjects,
+    setProjectMembers,
     getBoardStart,
     getBoardFailure,
     getBoardSuccess,
@@ -27,7 +28,9 @@ export default function useKanban() {
     const { enqueueSnackbar } = useSnackbar();
     const { user } = useContext(AuthContext);
     const department = useSelector((state) => state.department);
-    const { board, boardStatus, currentProject, projects } = useSelector((state) => state.kanban);
+    const { board, boardStatus, currentProject, projects, users_list, team_list } = useSelector(
+        (state) => state.kanban
+    );
 
     const { tasks, columns, ordered } = board;
 
@@ -55,16 +58,20 @@ export default function useKanban() {
                     project_id,
                     department_id,
                 });
-                const { errorcode, data, message } = response.data;
-                if (errorcode === 0) {
-                    dispatch(getBoardSuccess(data));
+                const response2 = await axiosInstance.post('/tasks/task_contacts', {
+                    project_id,
+                });
+
+                if ((response.data.errorcode === 0) & (response2.data.errorcode === 0)) {
+                    dispatch(setProjectMembers(response2.data.data));
+                    dispatch(getBoardSuccess(response.data.data));
                     enqueueSnackbar('fetched successful', { variant: 'success' });
                 } else {
                     enqueueSnackbar('Unable to fetch', { variant: 'warning' });
                 }
             } catch (error) {
                 dispatch(getBoardFailure(error));
-                enqueueSnackbar('Unable to fetch', { variant: 'error' });
+                enqueueSnackbar('Failed to fetch', { variant: 'error' });
             }
         };
     };
@@ -105,7 +112,7 @@ export default function useKanban() {
         };
     };
 
-    const updateColumn = (columnData) => {
+    const updateColumnDetails = (columnData) => {
         return async (dispatch) => {
             try {
                 const response = await axiosInstance.post('/tasks/update_col_name', {
@@ -133,6 +140,24 @@ export default function useKanban() {
         };
     };
 
+    const updateColumnTasks = (newColumns) => {
+        return async (dispatch) => {
+            try {
+                const response = await axiosInstance.post('/tasks/update_col_tasks', newColumns);
+                const { errorcode, status, message } = response.data;
+                if (errorcode === 0) {
+                    dispatch(setColumns(newColumns));
+                    enqueueSnackbar('column updated successful', { variant: 'success' });
+                } else {
+                    enqueueSnackbar('Unable to update', { variant: 'warning' });
+                }
+            } catch {
+                console.error(error);
+                enqueueSnackbar('Failed to update', { variant: 'error' });
+            }
+        };
+    };
+
     const deleteColumn = (columnId, currentProject) => {
         return async (dispatch) => {
             try {
@@ -149,6 +174,7 @@ export default function useKanban() {
                 }
             } catch (error) {
                 console.error(error);
+                enqueueSnackbar('Failed to delete', { variant: 'error' });
             }
         };
     };
@@ -171,21 +197,23 @@ export default function useKanban() {
         };
     };
 
-    const updateTaskApi = async (columnId, newData) => {
+    const updateTaskApi = (newData, currentProject) => {
         return async (dispatch) => {
             try {
-                const data = {
-                    columnId,
-                    newData,
-                };
-                // const response = await axiosInstance.post(API_ENDPOINTS.kanban, data, {
-                //     params: {
-                //         endpoint: 'update',
-                //     },
-                // });
-                dispatch(updateTasks(newData));
+                const response = await axiosInstance.post('/tasks/update_task', {
+                    ...newData,
+                    project_id: currentProject,
+                });
+                const { errorcode, data, message } = response.data;
+                if (errorcode === 0) {
+                    dispatch(updateTasks(newData));
+                    enqueueSnackbar('task updated successful', { variant: 'success' });
+                } else {
+                    enqueueSnackbar('Unable to update', { variant: 'warning' });
+                }
             } catch (error) {
                 console.error(error);
+                enqueueSnackbar('Failed to update', { variant: 'error' });
             }
         };
     };
@@ -223,7 +251,7 @@ export default function useKanban() {
 
     const updateColumns = useCallback(
         (newColumns) => {
-            dispatch(setColumns(newColumns));
+            dispatch(updateColumnTasks(newColumns));
         },
         [dispatch]
     );
@@ -258,10 +286,10 @@ export default function useKanban() {
     );
 
     const onUpdateTask = useCallback(
-        ({ task, columnId }) => {
-            dispatch(updateTaskApi({ task, columnId }));
+        (task) => {
+            dispatch(updateTaskApi(task, currentProject));
         },
-        [dispatch]
+        [dispatch, currentProject]
     );
 
     const onCreateColumn = useCallback(
@@ -281,7 +309,7 @@ export default function useKanban() {
     const onUpdateColumn = useCallback(
         (columnId, newData) => {
             dispatch(
-                updateColumn({
+                updateColumnDetails({
                     columnId,
                     newData,
                     proj_id: currentProject,
@@ -308,8 +336,8 @@ export default function useKanban() {
     );
 
     const onBoardChange = useCallback(
-        (project_id) => {
-            if (project_id) dispatch(getBoard(currentProject, department.department_id));
+        () => {
+            dispatch(getBoard(currentProject, department.department_id));
         },
         [dispatch, currentProject, department.department_id]
     );
@@ -318,6 +346,7 @@ export default function useKanban() {
         tasks,
         columns,
         ordered,
+        onUpdateTask,
         updateColumns,
         updateOrdered,
         onAddTask,
@@ -331,5 +360,7 @@ export default function useKanban() {
         projects,
         currentProject,
         boardStatus,
+        users_list,
+        team_list,
     };
 }

@@ -5,6 +5,8 @@ import keyBy from 'lodash/keyBy';
 const initialState = {
     projects: [],
     currentProject: null,
+    users_list:[],
+    team_list:[],
     board: {
         tasks: {},
         columns: {},
@@ -49,6 +51,11 @@ const slice = createSlice({
             state.projects = action.payload;
         },
 
+        setProjectMembers(state, action) {
+            state.users_list = action.payload.users;
+            state.team_list = action.payload.teams
+        },
+
         changeProject(state, action) {
             state.currentProject = action.payload;
         },
@@ -81,7 +88,12 @@ const slice = createSlice({
             }
         },
 
-        updateTasks(state, action) {},
+        updateTasks(state, action) {
+            const task = action.payload
+            const columnId = task.column
+            delete task.column
+            state.board.tasks[task.id] = task;
+        },
 
         deleteTask(state, action) {
             const { taskId, columnId } = action.payload;
@@ -113,6 +125,7 @@ export const {
     changeProject,
     deleteTask,
     updateTasks,
+    setProjectMembers,
     addTask,
     createColumnSuccess,
     updateColumnSuccess,

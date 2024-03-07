@@ -15,12 +15,15 @@ import Iconify from 'src/components/iconify/Iconify';
 import { RouterLink } from 'src/routes/components';
 import { usePopover } from 'src/components/custom-popover';
 import { useBoolean } from 'src/utils/use-boolean';
+import { useSnackbar } from 'src/components/snackbar';
 import { useNavigate } from 'react-router-dom';
 import CustomPopover from 'src/components/custom-popover/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Button } from '@mui/material';
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'src/redux/store';
 // import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
@@ -28,6 +31,8 @@ import { AuthContext } from 'src/auth/JwtContext';
 export default function ProjItem({ job }) {
     const popover = usePopover();
     const confirm = useBoolean();
+    const { enqueueSnackbar } = useSnackbar();
+    const department = useSelector((state) => state.department);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -54,6 +59,25 @@ export default function ProjItem({ job }) {
         navigate('/dashboard/projects/details', {
             state: { projectId: project_id , department_id: department_id},
         });
+    };
+
+    const delete_proj = async () => {
+        try {
+            const response = await axiosInstance.post('/proj/proj_delete', {
+                proj_id: project_id,
+                dept_id: department.department_id,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('delete successful', { variant: 'success' });
+            } else {
+                enqueueSnackbar('delete unsuccesful', { variant: 'warning' });
+            }
+        } catch (err) {
+            enqueueSnackbar('Failed to delete', { variant: 'error' });
+        } finally {
+            confirm.onFalse();
+        }
     };
 
     return (
@@ -218,7 +242,7 @@ export default function ProjItem({ job }) {
                 title="Delete"
                 content="Are you sure want to delete?"
                 action={
-                    <Button variant="contained" color="error" onClick={() => {}}>
+                    <Button variant="contained" color="error" onClick={delete_proj}>
                         Delete
                     </Button>
                 }

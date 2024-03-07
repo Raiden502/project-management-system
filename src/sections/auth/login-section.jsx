@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import Iconify from 'src/components/iconify/Iconify';
 
 function LoginSection() {
-    const { login } = useContext(AuthContext);
+    const { login, IsAuthenticated, IsInitialized } = useContext(AuthContext);
     const [passwordToogle, setPasswordToogle] = useState(false);
 
     const [loginDetails, setLoginDetails] = useState({ username: '', password: '' });
@@ -26,7 +26,7 @@ function LoginSection() {
 
     const SubmitDetails = async () => {
         try {
-            await login({email:loginDetails.username, password:loginDetails.password});
+            await login({ email: loginDetails.username, password: loginDetails.password });
         } catch (error) {
             console.error('Login failed', error);
         }
@@ -41,11 +41,9 @@ function LoginSection() {
                 height: '100vh', // Optional: adjust the height as needed
             }}
         >
-            <Card sx={{ width: 400, p:3 }}>
+            <Card sx={{ width: 400, p: 3 }}>
                 <Stack gap={3}>
-                    <Typography variant="h4">
-                        Sign in to TFMS
-                    </Typography>
+                    <Typography variant="h4">Sign in to TFMS</Typography>
                     <Typography variant="subtitle2">
                         New user?{' '}
                         <Typography
@@ -68,10 +66,17 @@ function LoginSection() {
                             value={loginDetails.username}
                             onChange={HandlePageDetails}
                             placeholder="Email address"
+                            error={IsAuthenticated === false && IsInitialized === false}
                         ></TextField>
                         <TextField
                             name="password"
                             label="Password"
+                            error={IsAuthenticated === false && IsInitialized === false}
+                            helperText={
+                                IsAuthenticated === false &&
+                                IsInitialized === false &&
+                                'Incorrect Login Details'
+                            }
                             type={passwordToogle ? 'text' : 'password'}
                             sx={{ height: '50px' }}
                             value={loginDetails.password}
@@ -115,7 +120,7 @@ function LoginSection() {
                             sx={{
                                 backgroundColor: '#212B36',
                                 textAlign: 'left',
-                                height: '50px'
+                                height: '50px',
                             }}
                             onClick={SubmitDetails}
                         >

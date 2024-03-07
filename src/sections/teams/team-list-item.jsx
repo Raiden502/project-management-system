@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 // components
 import Iconify from 'src/components/iconify/Iconify';
+import { useSnackbar } from 'src/components/snackbar';
 import { RouterLink } from 'src/routes/components';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Button } from '@mui/material';
@@ -21,6 +22,8 @@ import { useBoolean } from 'src/utils/use-boolean';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/JwtContext';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
@@ -28,19 +31,40 @@ export default function TeamItem({ job }) {
     const popover = usePopover();
     const confirm = useBoolean();
     const navigate = useNavigate();
-    const {user} = useContext(AuthContext);
+    const department = useSelector((state) => state.department);
+    const { enqueueSnackbar } = useSnackbar();
+    const { user } = useContext(AuthContext);
     const { team_id, name, description, avatar, user_count, date } = job;
 
     const editTeams = () => {
         navigate('/dashboard/teams/create', {
-            state: { teamsId:team_id },
+            state: { teamsId: team_id },
         });
     };
 
     const detailsTeams = () => {
         navigate('/dashboard/teams/details', {
-            state: { teamsId:team_id },
+            state: { teamsId: team_id },
         });
+    };
+
+    const delete_team = async () => {
+        try {
+            const response = await axiosInstance.post('/team/team_delete', {
+                team_id: team_id,
+                dept_id: department.department_id,
+            });
+            const { errorcode, status, message } = response.data;
+            if (errorcode === 0) {
+                enqueueSnackbar('delete successful', { variant: 'success' });
+            } else {
+                enqueueSnackbar('delete unsuccesful', { variant: 'warning' });
+            }
+        } catch (err) {
+            enqueueSnackbar('Failed to delete', { variant: 'error' });
+        } finally {
+            confirm.onFalse();
+        }
     };
 
     return (
@@ -130,7 +154,7 @@ export default function TeamItem({ job }) {
                         popover.onClose();
                         editTeams();
                     }}
-                    disabled = {user.role==='user'}
+                    disabled={user.role === 'user'}
                 >
                     <Iconify icon="solar:pen-bold" />
                     Edit
@@ -150,7 +174,7 @@ export default function TeamItem({ job }) {
                         confirm.onTrue();
                     }}
                     sx={{ color: 'error.main' }}
-                    disabled = {user.role==='user'}
+                    disabled={user.role === 'user'}
                 >
                     <Iconify icon="solar:trash-bin-trash-bold" />
                     Delete
@@ -163,7 +187,7 @@ export default function TeamItem({ job }) {
                 title="Delete"
                 content="Are you sure want to delete?"
                 action={
-                    <Button variant="contained" color="error" onClick={() => {}}>
+                    <Button variant="contained" color="error" onClick={delete_team}>
                         Delete
                     </Button>
                 }

@@ -22,10 +22,10 @@ export default function TaskDetailsCommentList({ comments }) {
                 }}
             >
                 {comments.map((comment) => (
-                    <Stack key={comment.userid} direction="row" spacing={2}>
+                    <Stack key={comment.id} direction="row" spacing={2}>
                         <Avatar src={comment.avatar} />
 
-                        <Stack spacing={comment.messageType === 'image' ? 1 : 0.5} flexGrow={1}>
+                        <Stack spacing={comment.message_type === 'image' ? 1 : 0.5} flexGrow={1}>
                             <Stack
                                 direction="row"
                                 alignItems="center"

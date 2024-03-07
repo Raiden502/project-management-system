@@ -64,7 +64,7 @@ export default function TaskColumnToolBar({ columnName, onDelete, onUpdate }) {
                     onKeyUp={handleUpdateColumn}
                 />
 
-                <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+                <IconButton color={popover.open ? 'inherit' : 'default'} disabled={columnName==="Done"} onClick={popover.onOpen}>
                     <Iconify icon="eva:more-horizontal-fill" />
                 </IconButton>
             </Stack>

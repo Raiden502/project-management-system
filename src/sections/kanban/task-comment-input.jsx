@@ -6,10 +6,13 @@ import Avatar from '@mui/material/Avatar';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify/Iconify';
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/JwtContext';
 
 // ----------------------------------------------------------------------
 
 export default function TaskDetailsCommentInput() {
+    const {user} = useContext(AuthContext)
     return (
         <Stack
             direction="row"
@@ -19,7 +22,7 @@ export default function TaskDetailsCommentInput() {
                 px: 2.5,
             }}
         >
-            <Avatar src="" alt="name" />
+            <Avatar src={user.avatar} alt="name" />
 
             <Paper variant="outlined" sx={{ p: 1, flexGrow: 1, bgcolor: 'transparent' }}>
                 <InputBase

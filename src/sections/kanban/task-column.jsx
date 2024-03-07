@@ -9,7 +9,6 @@ import TaskAdd from './task-row-add';
 import TaskColumnToolBar from './task-column-toolbar';
 
 export default function TaskColumn({ column, index, tasks }) {
-
     const { onUpdateColumn, onDeleteColumn, onAddTask, onDeleteTask } = useKanban();
 
     const addTask = useBoolean();
@@ -111,6 +110,7 @@ export default function TaskColumn({ column, index, tasks }) {
                                             key={taskId}
                                             index={taskIndex}
                                             task={tasks[taskId]}
+                                            column={column.id}
                                             onDeleteTask={handleDeleteTask}
                                         />
                                     ))}

@@ -17,52 +17,15 @@ import Iconify from 'src/components/iconify/Iconify';
 
 const ITEM_HEIGHT = 64;
 
-export default function TaskContactDetails({ assignee = [], open, onClose }) {
+export default function TaskContactDetails({ assignee = [], contact, handleChange, open, onClose }) {
     const [searchContact, setSearchContact] = useState('');
-    const _contacts = [ {
-        id: '1',
-        name: 'dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-    },
-    {
-        id: '2',
-        name: 'dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-    },
-    {
-        id: '3',
-        name: 'dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-    },
-    {
-        id: '4',
-        name: 'dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-    },
-    {
-        id: '5',
-        name: 'dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-    },
-    {
-        id: '5',
-        name: 'non dummy',
-        email:"dummy@gmail.com",
-        avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-    },
-]
 
     const handleSearchContacts = useCallback((event) => {
         setSearchContact(event.target.value);
     }, []);
 
     const dataFiltered = applyFilter({
-        inputData: _contacts,
+        inputData: contact,
         query: searchContact,
     });
 
@@ -71,7 +34,7 @@ export default function TaskContactDetails({ assignee = [], open, onClose }) {
     return (
         <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
             <DialogTitle sx={{ pb: 0 }}>
-                Contacts <Typography component="span">({_contacts.length})</Typography>
+                Contacts <Typography component="span">({contact.length})</Typography>
             </DialogTitle>
 
             <Box sx={{ px: 3, py: 2.5 }}>
@@ -102,9 +65,7 @@ export default function TaskContactDetails({ assignee = [], open, onClose }) {
                         }}
                     >
                         {dataFiltered.map((contact) => {
-                            const checked = assignee
-                                .map((person) => person.name)
-                                .includes(contact.name);
+                            const checked = assignee.includes(contact.id);
 
                             return (
                                 <ListItem
@@ -114,6 +75,7 @@ export default function TaskContactDetails({ assignee = [], open, onClose }) {
                                         <Button
                                             size="small"
                                             color={checked ? 'primary' : 'inherit'}
+                                            onClick={() => handleChange(contact.id)}
                                             startIcon={
                                                 <Iconify
                                                     width={16}
