@@ -18,48 +18,89 @@ import {
     Switch,
     FormControlLabel,
 } from '@mui/material';
+import { useCallback, useState } from 'react';
+import EmptyContent from 'src/components/empty-content/empty-content';
 import Iconify from 'src/components/iconify/Iconify';
 import Label from 'src/components/label';
 
 const headCells = [
     {
-        id: 'name',
-        align: 'left',
-        label: 'Name',
+        id: 'User',
+        align: 'center',
+        label: 'User',
     },
     {
         id: 'email',
-        align: 'left',
+        align: 'center',
         label: 'Email',
     },
     {
-        id: 'department',
-        align: 'left',
-        label: 'Department',
+        id: 'tasks',
+        align: 'center',
+        label: 'Assigned Tasks',
     },
     {
-        id: 'role',
-        align: 'left',
-        label: 'Role',
+        id: 'low',
+        align: 'center',
+        label: 'Low Priority',
     },
     {
-        id: 'status',
-        align: 'left',
-        label: 'Status',
+        id: 'medium',
+        align: 'center',
+        label: 'Medium Priority',
+    },
+    {
+        id: 'high',
+        align: 'center',
+        label: 'High Priority',
+    },
+    {
+        id: 'done',
+        align: 'center',
+        label: 'Completed',
+    },
+    {
+        id: 'in progress',
+        align: 'center',
+        label: 'In-Progress',
     },
 ];
 
+export default function UserListView({ userList }) {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [searchUsers, setSearchUsers] = useState('');
 
-export default function UserListView({userList}) {
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const dataFiltered = applyFilter({
+        inputData: userList,
+        query: searchUsers,
+    });
+
+    const notFound = !dataFiltered.length && !!searchUsers;
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const handleSearchTable = useCallback((event) => {
+        setSearchUsers(event.target.value);
+    }, []);
+
     return (
-        <Box component={Card}>
+        <Box component={Card} sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px'}}>
             <Stack p={3} gap={3} direction="row">
-                <TextField name="role" label="Role" type="text" sx={{ height: '50px' }} />
                 <TextField
                     name="search"
                     placeholder="Search ..."
                     type="text"
                     sx={{ height: '50px' }}
+                    value={searchUsers}
+                    onChange={handleSearchTable}
                     fullWidth
                     InputProps={{
                         startAdornment: (
@@ -84,41 +125,51 @@ export default function UserListView({userList}) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {userList.map((item, index) => (
-                            <TableRow
-                                key={item.userid}
-                                hover
-                                sx={{
-                                    borderBottom:
-                                        index < userList.length - 1 ? '1px dashed #f4f4f4' : 'none',
-                                }}
-                            >
-                                <TableCell
-                                    sx={{ display: 'flex', alignItems: 'center', border: 'none' }}
-                                >
-                                    <Avatar alt={item.name} src={item.avatar} sx={{ mr: 2 }} />
-                                    {item.name}
-                                </TableCell>
-                                <TableCell>{item.email}</TableCell>
-                                <TableCell>{item.department}</TableCell>
-                                <TableCell>{item.role}</TableCell>
-                                <TableCell>
-                                    <Label
-                                        variant="soft"
-                                        color={
-                                            (item.status === 'active' && 'success') ||
-                                            (item.status === 'pending' && 'warning') ||
-                                            (item.status === 'banned' && 'error') ||
-                                            'default'
-                                        }
-                                    >
-                                        <Typography variant="body2" fontSize={12} fontWeight="bold">
-                                            {item.status}
-                                        </Typography>
-                                    </Label>
+                        {notFound || dataFiltered.length === 0 ? (
+                            <TableRow>
+                                {' '}
+                                <TableCell colSpan={12}>
+                                    <EmptyContent title="No Data" />{' '}
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            dataFiltered
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((item, index) => (
+                                    <TableRow
+                                        key={item.user_id}
+                                        hover
+                                        sx={{
+                                            borderBottom:
+                                                index < userList.length - 1
+                                                    ? '1px dashed #f4f4f4'
+                                                    : 'none',
+                                        }}
+                                    >
+                                        <TableCell
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                border: 'none',
+                                            }}
+                                        >
+                                            <Avatar
+                                                alt={item.details.name}
+                                                src={item.details.avatar}
+                                                sx={{ mr: 2 }}
+                                            />
+                                            {item.details.name}
+                                        </TableCell>
+                                        <TableCell align="center">{item.email}</TableCell>
+                                        <TableCell align="center">{item.tasks}</TableCell>
+                                        <TableCell align="center">{item.low}</TableCell>
+                                        <TableCell align="center">{item.medium}</TableCell>
+                                        <TableCell align="center">{item.high}</TableCell>
+                                        <TableCell align="center">{item.done}</TableCell>
+                                        <TableCell align="center">{item.inprogress}</TableCell>
+                                    </TableRow>
+                                ))
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -135,12 +186,23 @@ export default function UserListView({userList}) {
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
                     count={userList.length}
-                    rowsPerPage={5}
-                    page={10}
-                    // onPageChange={handleChangePage}
-                    // onRowsPerPageChange={handleChangeRowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
         </Box>
     );
+}
+
+function applyFilter({ inputData, query }) {
+    if (query) {
+        inputData = inputData.filter(
+            (item) =>
+                item.details.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+                item.email.toLowerCase().indexOf(query.toLowerCase()) !== -1
+        );
+    }
+    return inputData;
 }
