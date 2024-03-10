@@ -40,9 +40,9 @@ export default function ContactDetails({ assignee = [] }) {
                     }}
                 >
                     {assignee.map((contact) => (
-                        <ListItem key={contact.id} disableGutters sx={{ height: ITEM_HEIGHT }}>
+                        <ListItem key={contact.details.id} disableGutters sx={{ height: ITEM_HEIGHT }}>
                             <ListItemAvatar>
-                                <Avatar src={contact.avatar} />
+                                <Avatar src={contact.details.avatar} />
                             </ListItemAvatar>
 
                             <ListItemText
@@ -51,7 +51,7 @@ export default function ContactDetails({ assignee = [] }) {
                                     sx: { mb: 0.25 },
                                 }}
                                 secondaryTypographyProps={{ typography: 'caption' }}
-                                primary={contact.name}
+                                primary={contact.details.name}
                                 secondary={contact.email}
                             />
                         </ListItem>

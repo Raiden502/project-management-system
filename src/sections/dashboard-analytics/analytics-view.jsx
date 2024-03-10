@@ -13,61 +13,12 @@ import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import TimeLine from './stages';
 
-const dummy = {
-    performer: [
-        {
-            id: '1',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_21.jpg',
-        },
-        {
-            id: '2',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_22.jpg',
-        },
-        {
-            id: '3',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_23.jpg',
-        },
-        {
-            id: '4',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_24.jpg',
-        },
-        {
-            id: '5',
-            name: 'dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-        {
-            id: '6',
-            name: 'non dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-        {
-            id: '7',
-            name: 'non dummy',
-            email: 'dummy@gmail.com',
-            avatar: 'https://api-prod-minimal-v510.vercel.app/assets/images/avatar/avatar_25.jpg',
-        },
-    ],
-};
-
 export default function AnalyticsView() {
     const theme = useTheme();
     const department = useSelector((state) => state.department);
     const firstRender = useRef(true);
     const [ProjectName, setProjectName] = useState('');
     const [ProjectList, setProjectList] = useState([]);
-    const [dashboard, setDashboardDetails] = useState({ ...dummy });
-
     const [totalCounts, setTotalCounts] = useState({
         total_stages: 0,
         total_tasks: 0,
@@ -78,6 +29,8 @@ export default function AnalyticsView() {
     const [stages, setStages] = useState([]);
     const [taskList, setTaskList] = useState([]);
     const [userList, setUsersList] = useState([]);
+    const [timeline, setTimeline] = useState([]);
+    const [performer, setPerformer] = useState([]);
 
     const fetchProjects = async () => {
         try {
@@ -100,6 +53,8 @@ export default function AnalyticsView() {
             '/get_stage_counts',
             '/get_tasks_list',
             '/get_user_list',
+            '/get_timeline',
+            '/get_performance',
         ];
         const response = await Promise.all(
             urls.map(async (uris) => {
@@ -115,12 +70,23 @@ export default function AnalyticsView() {
             })
         );
         // setLoaaderState(false);
-        const [dashboard_count, stages_count, priority_count, task_list, user_list] = response;
+        const [
+            dashboard_count,
+            stages_count,
+            priority_count,
+            task_list,
+            user_list,
+            timeline,
+            performer,
+        ] = response;
         if (dashboard_count.errorcode === 0) setTotalCounts(dashboard_count.data);
         if (stages_count.errorcode === 0) setPriorities(stages_count.data);
         if (priority_count.errorcode === 0) setStages(priority_count.data);
         if (task_list.errorcode === 0) setTaskList(task_list.data);
         if (user_list.errorcode === 0) setUsersList(user_list.data);
+        if (timeline.errorcode === 0) setTimeline(timeline.data);
+        if (performer.errorcode === 0) setPerformer(performer.data);
+
     };
 
     const handleChange = (event) => {
@@ -212,14 +178,14 @@ export default function AnalyticsView() {
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <ContactDetails assignee={dashboard.performer} />
+                    <ContactDetails assignee={performer} />
                 </Grid>
                 <Grid xs={12} md={8}>
                     <UserListView userList={userList} />
                 </Grid>
                 <Grid xs={12} md={4}>
                     {' '}
-                    <TimeLine assignee={dashboard.performer} />
+                    <TimeLine assignee={timeline} />
                 </Grid>
                 <Grid xs={12} md={12}>
                     <TaskListView tasks={taskList} />
