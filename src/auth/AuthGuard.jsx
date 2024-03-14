@@ -14,8 +14,14 @@ function AuthGuard({ children }) {
     const { pathname } = useLocation();
     const { IsAuthenticated, IsInitialized } = useContext(AuthContext);
 
+    const authurl = pathname.split('/')
+
     if (IsInitialized) {
         return <LoadingScreen />;
+    }
+    if (authurl.length>1){
+        const isVerify = authurl[1] == '/auth' && authurl[2] == '/verify'
+        if(isVerify) router.replace(pathname)
     }
     if (IsAuthenticated === false) {
         router.replace(paths.auth.login);

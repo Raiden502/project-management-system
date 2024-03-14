@@ -74,7 +74,7 @@ function Router() {
                     element: <RegisterPage />,
                 },
                 {
-                    path: 'verify',
+                    path: 'verify/:id',
                     element: <VerifyCode />,
                 },
             ],
@@ -83,9 +83,9 @@ function Router() {
             path: '/dashboard',
             element: (
                 <AuthGuard>
-                <DashBoardLayout>
-                    <Outlet />
-                </DashBoardLayout>
+                    <DashBoardLayout>
+                        <Outlet />
+                    </DashBoardLayout>
                 </AuthGuard>
             ),
             children: [

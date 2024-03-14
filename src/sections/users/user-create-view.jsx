@@ -13,6 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+import axios from 'axios';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'src/components/snackbar';
@@ -62,7 +63,7 @@ export default function UsersCreateView() {
 
     const HandleDetails = (event) => {
         const { name, value } = event.target;
-        if (name==='role' && value==='super_admin') return
+        if (name === 'role' && value === 'super_admin') return;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -84,6 +85,24 @@ export default function UsersCreateView() {
         } catch (err) {
             console.log(err);
             enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+    };
+
+    const mailVerify = async () => {
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_DEV_MAIL_API}api/send-user-password`,
+                { user_id: location.state?.userId }
+            );
+            const { status } = response.data;
+            if (status) {
+                enqueueSnackbar('verification mail sent', { variant: 'success' });
+            } else {
+                enqueueSnackbar('failed to send mail', { variant: 'warning' });
+            }
+        } catch (err) {
+            console.log(err);
+            enqueueSnackbar('Unable to send mail', { variant: 'error' });
         }
     };
 
@@ -162,6 +181,7 @@ export default function UsersCreateView() {
                                     backgroundColor: '#F5F5F5',
                                     borderRadius: '8px',
                                 }}
+                                gap={2}
                             >
                                 <Stack
                                     direction="row"
@@ -169,15 +189,17 @@ export default function UsersCreateView() {
                                     alignItems="center"
                                     justifyContent="space-between"
                                 >
-                                    <Typography variant="subtitle1">Email Verified</Typography>
-                                    <FormControlLabel
-                                        control={<Switch checked />}
-                                        onChange={(event) => {}}
-                                        label=""
-                                    />
+                                    <Typography variant="subtitle1">User Verification</Typography>
+                                    <Button
+                                        variant="contained"
+                                        disabled={location.state?.userId ? 0 : 1}
+                                        onClick={mailVerify}
+                                    >
+                                        Verify
+                                    </Button>
                                 </Stack>
                                 <Typography variant="body2" maxWidth={600}>
-                                    {`Disabling this will automatically send the user a verification email`}
+                                    {`Automatically sends the user a verification email on creating a user. You can verify it manually while editing`}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -224,13 +246,11 @@ export default function UsersCreateView() {
                                 value={formData.role}
                                 onChange={HandleDetails}
                             >
-                                {Roles.map(
-                                    (item) => (
-                                        <MenuItem key={item.role_id} value={item.role_id}>
-                                            {item.name}
-                                        </MenuItem>
-                                    )
-                                )}
+                                {Roles.map((item) => (
+                                    <MenuItem key={item.role_id} value={item.role_id}>
+                                        {item.name}
+                                    </MenuItem>
+                                ))}
                             </TextField>
                         </Box>
                         <Autocomplete
