@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import dayjs from 'dayjs';
 import { format, parse } from 'date-fns';
 // @mui
@@ -25,8 +25,9 @@ import TaskInputName from './task-input-name';
 import TaskDetailsToolbar from './task-item-toolbar';
 import { DatePicker } from '@mui/x-date-pickers';
 import Label from 'src/components/label/label';
+import { useSnackbar } from 'src/components/snackbar';
+import { AuthContext } from 'src/auth/JwtContext';
 import { useKanban } from './hooks';
-import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,8 @@ const StyledLabel = styled('span')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function TaskDetails({ task, openDetails, onCloseDetails, onDeleteTask, column }) {
+    const { user } = useContext(AuthContext);
+    const { enqueueSnackbar } = useSnackbar();
     const { onUpdateTask, users_list, team_list } = useKanban();
     const contactsUser = useBoolean();
     const contactsTeams = useBoolean();
@@ -69,12 +72,16 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
     }, []);
 
     const save_details = () => {
+        if(taskName==="" || dueDate===null || startDate==null){
+            enqueueSnackbar('fields are empty', { variant: 'warning' });
+            return
+        }
         onUpdateTask({
             priority,
             name: taskName,
             description: taskDescription,
             due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
-            start_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
+            start_date: startDate ? format(startDate, 'yyyy-MM-dd') : null,
             reporter: reporter[0],
             labels,
             teams,
@@ -151,6 +158,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add Reporter">
                                 <IconButton
                                     onClick={contactsReporter.onTrue}
+                                    disabled={user.role==='user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,
@@ -173,6 +181,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                                                 // onClick={() => {
                                                 //     HanleOnClear(user.id, 'users');
                                                 // }}
+                                                disabled={user.role==='user'}
                                                 sx={{
                                                     top: 2,
                                                     right: 2,
@@ -212,6 +221,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add assignee">
                                 <IconButton
                                     onClick={contactsUser.onTrue}
+                                    disabled={user.role==='user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,
@@ -250,6 +260,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add assignee">
                                 <IconButton
                                     onClick={contactsTeams.onTrue}
+                                    disabled={user.role==='user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,

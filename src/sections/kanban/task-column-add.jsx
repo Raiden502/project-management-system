@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 // @mui
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -10,11 +10,13 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Iconify from 'src/components/iconify/Iconify';
 import { useKanban } from './hooks';
 import { useBoolean } from 'src/utils/use-boolean';
+import { AuthContext } from 'src/auth/JwtContext';
 
 // ----------------------------------------------------------------------
 
 export default function TaskColumnAdd() {
     const { onCreateColumn } = useKanban();
+    const { user } = useContext(AuthContext);
 
     const [name, setName] = useState('');
 
@@ -71,6 +73,7 @@ export default function TaskColumnAdd() {
                     variant="outlined"
                     startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
                     onClick={addSection.onTrue}
+                    disabled={user.role==='user'}
                 >
                     Add Stages
                 </Button>

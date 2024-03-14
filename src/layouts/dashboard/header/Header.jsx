@@ -7,7 +7,7 @@ import { Avatar, Divider, IconButton, MenuItem, Stack, TextField, Typography } f
 import Iconify from 'src/components/iconify/Iconify';
 import { AuthContext } from 'src/auth/JwtContext';
 import axiosInstance from 'src/utils/axios';
-import { setDepartment } from 'src/redux/slices/Departments';
+import { setDepartment, setList } from 'src/redux/slices/Departments';
 import { useDispatch } from 'src/redux/store';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { paths } from 'src/routes/path';
@@ -26,11 +26,15 @@ export default function Header() {
 
     const fetchUsers = async () => {
         try {
-            const response = await axiosInstance.post('/dept/dept_filter', { org_id: user.org_id });
+            const response = await axiosInstance.post('/dept/dept_filter', {
+                org_id: user.org_id,
+                user_id: user.user_id,
+            });
             const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 setDept(data);
                 if (data.length > 0) {
+                    dispatch(setList(data));
                     setDefaultDept(data[0].department_id);
                     dispatch(setDepartment(data[0]));
                 }

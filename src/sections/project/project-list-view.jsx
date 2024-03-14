@@ -45,6 +45,7 @@ function ProjectListView() {
     },[department.department_id ]);
 
     const notFound = !dataFiltered.length && !!searchUsers;
+    console.log(user)
 
     return (
         <Stack gap={4}>

@@ -26,7 +26,7 @@ import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
-export default function DepartmentItem({ department }) {
+export default function DepartmentItem({ department, access }) {
     const popover = usePopover();
     const confirm = useBoolean();
     const { enqueueSnackbar } = useSnackbar();
@@ -203,7 +203,10 @@ export default function DepartmentItem({ department }) {
                 sx={{ width: 180 }}
             >
                 <MenuItem
-                    disabled={user.role === 'user'}
+                    disabled={
+                        user.role === 'user' ||
+                        !access.includes(department_id)
+                    }
                     onClick={() => {
                         popover.onClose();
                         editDepartment(department_id);
@@ -222,7 +225,10 @@ export default function DepartmentItem({ department }) {
                     Details
                 </MenuItem>
                 <MenuItem
-                    disabled={user.role === 'user'}
+                    disabled={
+                        user.role === 'user' ||
+                        !access.includes(department_id)
+                    }
                     onClick={() => {
                         popover.onClose();
                         confirm.onTrue();

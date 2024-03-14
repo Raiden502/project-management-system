@@ -65,6 +65,7 @@ export default function TaskKanbanView() {
                 return;
             }
 
+
             const initialColumn = columns[source.droppableId];
             const finishColumn = columns[destination.droppableId];
 

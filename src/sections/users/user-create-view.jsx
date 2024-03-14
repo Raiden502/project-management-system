@@ -22,6 +22,7 @@ import AvatarUploader from 'src/components/Image-uploader/avatar-uploader';
 import axiosInstance from 'src/utils/axios';
 import { useBoolean } from 'src/utils/use-boolean';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { de } from 'date-fns/locale';
 
 const formList = [
     { id: 'name', label: 'Name' },
@@ -108,7 +109,7 @@ export default function UsersCreateView() {
 
     const fetchDept = async () => {
         try {
-            const response = await axiosInstance.post('/dept/dept_filter', { org_id: user.org_id });
+            const response = await axiosInstance.post('/dept/dept_list', { org_id: user.org_id });
             const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 setDept(data);
@@ -152,6 +153,7 @@ export default function UsersCreateView() {
         }
     }, [location.state?.userId]);
 
+    console.log(formData, dept)
     return (
         <>
             {loading.value && <LoadingScreen />}
@@ -247,7 +249,7 @@ export default function UsersCreateView() {
                                 onChange={HandleDetails}
                             >
                                 {Roles.map((item) => (
-                                    <MenuItem key={item.role_id} value={item.role_id}>
+                                    <MenuItem key={item.role_id} value={item.role_id} disabled={(user.role=="admin" || user.role=="user") && item.name==="Super Admin"}>
                                         {item.name}
                                     </MenuItem>
                                 ))}

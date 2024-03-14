@@ -1,18 +1,22 @@
 import { Box, InputAdornment, Stack, TextField } from '@mui/material';
 import DepartmentItem from './department-list-item';
 import Iconify from 'src/components/iconify/Iconify';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import axiosInstance from 'src/utils/axios';
 import { AuthContext } from 'src/auth/JwtContext';
 import EmptyContent from 'src/components/empty-content/empty-content';
+import { useSelector } from 'src/redux/store';
 
 function DepartmentListView() {
-    const [departments, setDepartments] = useState([]);
+    const [departmentsList, setDepartments] = useState([]);
+    const department = useSelector((state)=>state.department)
     const { user } = useContext(AuthContext);
     const [searchUsers, setSearchUsers] = useState('');
 
+    const access = useMemo(()=>department.dept_list.map((item)=>item.department_id), [department.dept_list])
+
     const dataFiltered = applyFilter({
-        inputData: departments,
+        inputData: departmentsList,
         query: searchUsers,
     });
 
@@ -68,7 +72,7 @@ function DepartmentListView() {
                 }}
             >
                 {dataFiltered.map((details) => (
-                    <DepartmentItem key={details.department_id} department={details} />
+                    <DepartmentItem key={details.department_id} department={details} access={access} />
                 ))}
             </Box>
             {notFound && <EmptyContent title="No Data" />}

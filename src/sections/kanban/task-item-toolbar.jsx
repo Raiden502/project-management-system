@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -12,6 +12,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useBoolean } from 'src/utils/use-boolean';
+import { AuthContext } from 'src/auth/JwtContext';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,7 @@ export default function TaskDetailsToolbar({
     onSave,
 }) {
     const confirm = useBoolean();
+    const { user } = useContext(AuthContext);
     const popover = usePopover();
     const [status, setStatus] = useState([taskStatus]);
 
@@ -56,7 +58,7 @@ export default function TaskDetailsToolbar({
 
                 <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
                     <Tooltip title="Delete task">
-                        <IconButton onClick={confirm.onTrue}>
+                        <IconButton onClick={confirm.onTrue} disabled={user.role==='user'}>
                             <Iconify icon="solar:trash-bin-trash-bold" />
                         </IconButton>
                     </Tooltip>

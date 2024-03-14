@@ -1,5 +1,7 @@
 import { Button, Container } from '@mui/material';
+import { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { AuthContext } from 'src/auth/JwtContext';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify/Iconify';
 import { RouterLink } from 'src/routes/components';
@@ -7,6 +9,7 @@ import { paths } from 'src/routes/path';
 import ProjectListView from 'src/sections/project/project-list-view';
 
 function ProjectLists() {
+    const { user } = useContext(AuthContext);
     return (
         <>
             <Helmet>
@@ -32,6 +35,7 @@ function ProjectLists() {
                         <Button
                             component={RouterLink}
                             href={paths.dashboard.projects.create}
+                            disabled={user.role==='user'}
                             variant="contained"
                             sx={{
                                 bgcolor: '#212B36',

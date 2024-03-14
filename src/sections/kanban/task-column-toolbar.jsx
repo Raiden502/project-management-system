@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useContext } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -11,10 +11,12 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useBoolean } from 'src/utils/use-boolean'; 
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import TaskInputName from './task-input-name'
+import { AuthContext } from 'src/auth/JwtContext';
 // ----------------------------------------------------------------------
 
 export default function TaskColumnToolBar({ columnName, onDelete, onUpdate }) {
     const renameRef = useRef(null);
+    const { user } = useContext(AuthContext);
 
     const [value, setValue] = useState(columnName);
 
@@ -59,7 +61,7 @@ export default function TaskColumnToolBar({ columnName, onDelete, onUpdate }) {
                     inputRef={renameRef}
                     placeholder="Section name"
                     value={value}
-                    disabled={value==="Done"}
+                    disabled={value==="Done" || user.role==='user'}
                     onChange={handleChangeColumnName}
                     onKeyUp={handleUpdateColumn}
                 />
@@ -83,12 +85,13 @@ export default function TaskColumnToolBar({ columnName, onDelete, onUpdate }) {
                         popover.onClose();
                     }}
                     sx={{ color: 'error.main' }}
+                    disabled={user.role==='user'}
                 >
                     <Iconify icon="solar:trash-bin-trash-bold" />
                     Delete
                 </MenuItem>
 
-                <MenuItem onClick={popover.onClose}>
+                <MenuItem onClick={popover.onClose} disabled={user.role==='user'}>
                     <Iconify icon="solar:pen-bold" />
                     Rename
                 </MenuItem>

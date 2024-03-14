@@ -12,6 +12,10 @@ import DataActivity from './data-activity';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import TimeLine from './stages';
+import user_bg from 'src/assets/user_bg.png';
+import team_bg from 'src/assets/team_bg.png';
+import task_bg from 'src/assets/task_bg.png';
+import Image from 'src/components/image';
 
 export default function AnalyticsView() {
     const theme = useTheme();
@@ -86,7 +90,6 @@ export default function AnalyticsView() {
         if (user_list.errorcode === 0) setUsersList(user_list.data);
         if (timeline.errorcode === 0) setTimeline(timeline.data);
         if (performer.errorcode === 0) setPerformer(performer.data);
-
     };
 
     const handleChange = (event) => {
@@ -131,6 +134,7 @@ export default function AnalyticsView() {
                     <CountWidgetSummary
                         title="Total Users"
                         total={totalCounts.total_users}
+                        icon={<Image src={user_bg} />}
                         sx={{
                             borderRadius: '15px',
                             boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
@@ -142,6 +146,7 @@ export default function AnalyticsView() {
                     <CountWidgetSummary
                         title="Total Teams"
                         total={totalCounts.total_teams}
+                        icon={<Image src={team_bg} />}
                         sx={{
                             borderRadius: '15px',
                             boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
@@ -153,6 +158,7 @@ export default function AnalyticsView() {
                     <CountWidgetSummary
                         title="Total Tasks"
                         total={totalCounts.total_tasks}
+                        icon={<Image src={task_bg} />}
                         sx={{
                             borderRadius: '15px',
                             boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',

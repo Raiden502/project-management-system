@@ -30,7 +30,6 @@ const StyledLabel = styled('span')(({ theme }) => ({
     fontWeight: theme.typography.fontWeightSemiBold,
 }));
 
-
 export default function DepartmentCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
@@ -77,7 +76,7 @@ export default function DepartmentCreateView() {
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
-                console.log(data)
+                console.log(data);
                 setFormData(data);
                 setSelectedImages(data?.avatar);
             }
@@ -137,6 +136,11 @@ export default function DepartmentCreateView() {
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
                 const { users, teams } = data;
+                const super_admin = users.filter((item) => item.role === 'super_admin').map(item => item.id)
+                setFormData((prev) => ({
+                    ...prev,
+                    users: super_admin,
+                }));
                 setUsers(users);
                 setTeams(teams);
             }
@@ -151,7 +155,7 @@ export default function DepartmentCreateView() {
             fetchList();
             firstRender.current = false;
         }
-    }, [location.state?.departmentId]);
+    }, [location.state?.departmentId, users, formData.users]);
 
     const secRender = useRef(true);
     useEffect(() => {
@@ -160,6 +164,8 @@ export default function DepartmentCreateView() {
             secRender.current = false;
         }
     }, [location.state?.departmentId]);
+
+    console.log(users, formData);
     return (
         <Grid container spacing={3}>
             <Grid md={4}>
@@ -210,7 +216,7 @@ export default function DepartmentCreateView() {
                             <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
                                 {users
                                     .filter((item) => formData.users.includes(item.id))
-                                    .map((user) => (
+                                    .map((userinfo) => (
                                         <Box
                                             sx={{
                                                 m: 1,
@@ -220,17 +226,18 @@ export default function DepartmentCreateView() {
                                             }}
                                         >
                                             <Avatar
-                                                key={user.userid}
-                                                alt={user.name}
-                                                src={user.avatar}
+                                                key={userinfo.userid}
+                                                alt={userinfo.name}
+                                                src={userinfo.avatar}
                                             />
                                             <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
-                                                {user.name}
+                                                {userinfo.name}
                                             </StyledLabel>
                                             <IconButton
                                                 onClick={() => {
-                                                    HanleOnClear(user.id, 'users');
+                                                    HanleOnClear(userinfo.id, 'users');
                                                 }}
+                                                disabled={userinfo.role === 'super_admin'}
                                                 sx={{
                                                     top: 2,
                                                     right: 2,
@@ -334,7 +341,7 @@ export default function DepartmentCreateView() {
                     onClick={location.state?.departmentId ? editDept : createDept}
                     variant="contained"
                 >
-                    {location.state?.departmentId ? "Save": "Create"}
+                    {location.state?.departmentId ? 'Save' : 'Create'}
                 </Button>
             </Grid>
         </Grid>
