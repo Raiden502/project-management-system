@@ -158,7 +158,6 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add Reporter">
                                 <IconButton
                                     onClick={contactsReporter.onTrue}
-                                    disabled={user.role==='user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,

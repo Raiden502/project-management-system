@@ -113,6 +113,7 @@ export default function UsersCreateView() {
             const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 setDept(data);
+                console.log(data)
             }
         } catch (err) {
             console.log(err);
@@ -143,7 +144,7 @@ export default function UsersCreateView() {
             fetchDept();
             secondRender.current = false;
         }
-    });
+    }, [dept]);
 
     const firstRender = useRef(true);
     useEffect(() => {
@@ -153,7 +154,7 @@ export default function UsersCreateView() {
         }
     }, [location.state?.userId]);
 
-    console.log(formData, dept)
+    console.log(dept)
     return (
         <>
             {loading.value && <LoadingScreen />}
@@ -288,10 +289,10 @@ export default function UsersCreateView() {
                                 value.map((option, index) => (
                                     <Chip
                                         {...getTagProps({ index })}
-                                        key={option.department_id}
+                                        key={option?.department_id}
                                         label={
                                             <Typography variant="subtitle2">
-                                                {option.name}
+                                                {option?.name}
                                             </Typography>
                                         }
                                         size="small"
