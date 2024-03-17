@@ -20,11 +20,13 @@ import axiosInstance from 'src/utils/axios';
 import uuidv4 from 'src/utils/uuidv4';
 import { AuthContext } from 'src/auth/JwtContext';
 import { useSnackbar } from 'src/components/snackbar';
+import { useBoolean } from 'src/utils/use-boolean';
 
 // ----------------------------------------------------------------------
 
 export default function useKanban() {
     const dispatch = useDispatch();
+    const loading = useBoolean();
     const { enqueueSnackbar } = useSnackbar();
     const { user } = useContext(AuthContext);
     const department = useSelector((state) => state.department);
@@ -37,6 +39,7 @@ export default function useKanban() {
     const fetchProjects = () => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/proj/proj_list', {
                     dept_id: department.department_id,
                 });
@@ -46,6 +49,8 @@ export default function useKanban() {
                 }
             } catch (error) {
                 console.log(error);
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -54,6 +59,7 @@ export default function useKanban() {
         return async (dispatch) => {
             dispatch(getBoardStart());
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/board_details', {
                     project_id,
                     department_id,
@@ -72,6 +78,8 @@ export default function useKanban() {
             } catch (error) {
                 dispatch(getBoardFailure(error));
                 enqueueSnackbar('Failed to fetch', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -79,6 +87,7 @@ export default function useKanban() {
     const createColumn = (newData) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/create_column', newData);
                 const { errorcode, data, message } = response.data;
                 if (errorcode === 0) {
@@ -90,6 +99,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('Failed to save', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -97,6 +108,7 @@ export default function useKanban() {
     const reorderColumn = (newData) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/reorder_column', newData);
                 const { errorcode, data, message } = response.data;
                 if (errorcode === 0) {
@@ -108,6 +120,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('Failed to update', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -115,6 +129,7 @@ export default function useKanban() {
     const updateColumnDetails = (columnData) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/update_col_name', {
                     type_id: columnData.newData.id,
                     name: columnData.newData.name,
@@ -136,6 +151,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('Failed to update', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -143,6 +160,7 @@ export default function useKanban() {
     const updateColumnTasks = (newColumns) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/update_col_tasks', newColumns);
                 const { errorcode, status, message } = response.data;
                 if (errorcode === 0) {
@@ -154,6 +172,8 @@ export default function useKanban() {
             } catch {
                 console.error(error);
                 enqueueSnackbar('Failed to update', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -161,6 +181,7 @@ export default function useKanban() {
     const deleteColumn = (columnId, currentProject) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/delete_column', {
                     type_id: columnId,
                     proj_id: currentProject,
@@ -175,6 +196,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('Failed to delete', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -182,6 +205,7 @@ export default function useKanban() {
     const createTaskApi = (newData) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/create_tasks', newData);
                 const { errorcode, data, message } = response.data;
                 if (errorcode === 0) {
@@ -193,6 +217,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('failed to save', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -200,6 +226,7 @@ export default function useKanban() {
     const updateTaskApi = (newData, currentProject) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/update_task', {
                     ...newData,
                     project_id: currentProject,
@@ -214,6 +241,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('Failed to update', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -221,6 +250,7 @@ export default function useKanban() {
     const deleteTaskApi = (data) => {
         return async (dispatch) => {
             try {
+                loading.onTrue();
                 const response = await axiosInstance.post('/tasks/delete_task', data);
                 const { errorcode, message } = response.data;
                 if (errorcode === 0) {
@@ -232,6 +262,8 @@ export default function useKanban() {
             } catch (error) {
                 console.error(error);
                 enqueueSnackbar('failed to delete', { variant: 'error' });
+            } finally {
+                loading.onFalse();
             }
         };
     };
@@ -335,12 +367,9 @@ export default function useKanban() {
         [dispatch, department.department_id]
     );
 
-    const onBoardChange = useCallback(
-        () => {
-            dispatch(getBoard(currentProject, department.department_id));
-        },
-        [dispatch, currentProject, department.department_id]
-    );
+    const onBoardChange = useCallback(() => {
+        dispatch(getBoard(currentProject, department.department_id));
+    }, [dispatch, currentProject, department.department_id]);
 
     return {
         tasks,
@@ -362,5 +391,6 @@ export default function useKanban() {
         boardStatus,
         users_list,
         team_list,
+        loading,
     };
 }

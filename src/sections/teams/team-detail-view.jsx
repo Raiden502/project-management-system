@@ -1,4 +1,5 @@
 import {
+    Backdrop,
     Box,
     Button,
     Card,
@@ -17,6 +18,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import { AuthContext } from 'src/auth/JwtContext';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -41,9 +44,10 @@ function CustomTabPanel(props) {
 export default function TeamDetailsView() {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
+    const loading = useBoolean()
     const department = useSelector((state) => state.department);
     const location = useLocation();
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [teams, setTeams] = useState({});
 
     const handleChange = (event, newValue) => {
@@ -62,17 +66,21 @@ export default function TeamDetailsView() {
 
     const getTeamData = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/team/team_details', {
                 team_id: location.state?.teamsId,
                 dept_id: department.department_id,
             });
             const { data, errorcode, status, message } = response.data;
-            console.log(data)
+            console.log(data);
             if (errorcode === 0) {
                 setTeams(data);
             }
         } catch (err) {
             console.log(err);
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -86,6 +94,9 @@ export default function TeamDetailsView() {
 
     return (
         <>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button
                     sx={{
@@ -104,10 +115,7 @@ export default function TeamDetailsView() {
             </Stack>
             <Box sx={{ mt: 3 }}>
                 <Tabs value={value} onChange={handleChange}>
-                    <Tab
-                        label={<Typography variant="subtitle2">Content</Typography>}
-                        key={0}
-                    />
+                    <Tab label={<Typography variant="subtitle2">Content</Typography>} key={0} />
                     <Tab label={<Typography variant="subtitle2">Candidates</Typography>} key={1} />
                 </Tabs>
             </Box>

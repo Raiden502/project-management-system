@@ -15,7 +15,7 @@ import { useRouter } from 'src/routes/hook';
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
-    const { theme } = useTheme();
+    const  theme  = useTheme();
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -60,7 +60,7 @@ export default function Header() {
     }, []);
 
     return (
-        <Box sx={{ position: 'sticky', top: 0, zIndex: 2, mb: 2 }}>
+        <Box sx={{ position: 'sticky', top: 0, zIndex: theme.zIndex.appBar + 1, mb: 2 }}>
             <AppBar
                 position="static"
                 sx={{ bgcolor: 'transparent', boxShadow: 'none', backdropFilter: 'blur(7px)' }}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Stack, Typography, Button, Paper, TextField, MenuItem } from '@mui/material';
+import { Stack, Typography, Button, Paper, TextField, MenuItem, Backdrop } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { hideScroll } from 'src/theme/css';
@@ -8,6 +8,8 @@ import { useKanban } from './hooks';
 import TaskColumn from './task-column';
 import TaskColumnAdd from './task-column-add';
 import EmptyContent from 'src/components/empty-content/empty-content';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useBoolean } from 'src/utils/use-boolean';
 
 export default function TaskKanbanView() {
     const dispatch = useDispatch();
@@ -26,6 +28,7 @@ export default function TaskKanbanView() {
         onBoardChange,
         onChangeProject,
         fetchProjects,
+        loading,
     } = useKanban();
 
     const getProjectCallback = () => {
@@ -64,7 +67,6 @@ export default function TaskKanbanView() {
                 updateOrdered(newOrdered);
                 return;
             }
-
 
             const initialColumn = columns[source.droppableId];
             const finishColumn = columns[destination.droppableId];
@@ -112,6 +114,9 @@ export default function TaskKanbanView() {
     );
     return (
         <>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <TextField
                 fullWidth
                 select

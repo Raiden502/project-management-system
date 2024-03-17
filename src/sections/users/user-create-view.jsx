@@ -1,6 +1,7 @@
 import {
     Autocomplete,
     Avatar,
+    Backdrop,
     Box,
     Button,
     Card,
@@ -157,7 +158,9 @@ export default function UsersCreateView() {
     console.log(dept)
     return (
         <>
-            {loading.value && <LoadingScreen />}
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             {loading.value === false && (
                 <Grid container spacing={3}>
                     <Grid

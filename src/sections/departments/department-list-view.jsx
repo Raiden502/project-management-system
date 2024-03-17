@@ -1,4 +1,4 @@
-import { Box, InputAdornment, Stack, TextField } from '@mui/material';
+import { Backdrop, Box, InputAdornment, Stack, TextField } from '@mui/material';
 import DepartmentItem from './department-list-item';
 import Iconify from 'src/components/iconify/Iconify';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -6,9 +6,12 @@ import axiosInstance from 'src/utils/axios';
 import { AuthContext } from 'src/auth/JwtContext';
 import EmptyContent from 'src/components/empty-content/empty-content';
 import { useSelector } from 'src/redux/store';
+import { useBoolean } from 'src/utils/use-boolean';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 function DepartmentListView() {
     const [departmentsList, setDepartments] = useState([]);
+    const loading = useBoolean()
     const department = useSelector((state)=>state.department)
     const { user } = useContext(AuthContext);
     const [searchUsers, setSearchUsers] = useState('');
@@ -26,6 +29,7 @@ function DepartmentListView() {
 
     const getDepartmentList = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/dept/dept_list', { org_id: user.org_id });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
@@ -34,6 +38,9 @@ function DepartmentListView() {
             }
         } catch (err) {
             console.log(err);
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -48,6 +55,9 @@ function DepartmentListView() {
     const notFound = !dataFiltered.length && !!searchUsers;
     return (
         <Stack gap={4}>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <TextField
                 name="projectname"
                 InputProps={{

@@ -8,6 +8,7 @@ import {
     Tooltip,
     IconButton,
     Avatar,
+    Backdrop,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { styled, alpha } from '@mui/material/styles';
@@ -21,6 +22,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from 'src/auth/JwtContext';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 const StyledLabel = styled('span')(({ theme }) => ({
     ...theme.typography.caption,
@@ -66,11 +68,12 @@ const temp = [
 export default function TeamCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
+    const loading = useBoolean()
     const { user } = useContext(AuthContext);
     const [selectedImages, setSelectedImages] = useState(null);
     const department = useSelector((state) => state.department);
     const location = useLocation();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const [users, setUsers] = useState([]);
     const [formData, setFormData] = useState({
@@ -103,6 +106,7 @@ export default function TeamCreateView() {
 
     const fetchFormData = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/team/team_formdetails', {
                 team_id: location.state?.teamsId,
             });
@@ -114,14 +118,18 @@ export default function TeamCreateView() {
         } catch (err) {
             console.log(err);
         }
+        finally{
+            loading.onFalse()
+        }
     };
 
     const createDept = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/team/team_create', {
                 ...formData,
                 org_id: user.org_id,
-                dept_id:department.department_id,
+                dept_id: department.department_id,
                 user_id: user.user_id,
                 avatar: selectedImages,
             });
@@ -137,10 +145,14 @@ export default function TeamCreateView() {
             console.log(err);
             enqueueSnackbar('Unable to save', { variant: 'error' });
         }
+        finally{
+            loading.onFalse()
+        }
     };
 
     const editDept = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/team/team_edit', {
                 ...formData,
                 team_id: location.state?.teamsId,
@@ -157,6 +169,9 @@ export default function TeamCreateView() {
         } catch (err) {
             console.log(err);
             enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -192,118 +207,130 @@ export default function TeamCreateView() {
     }, [location.state?.teamsId]);
 
     return (
-        <Grid container spacing={3}>
-            <Grid md={4}>
-                <Card
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        p: 3,
-                    }}
-                >
-                    <Stack sx={{ alignItems: 'center' }} gap={3}>
-                        <AvatarUploader
-                            selectedImages={selectedImages}
-                            setSelectedImages={setSelectedImages}
-                        />
-                        <Typography variant="body2" sx={{ width: 190, textAlign: 'center' }}>
-                            Allowed *.jpeg, *.jpg, *.png max size of 3 Mb
-                        </Typography>
-                    </Stack>
-                </Card>
-            </Grid>
-            <Grid xs={12} md={8}>
-                <Card sx={{ p: 3 }}>
-                    <Stack spacing={2}>
-                        <TextField
-                            name="name"
-                            label="Department Name"
-                            value={formData.name}
-                            onChange={HandleFormdata}
-                            placeholder="e.g., Department Name"
-                        />
-                        <TextField
-                            multiline
-                            rows={6}
-                            maxRows={10}
-                            label="Description"
-                            name="description"
-                            value={formData.description}
-                            onChange={HandleFormdata}
-                            placeholder="description"
-                        />
+        <>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
+            <Grid container spacing={3}>
+                <Grid md={4}>
+                    <Card
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            p: 3,
+                        }}
+                    >
+                        <Stack sx={{ alignItems: 'center' }} gap={3}>
+                            <AvatarUploader
+                                selectedImages={selectedImages}
+                                setSelectedImages={setSelectedImages}
+                            />
+                            <Typography variant="body2" sx={{ width: 190, textAlign: 'center' }}>
+                                Allowed *.jpeg, *.jpg, *.png max size of 3 Mb
+                            </Typography>
+                        </Stack>
+                    </Card>
+                </Grid>
+                <Grid xs={12} md={8}>
+                    <Card sx={{ p: 3 }}>
+                        <Stack spacing={2}>
+                            <TextField
+                                name="name"
+                                label="Department Name"
+                                value={formData.name}
+                                onChange={HandleFormdata}
+                                placeholder="e.g., Department Name"
+                            />
+                            <TextField
+                                multiline
+                                rows={6}
+                                maxRows={10}
+                                label="Description"
+                                name="description"
+                                value={formData.description}
+                                onChange={HandleFormdata}
+                                placeholder="description"
+                            />
 
-                        <Stack direction="row">
-                            <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
-                                Assignee
-                            </StyledLabel>
-                            <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1}>
-                                {users
-                                    .filter((item) => formData.users.includes(item.id))
-                                    .map((user) => (
-                                        <Box sx={{ m: 1, position: 'relative', p: 1 }}>
-                                            <Avatar
-                                                key={user.userid}
-                                                alt={user.name}
-                                                src={user.avatar}
-                                            />
-                                            <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
-                                                {user.name}
-                                            </StyledLabel>
-                                            <IconButton
-                                                onClick={() => {
-                                                    HanleOnClear(user.id, 'users');
-                                                }}
-                                                sx={{
-                                                    top: 2,
-                                                    right: 2,
-                                                    position: 'absolute',
-                                                    backgroundColor: '#212B36',
-                                                    color: 'white',
-                                                    p: 0.5,
-                                                }}
-                                            >
-                                                <Iconify icon="ic:round-close" width={8} />
-                                            </IconButton>
-                                        </Box>
-                                    ))}
+                            <Stack direction="row">
+                                <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>
+                                    Assignee
+                                </StyledLabel>
+                                <Stack
+                                    direction="row"
+                                    flexWrap="wrap"
+                                    alignItems="center"
+                                    spacing={1}
+                                >
+                                    {users
+                                        .filter((item) => formData.users.includes(item.id))
+                                        .map((user) => (
+                                            <Box sx={{ m: 1, position: 'relative', p: 1 }}>
+                                                <Avatar
+                                                    key={user.userid}
+                                                    alt={user.name}
+                                                    src={user.avatar}
+                                                />
+                                                <StyledLabel
+                                                    sx={{ height: 40, lineHeight: '40px' }}
+                                                >
+                                                    {user.name}
+                                                </StyledLabel>
+                                                <IconButton
+                                                    onClick={() => {
+                                                        HanleOnClear(user.id, 'users');
+                                                    }}
+                                                    sx={{
+                                                        top: 2,
+                                                        right: 2,
+                                                        position: 'absolute',
+                                                        backgroundColor: '#212B36',
+                                                        color: 'white',
+                                                        p: 0.5,
+                                                    }}
+                                                >
+                                                    <Iconify icon="ic:round-close" width={8} />
+                                                </IconButton>
+                                            </Box>
+                                        ))}
 
-                                <Tooltip title="Add assignee">
-                                    <IconButton
-                                        onClick={usersAssign.onTrue}
-                                        sx={{
-                                            bgcolor: (theme) =>
-                                                alpha(theme.palette.grey[500], 0.08),
-                                            border: (theme) =>
-                                                `dashed 1px ${theme.palette.divider}`,
-                                        }}
-                                    >
-                                        <Iconify icon="mingcute:add-line" />
-                                    </IconButton>
-                                </Tooltip>
+                                    <Tooltip title="Add assignee">
+                                        <IconButton
+                                            onClick={usersAssign.onTrue}
+                                            sx={{
+                                                bgcolor: (theme) =>
+                                                    alpha(theme.palette.grey[500], 0.08),
+                                                border: (theme) =>
+                                                    `dashed 1px ${theme.palette.divider}`,
+                                            }}
+                                        >
+                                            <Iconify icon="mingcute:add-line" />
+                                        </IconButton>
+                                    </Tooltip>
 
-                                <TeamContactDetails
-                                    assignee={formData.users}
-                                    open={usersAssign.value}
-                                    onClose={usersAssign.onFalse}
-                                    type="users"
-                                    handleChange={HandleUserData}
-                                    contacts={users}
-                                />
+                                    <TeamContactDetails
+                                        assignee={formData.users}
+                                        open={usersAssign.value}
+                                        onClose={usersAssign.onFalse}
+                                        type="users"
+                                        handleChange={HandleUserData}
+                                        contacts={users}
+                                    />
+                                </Stack>
                             </Stack>
                         </Stack>
-                    </Stack>
-                </Card>
+                    </Card>
+                </Grid>
+                <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                        onClick={location.state?.teamsId ? editDept : createDept}
+                        variant="contained"
+                    >
+                        {location.state?.teamsId ? 'Save' : 'Create'}
+                    </Button>
+                </Grid>
             </Grid>
-            <Grid xs={12} lg={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                    onClick={location.state?.teamsId ? editDept : createDept}
-                    variant="contained"
-                >
-                    {location.state?.teamsId ? 'Save' : 'Create'}
-                </Button>
-            </Grid>
-        </Grid>
+        </>
     );
 }

@@ -1,4 +1,4 @@
-import { Box, InputAdornment, Stack, TextField } from '@mui/material';
+import { Backdrop, Box, InputAdornment, Stack, TextField } from '@mui/material';
 import ProjItem from './project-list-item';
 import Iconify from 'src/components/iconify/Iconify';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -7,9 +7,12 @@ import { AuthContext } from 'src/auth/JwtContext';
 import EmptyContent from 'src/components/empty-content/empty-content';
 import { useSelector } from 'src/redux/store';
 import { useCallback } from 'react';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function ProjectListView() {
     const [projects, setProjects] = useState([]);
+    const loading = useBoolean()
     const { user } = useContext(AuthContext);
     const department = useSelector((state)=>state.department)
     const [searchUsers, setSearchUsers] = useState('');
@@ -25,6 +28,7 @@ function ProjectListView() {
 
     const getProjectList = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/proj/proj_list', { dept_id: department.department_id });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
@@ -33,6 +37,9 @@ function ProjectListView() {
             }
         } catch (err) {
             console.log(err);
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -49,6 +56,9 @@ function ProjectListView() {
 
     return (
         <Stack gap={4}>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <TextField
                 name="projectname"
                 InputProps={{

@@ -1,4 +1,5 @@
 import {
+    Backdrop,
     Box,
     Button,
     Card,
@@ -17,6 +18,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import { AuthContext } from 'src/auth/JwtContext';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -38,12 +41,12 @@ function CustomTabPanel(props) {
     );
 }
 
-
 export default function ProjectDetailsView() {
     const [value, setValue] = useState(0);
+    const loading = useBoolean();
     const department = useSelector((state) => state.department);
     const location = useLocation();
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [project, setProject] = useState({});
 
@@ -57,23 +60,29 @@ export default function ProjectDetailsView() {
 
     const editProject = () => {
         navigate('/dashboard/projects/create', {
-            state: { projectId: location.state?.projectId, department_id:location.state?.department_id },
+            state: {
+                projectId: location.state?.projectId,
+                department_id: location.state?.department_id,
+            },
         });
     };
 
     const getProjectData = async () => {
         try {
+            loading.onTrue();
             const response = await axiosInstance.post('/proj/proj_details', {
                 proj_id: location.state?.projectId,
                 dept_id: department.department_id,
             });
             const { data, errorcode, status, message } = response.data;
-            console.log(data)
+            console.log(data);
             if (errorcode === 0) {
                 setProject(data);
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            loading.onFalse();
         }
     };
 
@@ -88,6 +97,9 @@ export default function ProjectDetailsView() {
     return (
         <>
             <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Backdrop open={loading.value}>
+                    <LoadingScreen />
+                </Backdrop>
                 <Button
                     sx={{
                         textAlign: 'right',
@@ -98,7 +110,7 @@ export default function ProjectDetailsView() {
                     <Typography variant="body2">Back</Typography>
                 </Button>
                 <Stack direction="row" gap={3}>
-                    <IconButton onClick={editProject} disabled={user.role==='user'}>
+                    <IconButton onClick={editProject} disabled={user.role === 'user'}>
                         <Iconify icon="solar:pen-bold" />
                     </IconButton>
                 </Stack>

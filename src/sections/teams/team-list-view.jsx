@@ -1,4 +1,4 @@
-import { Box, InputAdornment, Stack, TextField } from '@mui/material';
+import { Backdrop, Box, InputAdornment, Stack, TextField } from '@mui/material';
 import TeamItem from './team-list-item';
 import Iconify from 'src/components/iconify/Iconify';
 import axiosInstance from 'src/utils/axios';
@@ -6,6 +6,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import EmptyContent from 'src/components/empty-content/empty-content';
 import { AuthContext } from 'src/auth/JwtContext';
 import { useSelector } from 'src/redux/store';
+import { useBoolean } from 'src/utils/use-boolean';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 const tempData = [
     {
@@ -23,6 +25,7 @@ const tempData = [
 
 function TeamListView() {
     const [teams, setTeams] = useState([]);
+    const loading = useBoolean()
     const { user } = useContext(AuthContext);
     const department = useSelector((state) => state.department);
     const [searchUsers, setSearchUsers] = useState('');
@@ -38,6 +41,7 @@ function TeamListView() {
 
     const getTeamsList = async () => {
         try {
+            loading.onTrue()
             const response = await axiosInstance.post('/team/team_list', { dept_id: department.department_id });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
@@ -45,6 +49,9 @@ function TeamListView() {
             }
         } catch (err) {
             console.log(err);
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -60,6 +67,9 @@ function TeamListView() {
 
     return (
         <Stack gap={4}>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <TextField
                 name="projectname"
                 InputProps={{

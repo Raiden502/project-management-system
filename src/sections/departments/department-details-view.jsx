@@ -1,4 +1,5 @@
 import {
+    Backdrop,
     Box,
     Button,
     Card,
@@ -17,6 +18,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/utils/axios';
 import { AuthContext } from 'src/auth/JwtContext';
 import { useSelector } from 'src/redux/store';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useBoolean } from 'src/utils/use-boolean';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -41,6 +44,7 @@ function CustomTabPanel(props) {
 export default function DepartmentDetailsView() {
     const department = useSelector((state) => state.department);
     const [value, setValue] = useState(0);
+    const loading = useBoolean();
     const location = useLocation();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
@@ -62,8 +66,9 @@ export default function DepartmentDetailsView() {
 
     const getDepartmentData = async () => {
         try {
+            loading.onTrue();
             const response = await axiosInstance.post('/dept/dept_details', {
-                dept_id: location.state?.departmentId || department.department_id
+                dept_id: location.state?.departmentId || department.department_id,
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
@@ -72,6 +77,8 @@ export default function DepartmentDetailsView() {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            loading.onFalse();
         }
     };
 
@@ -85,6 +92,9 @@ export default function DepartmentDetailsView() {
 
     return (
         <>
+            <Backdrop open={loading.value}>
+                <LoadingScreen />
+            </Backdrop>
             <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button
                     sx={{

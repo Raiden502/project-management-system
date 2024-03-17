@@ -72,9 +72,15 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
     }, []);
 
     const save_details = () => {
-        if(taskName==="" || dueDate===null || startDate==null){
+        if (
+            taskName === '' ||
+            dueDate === null ||
+            startDate == null ||
+            reporter.length === 0 ||
+            (users.length <= 1 && teams.length <= 1)
+        ) {
             enqueueSnackbar('fields are empty', { variant: 'warning' });
-            return
+            return;
         }
         onUpdateTask({
             priority,
@@ -150,6 +156,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                         placeholder="Task name"
                         value={taskName}
                         onChange={handleChangeTaskName}
+                        required
                     />
 
                     <Stack direction="row" alignItems="center">
@@ -180,7 +187,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                                                 // onClick={() => {
                                                 //     HanleOnClear(user.id, 'users');
                                                 // }}
-                                                disabled={user.role==='user'}
+                                                disabled={user.role === 'user'}
                                                 sx={{
                                                     top: 2,
                                                     right: 2,
@@ -220,7 +227,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add assignee">
                                 <IconButton
                                     onClick={contactsUser.onTrue}
-                                    disabled={user.role==='user'}
+                                    disabled={user.role === 'user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,
@@ -259,7 +266,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
                             <Tooltip title="Add assignee">
                                 <IconButton
                                     onClick={contactsTeams.onTrue}
-                                    disabled={user.role==='user'}
+                                    disabled={user.role === 'user'}
                                     sx={{
                                         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
                                         border: (theme) => `dashed 1px ${theme.palette.divider}`,
