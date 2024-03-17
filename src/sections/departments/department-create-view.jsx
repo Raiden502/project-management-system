@@ -80,7 +80,7 @@ export default function DepartmentCreateView() {
             });
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
-                console.log(data);
+                console.log("form data", data);
                 setFormData(data);
                 setSelectedImages(data?.avatar);
             }
@@ -151,12 +151,11 @@ export default function DepartmentCreateView() {
             const { data, errorcode, status, message } = response.data;
             if (errorcode === 0) {
                 const { users, teams } = data;
-                const super_admin = users
-                    .filter((item) => item.role === 'super_admin')
-                    .map((item) => item.id);
+                
+                const super_admin = users.filter((item) => item.role === 'super_admin').map(item => item.id)
                 setFormData((prev) => ({
                     ...prev,
-                    users: super_admin,
+                    users: prev.users.length>0?prev.users:super_admin,
                 }));
                 setUsers(users);
                 setTeams(teams);
@@ -172,7 +171,7 @@ export default function DepartmentCreateView() {
             fetchList();
             firstRender.current = false;
         }
-    }, [location.state?.departmentId, users, formData.users]);
+    }, [user.org_id]);
 
     const secRender = useRef(true);
     useEffect(() => {
@@ -182,7 +181,7 @@ export default function DepartmentCreateView() {
         }
     }, [location.state?.departmentId]);
 
-    console.log(users, formData);
+    console.log("users", formData.users);
     return (
         <>
             <Backdrop open={loading.value}>
