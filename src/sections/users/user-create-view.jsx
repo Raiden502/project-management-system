@@ -24,6 +24,7 @@ import axiosInstance from 'src/utils/axios';
 import { useBoolean } from 'src/utils/use-boolean';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { de } from 'date-fns/locale';
+import { useTheme } from '@emotion/react';
 
 const formList = [
     { id: 'name', label: 'Name' },
@@ -49,6 +50,7 @@ const Roles = [
 export default function UsersCreateView() {
     const location = useLocation();
     const navigate = useNavigate();
+    const theme = useTheme()
     const loading = useBoolean();
     const [formData, setFormData] = useState({ ...tempData });
     const [selectedImages, setSelectedImages] = useState(null);
@@ -71,6 +73,7 @@ export default function UsersCreateView() {
 
     const syncData = async () => {
         try {
+            loading.onTrue();
             const requestData = { ...formData, avatar: selectedImages, org_id: user.org_id };
             console.log(requestData);
             const response = await axiosInstance.post(
@@ -87,6 +90,9 @@ export default function UsersCreateView() {
         } catch (err) {
             console.log(err);
             enqueueSnackbar('Unable to save', { variant: 'error' });
+        }
+        finally{
+            loading.onFalse()
         }
     };
 
@@ -158,7 +164,7 @@ export default function UsersCreateView() {
     console.log(dept)
     return (
         <>
-            <Backdrop open={loading.value}>
+            <Backdrop open={loading.value} sx={{zIndex:theme.zIndex.appBar +1}}>
                 <LoadingScreen />
             </Backdrop>
             {loading.value === false && (

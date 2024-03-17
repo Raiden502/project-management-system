@@ -23,6 +23,7 @@ import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { useTheme } from '@emotion/react';
 
 const StyledLabel = styled('span')(({ theme }) => ({
     ...theme.typography.caption,
@@ -35,6 +36,7 @@ const StyledLabel = styled('span')(({ theme }) => ({
 export default function DepartmentCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
+    const theme = useTheme()
     const loading = useBoolean();
     const { user } = useContext(AuthContext);
     const location = useLocation();
@@ -184,7 +186,7 @@ export default function DepartmentCreateView() {
     console.log("users", formData.users);
     return (
         <>
-            <Backdrop open={loading.value}>
+            <Backdrop open={loading.value} sx={{zIndex:theme.zIndex.appBar +1}}>
                 <LoadingScreen />
             </Backdrop>
 

@@ -23,6 +23,7 @@ import { AuthContext } from 'src/auth/JwtContext';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'src/redux/store';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { useTheme } from '@emotion/react';
 
 const StyledLabel = styled('span')(({ theme }) => ({
     ...theme.typography.caption,
@@ -68,6 +69,7 @@ const temp = [
 export default function TeamCreateView() {
     const usersAssign = useBoolean();
     const teamsAssign = useBoolean();
+    const theme = useTheme()
     const loading = useBoolean()
     const { user } = useContext(AuthContext);
     const [selectedImages, setSelectedImages] = useState(null);
@@ -208,7 +210,7 @@ export default function TeamCreateView() {
 
     return (
         <>
-            <Backdrop open={loading.value}>
+            <Backdrop open={loading.value} sx={{zIndex:theme.zIndex.appBar +1}}>
                 <LoadingScreen />
             </Backdrop>
             <Grid container spacing={3}>

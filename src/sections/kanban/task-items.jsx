@@ -34,26 +34,27 @@ export default function TaskItem({ task, onDeleteTask, index, column }) {
             }}
         />
     );
-    // const renderImg = (
-    //     <Box
-    //         sx={{
-    //             p: (theme) => theme.spacing(1, 1, 0, 1),
-    //         }}
-    //     >
-    //         <Image
-    //             disabledEffect
-    //             alt={task?.attachments[0]}
-    //             src={task?.attachments[0]}
-    //             ratio="4/3"
-    //             sx={{
-    //                 borderRadius: 1.5,
-    //                 ...(details.value && {
-    //                     opacity: 0.8,
-    //                 }),
-    //             }}
-    //         />
-    //     </Box>
-    // );
+
+    const renderImg = (attachments) => (
+        <Box
+            sx={{
+                p: (theme) => theme.spacing(1, 1, 0, 1),
+            }}
+        >
+            <Image
+                disabledEffect
+                alt={attachments[0].file}
+                src={attachments[0].file}
+                ratio="4/3"
+                sx={{
+                    borderRadius: 1.5,
+                    ...(details.value && {
+                        opacity: 0.8,
+                    }),
+                }}
+            />
+        </Box>
+    );
 
     const renderInfo = (
         <Stack direction="row" alignItems="center">
@@ -121,7 +122,7 @@ export default function TaskItem({ task, onDeleteTask, index, column }) {
                             }),
                         }}
                     >
-                        {/* {!!task?.attachments?.length && renderImg} */}
+                        {task?.attachments?.length > 0 && renderImg(task?.attachments)}
 
                         <Stack spacing={2} sx={{ px: 2, py: 2.5, position: 'relative' }}>
                             {renderPriority}

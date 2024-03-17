@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Stack, Typography } from '@mui/material';
+import { Box, IconButton, Input, Stack, Tooltip, alpha } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
-import uploadimag from 'src/assets/upload-img.png';
 
-const ImagePreview = ({ OnClear, index, image }) => (
+const ImagePreview = ({ OnClear, index, image, width, height }) => (
     <>
         <Box sx={{ position: 'relative' }}>
             <Box
@@ -11,11 +10,11 @@ const ImagePreview = ({ OnClear, index, image }) => (
                 key={index}
                 src={image}
                 sx={{
-                    width: 100,
-                    height: 100,
+                    width,
+                    height,
                     flexShrink: 0,
                     borderRadius: '10px',
-                    boxShadow:'rgba(149, 157, 165, 0.1) 0px 8px 24px',
+                    boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px',
                 }}
             />
             <IconButton
@@ -27,101 +26,98 @@ const ImagePreview = ({ OnClear, index, image }) => (
                     right: 6,
                     position: 'absolute',
                     backgroundColor: '#212B36',
+                    opacity: 0.8,
                     color: 'white',
+                    width: Number(width / 4.5),
+                    height: Number(width / 4.5),
+                    p: 0.3,
                 }}
             >
-                <Iconify icon="ic:round-close" width={14} />
+                <Iconify icon="ic:round-close" />
             </IconButton>
         </Box>
     </>
 );
 
 const ImageUploader = ({
-    maxImages = 5,
     maxImageSize = 5 * 1024 * 1024,
     allowedTypes = ['image/jpeg', 'image/png'],
-    srcImage = [],
-    singleUpload = false,
+    width = 60,
+    height = 60,
+    selectedImages,
+    setSelectedImages,
 }) => {
-    const [selectedImages, setSelectedImages] = useState([]);
-    const [imageUrl, setImageUrl] = useState(srcImage || '');
-    const [totalImage, setTotalImages] = useState(maxImages);
-
     const handleImageChange = (event) => {
         const files = Array.from(event.target.files);
         files.forEach((file) => {
-            if (file.size > maxImageSize || !allowedTypes.includes(file.type) || totalImage == 0) {
+            if (file.size > maxImageSize || !allowedTypes.includes(file.type)) {
                 return;
             }
             const reader = new FileReader();
             reader.onloadend = () => {
-                setTotalImages((prev) => prev - 1);
-                setSelectedImages((prevImages) => [...prevImages, reader.result]);
+                setSelectedImages((prevImages) => [...prevImages,{id:"", file:reader.result}]);
             };
             reader.readAsDataURL(file);
         });
     };
 
     const clearImages = (selectedIndex) => {
-        setTotalImages((prev) => prev + 1);
         const filteredData = selectedImages.filter((item, index) => index !== selectedIndex);
         setSelectedImages([...filteredData]);
     };
-    const clearUrlImages = (selectedIndex) => {
-        setTotalImages((prev) => prev + 1);
-        const filteredData = imageUrl.filter((item, index) => index !== selectedIndex);
-        setImageUrl([...filteredData]);
-    };
 
     return (
-        <Box>
+        <Box
+            htmlFor="image-upload"
+            component="label"
+            style={{
+                cursor: 'pointer',
+            }}
+        >
             <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    mb: 2,
+                gap={2}
+                display="grid"
+                gridTemplateColumns={{
+                    xs: 'repeat(2, 1fr)',
+                    sm: 'repeat(2, 1fr)',
+                    md: 'repeat(4, 1fr)',
                 }}
             >
-                <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
+                {selectedImages.map((image, index) => (
+                    <ImagePreview
+                        OnClear={clearImages}
+                        index={index}
+                        image={image.file}
+                        width={width}
+                        height={height}
+                    />
+                ))}
+                <Tooltip title="Add Attachments">
                     <Box
                         sx={{
-                            height: '180px',
+                            width,
+                            height,
                             borderRadius: '10px',
-                            backgroundColor: '#f5f5f5',
+                            bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+                            border: (theme) => `dashed 1px ${theme.palette.divider}`,
                             display: 'flex',
-                            alignItems: 'center',
+                            flexDirection: 'column',
                             justifyContent: 'center',
+                            alignItems: 'center',
                         }}
                     >
-                        <Stack sx={{ alignItems: 'center' }}>
-                            <Box
-                                component="img"
-                                src={uploadimag}
-                                alt="Upload Image"
-                                sx={{ width: 60, height: 60 }}
-                            />
-                            <Typography variant="subtitle1">Select file to upload</Typography>
-                        </Stack>
+                        <Iconify icon="mingcute:add-line" />
                     </Box>
-                </label>
-                <input
-                    id="image-upload"
-                    type="file"
-                    accept={allowedTypes.join(',')}
-                    multiple
-                    onChange={handleImageChange}
-                    style={{ display: 'none' }}
-                />
+                </Tooltip>
             </Box>
-
-            <Stack gap={2} direction="row">
-                {selectedImages.map((image, index) => (
-                    <ImagePreview OnClear={clearImages} index={index} image={image} />
-                ))}
-                {imageUrl.map((image, index) => (
-                    <ImagePreview OnClear={clearUrlImages} index={index} image={image} />
-                ))}
-            </Stack>
+            <Input
+                id="image-upload"
+                type="file"
+                accept={allowedTypes.join(',')}
+                multiple
+                onChange={handleImageChange}
+                sx={{ display: 'none' }}
+            />
         </Box>
     );
 };

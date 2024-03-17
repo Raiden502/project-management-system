@@ -28,6 +28,7 @@ import Label from 'src/components/label/label';
 import { useSnackbar } from 'src/components/snackbar';
 import { AuthContext } from 'src/auth/JwtContext';
 import { useKanban } from './hooks';
+import ImageUploader from 'src/components/Image-uploader/image-uploader';
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +58,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
     const [labels, setLabels] = useState(task?.labels ? task.labels : []);
     const [teams, setTeams] = useState(task?.teams ? task.teams : []);
     const [users, setUsers] = useState(task?.users ? task.users : []);
+    const [selectedImages, setSelectedImages] = useState(task?.attachments? task?.attachments:[]);
     const [comments, setNewComments] = useState(task?.comments ? task.comments : []);
 
     const handleChangeTaskName = useCallback((event) => {
@@ -77,7 +79,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
             dueDate === null ||
             startDate == null ||
             reporter.length === 0 ||
-            (users.length <= 1 && teams.length <= 1)
+            (users.length == 0 && teams.length == 0)
         ) {
             enqueueSnackbar('fields are empty', { variant: 'warning' });
             return;
@@ -89,6 +91,7 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
             due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
             start_date: startDate ? format(startDate, 'yyyy-MM-dd') : null,
             reporter: reporter[0],
+            attachments:selectedImages,
             labels,
             teams,
             users,
@@ -359,7 +362,10 @@ export default function TaskDetails({ task, openDetails, onCloseDetails, onDelet
 
                     <Stack direction="row">
                         <StyledLabel>Attachments</StyledLabel>
-                        {/* <KanbanDetailsAttachments attachments={task.attachments} /> */}
+                        <ImageUploader
+                            selectedImages={selectedImages}
+                            setSelectedImages={setSelectedImages}
+                        />
                     </Stack>
                 </Stack>
 

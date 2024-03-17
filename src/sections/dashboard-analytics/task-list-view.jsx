@@ -68,6 +68,16 @@ const headCells = [
         label: 'End Date',
     },
     {
+        id: 'total_days',
+        align: 'center',
+        label: 'Total Days',
+    },
+    {
+        id: 'overrun',
+        align: 'center',
+        label: 'Task overun',
+    },
+    {
         id: 'progress',
         align: 'center',
         label: 'Progress',
@@ -122,9 +132,11 @@ export default function TaskListView({ tasks }) {
     }, []);
 
     return (
-        <Box component={Card} sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px'}}>
+        <Box
+            component={Card}
+            sx={{ borderRadius: '15px', boxShadow: 'rgba(149, 157, 165, 0.1) 0px 8px 24px' }}
+        >
             <Stack p={3} gap={3} direction="row">
-                {/* <TextField name="role" label="Role" type="text" sx={{ height: '50px' }} /> */}
                 <TextField
                     name="search"
                     placeholder="Search ..."
@@ -202,12 +214,28 @@ export default function TaskListView({ tasks }) {
                                         </TableCell>
                                         <TableCell align="center">{item.status}</TableCell>
                                         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Avatar
-                                                alt={item.reporter.name}
-                                                src={item.reporter.avatar}
-                                                sx={{ mr: 2 }}
-                                            />
-                                            {item.reporter.name}
+                                            {item.reporter.id ? (
+                                                <>
+                                                    <Avatar
+                                                        alt={item.reporter.name}
+                                                        src={item.reporter.avatar}
+                                                        sx={{ mr: 2 }}
+                                                    />
+                                                    <Typography variant="body2">
+                                                        {item.reporter.name}
+                                                    </Typography>
+                                                </>
+                                            ) : (
+                                                <Label variant="soft" color="default">
+                                                    <Typography
+                                                        variant="body2"
+                                                        fontSize={12}
+                                                        fontWeight="bold"
+                                                    >
+                                                        {item.start_date ? item.start_date : '...'}
+                                                    </Typography>
+                                                </Label>
+                                            )}
                                         </TableCell>
                                         <TableCell align="center">{item.users}</TableCell>
                                         <TableCell align="center">{item.teams}</TableCell>
@@ -241,6 +269,41 @@ export default function TaskListView({ tasks }) {
                                                     {item.due_date ? item.due_date : '...'}
                                                 </Typography>
                                             </Label>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography>
+                                                {item.due_date && item.start_date
+                                                    ? (new Date(
+                                                          item.due_date
+                                                              .split('-')
+                                                              .reverse()
+                                                              .join('-')
+                                                      ) -
+                                                          new Date(
+                                                              item.start_date
+                                                                  .split('-')
+                                                                  .reverse()
+                                                                  .join('-')
+                                                          )) /
+                                                      (1000 * 60 * 60 * 24)
+                                                    : 0}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography>
+                                                {item.due_date
+                                                    ? Math.ceil(
+                                                          (new Date(
+                                                              item.due_date
+                                                                  .split('-')
+                                                                  .reverse()
+                                                                  .join('-')
+                                                          ) -
+                                                              new Date()) /
+                                                              (1000 * 60 * 60 * 24)
+                                                      )
+                                                    : 0}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
                                             <Typography>{`${item.progress}%`}</Typography>

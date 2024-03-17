@@ -10,8 +10,10 @@ import TaskColumnAdd from './task-column-add';
 import EmptyContent from 'src/components/empty-content/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useBoolean } from 'src/utils/use-boolean';
+import { useTheme } from '@emotion/react';
 
 export default function TaskKanbanView() {
+    const theme = useTheme();
     const dispatch = useDispatch();
     const firstRender = useRef(true);
     const secondRender = useRef(true);
@@ -114,7 +116,7 @@ export default function TaskKanbanView() {
     );
     return (
         <>
-            <Backdrop open={loading.value}>
+            <Backdrop open={loading.value} sx={{ zIndex: theme.drawer + 1 }}>
                 <LoadingScreen />
             </Backdrop>
             <TextField
