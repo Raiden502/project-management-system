@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { paths } from 'src/routes/path';
 import UserListView from 'src/sections/users/user-list-view';
+import UserTabsView from 'src/sections/users/user-tabs-view';
 
 function UsersLists() {
     return (
@@ -28,7 +29,7 @@ function UsersLists() {
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
-                <UserListView />
+                <UserTabsView />
             </Container>
         </>
     );

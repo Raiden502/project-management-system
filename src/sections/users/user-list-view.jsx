@@ -2,8 +2,6 @@ import {
     Avatar,
     Box,
     Card,
-    Checkbox,
-    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -15,21 +13,11 @@ import {
     InputAdornment,
     Stack,
     TablePagination,
-    Switch,
-    FormControlLabel,
-    MenuItem,
-    Button,
-    Backdrop,
 } from '@mui/material';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
-import axiosInstance from 'src/utils/axios';
-import { useBoolean } from 'src/utils/use-boolean';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'src/redux/store';
 import EmptyContent from 'src/components/empty-content';
 import UserListRow from './user-list-row';
-import { LoadingScreen } from 'src/components/loading-screen';
 
 const headCells = [
     {
@@ -59,11 +47,9 @@ const headCells = [
     },
 ];
 
-export default function UserListView() {
-    const [userList, setUserList] = useState([]);
-    const navigate = useNavigate();
-    const department = useSelector((state) => state.department);
-    const loading = useBoolean();
+export default function UserListView({ userList }) {
+
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -88,49 +74,8 @@ export default function UserListView() {
     });
 
     const notFound = !dataFiltered.length && !!searchUsers;
-
-    const deleteUser = async () => {
-        try {
-            const response = await axiosInstance.post('');
-            const { data, errorcode, verified, message } = response.data;
-            if (errorcode === 0) {
-                console.log('deleted');
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    const fetchUsers = async () => {
-        try {
-            loading.onTrue();
-            const response = await axiosInstance.post('user/user_list', {
-                department_id: department.department_id,
-            });
-            const { data, errorcode, verified, message } = response.data;
-            if (errorcode === 0) {
-                setUserList(data);
-            }
-        } catch (err) {
-            console.log(err);
-        } finally {
-            loading.onFalse();
-        }
-    };
-
-    const firstRender = useRef(true);
-    useEffect(() => {
-        if (firstRender.current && department.department_id) {
-            fetchUsers();
-            firstRender.current = false;
-        }
-    }, [department.department_id]);
-
     return (
         <Box component={Card}>
-            <Backdrop open={loading.value}>
-                <LoadingScreen />
-            </Backdrop>
             <Stack p={3} gap={3} direction="row">
                 <TextField
                     user_name="search"
