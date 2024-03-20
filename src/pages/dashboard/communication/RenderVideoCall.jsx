@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import Draggable from 'react-draggable';
 import { Resizable } from 'react-resizable';
@@ -40,3 +40,26 @@ function RenderVideoCallComponent({ isOpen, onClose }) {
 }
 
 export default RenderVideoCallComponent;
+
+// function RenderVideoCallComponent({ isOpen, onClose }) {
+//     if (!isOpen) {
+//         return <></>;
+//     }
+
+//     const containerRef = useRef(null);
+//     const externalWindowRef = useRef(null);
+//     containerRef.current = document.createElement('div');
+
+//     useEffect(() => {
+//         externalWindowRef.current = window.open('', '', 'width=600,height=400,left=200,top=200');
+//         externalWindowRef.current.document.body.appendChild(containerRef.current);
+//         return () => {
+//             externalWindowRef.current.close();
+//         };
+//     }, []);
+
+
+//     return createPortal(<VideoCallView />, containerRef.current);
+// }
+
+// export default RenderVideoCallComponent;

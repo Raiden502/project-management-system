@@ -7,6 +7,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import MicIcon from '@mui/icons-material/Mic';
 import { useTheme } from '@emotion/react';
+import Iconify from 'src/components/iconify/Iconify';
 
 const servers = {
     iceServers: [
@@ -16,10 +17,35 @@ const servers = {
     ],
 };
 
+const displayMediaOptions = {
+    video: {
+        displaySurface: 'browser',
+        cursor: 'always',
+    },
+    audio: {
+        suppressLocalAudioPlayback: false,
+    },
+    preferCurrentTab: false,
+    selfBrowserSurface: 'exclude',
+    systemAudio: 'include',
+    surfaceSwitching: 'include',
+    monitorTypeSurfaces: 'include',
+};
+
+const callMediaOptions = {
+    video: {
+        width: { ideal: 320 },
+        height: { ideal: 240 },
+        frameRate: { ideal: 24 },
+    },
+    audio: true,
+};
+
 function VideoCallView() {
     const { CallDispatch, incomingCall, IoInstance } = useContext(CallContext);
     const [actions, setActions] = useState({ audio: false, video: true });
-    const peerConnection = new RTCPeerConnection(servers);
+    const [screenSharing, setScreenSharing] = useState('cam');
+    const peerConnection = useRef(new RTCPeerConnection(servers));
     const localStreamRef = useRef(null);
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
@@ -42,49 +68,76 @@ function VideoCallView() {
 
     const leaveButton = async () => {
         await localStreamRef.current.getTracks().forEach((track) => track.stop());
-        peerConnection.close();
+        peerConnection.current.close();
         IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
             payload: null,
         });
         CallDispatch({ type: 'SET_LEAVE' });
     };
-    const startCall = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: { ideal: 320 },
-                    height: { ideal: 240 },
-                    frameRate: { ideal: 24 },
-                },
-                audio: true,
-            });
 
+    const toggleScreenSharing = async () => {
+        try {
+            let stream;
+            if (screenSharing === 'cam') {
+                stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+            } else {
+                stream = await navigator.mediaDevices.getUserMedia(callMediaOptions);
+            }
+
+            localStreamRef.current.getTracks().forEach((track) => track.stop());
             localStreamRef.current = stream;
             localVideoRef.current.srcObject = localStreamRef.current;
-            localStreamRef.current
-                .getTracks()
-                .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
 
             const audioTracks = localStreamRef.current.getAudioTracks();
             audioTracks.forEach((track) => {
                 track.enabled = false;
             });
 
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
+            const senders = peerConnection.current.getSenders();
+            console.log('-->', senders);
+            senders.forEach(async (sender) => {
+                const track = localStreamRef.current
+                    .getTracks()
+                    .find((t) => t.kind === sender.track.kind);
+                if (track) {
+                    await sender.replaceTrack(track);
+                }
+            });
+
+            setScreenSharing((prev) => (prev === 'cam' ? 'screen' : 'cam'));
+        } catch (error) {
+            console.error('Error accessing screen sharing:', error);
+        }
+    };
+
+    const startCall = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(callMediaOptions);
+            localStreamRef.current = stream;
+            localVideoRef.current.srcObject = localStreamRef.current;
+            localStreamRef.current
+                .getTracks()
+                .forEach((track) => peerConnection.current.addTrack(track, localStreamRef.current));
+
+            const audioTracks = localStreamRef.current.getAudioTracks();
+            audioTracks.forEach((track) => {
+                track.enabled = false;
+            });
+
+            const offer = await peerConnection.current.createOffer();
+            await peerConnection.current.setLocalDescription(offer);
 
             IoInstance.current.emit('offer', {
                 payload: offer,
                 receiverId: incomingCall.receiverInfo.id,
             });
-            
         } catch (err) {
             console.error(err);
         }
     };
 
-    peerConnection.onicecandidate = (event) => {
+    peerConnection.current.onicecandidate = (event) => {
         if (event.candidate) {
             IoInstance.current.emit('candidate', {
                 payload: event.candidate,
@@ -93,7 +146,7 @@ function VideoCallView() {
         }
     };
 
-    peerConnection.onaddstream = (event) => {
+    peerConnection.current.onaddstream = (event) => {
         remoteVideoRef.current.srcObject = event.stream;
     };
 
@@ -101,9 +154,9 @@ function VideoCallView() {
         const { payload } = receivedMessage;
 
         try {
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
+            await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload));
+            const answer = await peerConnection.current.createAnswer();
+            await peerConnection.current.setLocalDescription(answer);
 
             IoInstance.current.emit('answer', {
                 payload: answer,
@@ -115,17 +168,17 @@ function VideoCallView() {
     };
     const answerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+        await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload));
     };
     const candidateListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        await peerConnection.addIceCandidate(new RTCIceCandidate(payload));
+        await peerConnection.current.addIceCandidate(new RTCIceCandidate(payload));
     };
 
     const leaveListner = async (receivedMessage) => {
         const { payload } = receivedMessage;
         await localStreamRef.current.getTracks().forEach((track) => track.stop());
-        peerConnection.close();
+        peerConnection.current.close();
         CallDispatch({ type: 'SET_LEAVE' });
     };
 
@@ -194,21 +247,46 @@ function VideoCallView() {
                 }}
                 gap={3}
             >
-                <IconButton onClick={leaveButton} sx={{ backgroundColor: '#212B36' }}>
-                    <CallEndIcon color="error" />
-                </IconButton>
-                <IconButton onClick={muteAudioButton} sx={{ backgroundColor: '#212B36' }}>
-                    {actions.audio === true ? (
-                        <MicIcon color="success" />
+                <IconButton
+                    onClick={toggleScreenSharing}
+                    sx={{
+                        backgroundColor: '#212B36',
+                        color: screenSharing === 'screen' ? 'green' : 'red',
+                    }}
+                >
+                    {screenSharing === 'screen' ? (
+                        <Iconify icon="ic:baseline-screen-share" />
                     ) : (
-                        <MicOffIcon color="error" />
+                        <Iconify icon="ic:baseline-stop-screen-share" />
                     )}
                 </IconButton>
-                <IconButton onClick={muteVideoButton} sx={{ backgroundColor: '#212B36' }}>
-                    {actions.video === true ? (
-                        <VideocamIcon color="success" />
+                <IconButton onClick={leaveButton} sx={{ backgroundColor: '#212B36', color: 'red' }}>
+                    <Iconify icon="solar:end-call-bold" />
+                </IconButton>
+                <IconButton
+                    onClick={muteAudioButton}
+                    sx={{
+                        backgroundColor: '#212B36',
+                        color: actions.audio === true ? 'green' : 'red',
+                    }}
+                >
+                    {actions.audio === true ? (
+                        <Iconify icon="ion:mic" />
                     ) : (
-                        <VideocamOffIcon color="error" />
+                        <Iconify icon="ion:mic-off" />
+                    )}
+                </IconButton>
+                <IconButton
+                    onClick={muteVideoButton}
+                    sx={{
+                        backgroundColor: '#212B36',
+                        color: actions.video === true ? 'green' : 'red',
+                    }}
+                >
+                    {actions.video === true ? (
+                        <Iconify icon="fluent:video-28-filled" />
+                    ) : (
+                        <Iconify icon="fluent:video-off-16-filled" />
                     )}
                 </IconButton>
             </Stack>
