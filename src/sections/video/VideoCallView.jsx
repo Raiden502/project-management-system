@@ -208,14 +208,14 @@ function VideoCallView() {
                 backgroundColor: '#212B36',
                 alignItems: 'center',
                 position: 'relative',
-                width: 700,
+                // width: 1000,
                 p: 3,
                 borderRadius: 1,
             }}
         >
             <Stack
                 direction="row"
-                gap={3}
+                // gap={3}
                 sx={{
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -224,15 +224,15 @@ function VideoCallView() {
             >
                 <video
                     ref={remoteVideoRef}
-                    width="320"
-                    height="240"
+                    width="640"
+                    height="420"
                     autoPlay
                     style={{ borderRadius: '10px' }}
                 ></video>
                 <video
                     ref={localVideoRef}
-                    width="320"
-                    height="240"
+                    width="640"
+                    height="420"
                     autoPlay
                     style={{ borderRadius: '10px' }}
                 ></video>

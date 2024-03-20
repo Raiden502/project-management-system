@@ -10,7 +10,7 @@ import VideoCallView from 'src/sections/video/VideoCallView';
 
 const DraggableResizableBox = ({ children, ...props }) => (
     <Draggable {...props}>
-        <Resizable maxWidth={1000} maxHeight={1000} minWidth={400} minHeight={300}>
+        <Resizable maxWidth={1500} maxHeight={1500} minWidth={400} minHeight={300}>
             <Box
                 sx={{
                     position: 'fixed',

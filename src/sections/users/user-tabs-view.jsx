@@ -65,6 +65,7 @@ export default function UserTabsView() {
             const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 setUserList(data);
+                setStatus((prev) => ({ status: 'all', data }));
             }
         } catch (err) {
             console.log(err);
