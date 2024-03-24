@@ -15,13 +15,16 @@ import Iconify from 'src/components/iconify/Iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import axiosInstance from 'src/utils/axios';
 
+const passwordStrengthRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 export default function Verification() {
     const { id } = useParams();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const [token, setToken] = useState({ data: {}, verified: false });
     const [passwordToogle, setPasswordToogle] = useState(false);
-    const [passkey, setPasskey] = useState({ newkey: '', confirm: '' });
+    const [passkey, setPasskey] = useState({ newkey: '', confirm: '', strength: true });
 
     useEffect(() => {
         if (id) {
@@ -44,7 +47,7 @@ export default function Verification() {
 
     const updatePassword = async () => {
         try {
-            if (passkey.confirm !== passkey.newkey) {
+            if (passkey.confirm !== passkey.newkey || passkey.strength === false) {
                 enqueueSnackbar('password mismatch', { variant: 'error' });
                 return;
             }
@@ -90,11 +93,17 @@ export default function Verification() {
                                 name="password"
                                 label="Password"
                                 type={passwordToogle ? 'text' : 'password'}
-                                sx={{ height: '50px' }}
+                                sx={{ height: '50px', mb:7 }}
+                                error={!passkey.strength}
                                 value={passkey.newkey}
                                 onChange={(e) =>
-                                    setPasskey((prev) => ({ ...prev, newkey: e.target.value }))
+                                    setPasskey((prev) => ({
+                                        ...prev,
+                                        newkey: e.target.value,
+                                        strength: passwordStrengthRegex.test(e.target.value),
+                                    }))
                                 }
+                                helperText="Password should contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character."
                                 placeholder="Password"
                                 InputProps={{
                                     endAdornment: (
@@ -121,7 +130,7 @@ export default function Verification() {
                                 type="password"
                                 sx={{ height: '50px' }}
                                 value={passkey.confirm}
-                                error={passkey.confirm !== passkey.newkey || passkey.newkey === ''}
+                                error={passkey.confirm !== passkey.newkey}
                                 onChange={(e) =>
                                     setPasskey((prev) => ({ ...prev, confirm: e.target.value }))
                                 }

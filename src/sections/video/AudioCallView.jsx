@@ -19,7 +19,7 @@ const servers = {
 function AudioCallView() {
     const theme = useTheme();
     const { CallDispatch, incomingCall, IoInstance } = useContext(CallContext);
-    const peerConnection = new RTCPeerConnection(servers);
+    const peerConnection = useRef(new RTCPeerConnection(servers));
     const [actions, setActions] = useState({ audio: false });
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [close, setClose] = useState(true);
@@ -37,7 +37,7 @@ function AudioCallView() {
 
     const leaveButton = async () => {
         await localStreamRef.current.getTracks().forEach((track) => track.stop());
-        peerConnection.close();
+        peerConnection.current.close();
         IoInstance.current.emit('leave', {
             receiverId: incomingCall.receiverInfo.id,
             payload: null,
@@ -55,10 +55,10 @@ function AudioCallView() {
             localAudioRef.current.srcObject = localStreamRef.current;
             localStreamRef.current
                 .getAudioTracks()
-                .forEach((track) => peerConnection.addTrack(track, localStreamRef.current));
+                .forEach((track) => peerConnection.current.addTrack(track, localStreamRef.current));
 
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
+            const offer = await peerConnection.current.createOffer();
+            await peerConnection.current.setLocalDescription(offer);
             IoInstance.current.emit('offer', {
                 payload: offer,
                 receiverId: incomingCall.receiverInfo.id,
@@ -68,7 +68,7 @@ function AudioCallView() {
         }
     };
 
-    peerConnection.onicecandidate = (event) => {
+    peerConnection.current.onicecandidate = (event) => {
         if (event.candidate) {
             IoInstance.current.emit('candidate', {
                 payload: event.candidate,
@@ -77,7 +77,7 @@ function AudioCallView() {
         }
     };
 
-    peerConnection.onaddstream = (event) => {
+    peerConnection.current.onaddstream = (event) => {
         remoteAudioRef.current.srcObject = event.stream;
     };
 
@@ -85,9 +85,9 @@ function AudioCallView() {
         const { payload } = receivedMessage;
 
         try {
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
+            await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload));
+            const answer = await peerConnection.current.createAnswer();
+            await peerConnection.current.setLocalDescription(answer);
 
             IoInstance.current.emit('answer', {
                 payload: answer,
@@ -99,16 +99,16 @@ function AudioCallView() {
     };
     const answerListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+        await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload));
     };
     const candidateListener = async (receivedMessage) => {
         const { payload } = receivedMessage;
-        await peerConnection.addIceCandidate(new RTCIceCandidate(payload));
+        await peerConnection.current.addIceCandidate(new RTCIceCandidate(payload));
     };
     const leaveListner = async (receivedMessage) => {
         const { payload } = receivedMessage;
         await localStreamRef.current.getTracks().forEach((track) => track.stop());
-        peerConnection.close();
+        peerConnection.current.close();
         CallDispatch({ type: 'SET_LEAVE' });
     };
 
@@ -143,7 +143,7 @@ function AudioCallView() {
             };
         }
     }, [incomingCall.accept]);
-    
+
     return (
         <Box
             sx={{
