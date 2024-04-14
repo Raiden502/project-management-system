@@ -12,7 +12,7 @@ import {
     Stepper,
     TextField,
 } from '@mui/material';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { AuthContext } from 'src/auth/JwtContext.jsx';
@@ -48,6 +48,12 @@ function RegisterSection() {
         },
         [newUser]
     );
+
+    const checkEmailValid = useMemo(() => {
+        const re = /\S+@\S+\.\S+/;
+        const valid = re.test(newUser.email);
+        return valid;
+    }, [newUser.email]);
 
     const SubmitDetails = async () => {
         try {
@@ -113,6 +119,10 @@ function RegisterSection() {
                             label="Bussiness Email"
                             value={newUser.email}
                             onChange={HandlePageDetails}
+                            error={!checkEmailValid && newUser.email !== ''}
+                            helperText={
+                                !checkEmailValid && newUser.email !== '' && 'invalid email id'
+                            }
                             placeholder="example@company.com"
                         ></TextField>
                     </Stack>

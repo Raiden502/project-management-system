@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import axios from 'axios';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'src/components/snackbar';
 import { AuthContext } from 'src/auth/JwtContext';
@@ -50,7 +50,7 @@ const Roles = [
 export default function UsersCreateView() {
     const location = useLocation();
     const navigate = useNavigate();
-    const theme = useTheme()
+    const theme = useTheme();
     const loading = useBoolean();
     const [formData, setFormData] = useState({ ...tempData });
     const [selectedImages, setSelectedImages] = useState(null);
@@ -64,6 +64,12 @@ export default function UsersCreateView() {
             departments: [...emitValue.map((option) => option.department_id)],
         }));
     };
+
+    const checkEmailValid = useMemo(() => {
+        const re = /\S+@\S+\.\S+/;
+        const valid = re.test(formData.email);
+        return valid;
+    }, [formData.email]);
 
     const HandleDetails = (event) => {
         const { name, value } = event.target;
@@ -90,9 +96,8 @@ export default function UsersCreateView() {
         } catch (err) {
             console.log(err);
             enqueueSnackbar('Unable to save', { variant: 'error' });
-        }
-        finally{
-            loading.onFalse()
+        } finally {
+            loading.onFalse();
         }
     };
 
@@ -120,7 +125,7 @@ export default function UsersCreateView() {
             const { data, errorcode, verified, message } = response.data;
             if (errorcode === 0) {
                 setDept(data);
-                console.log(data)
+                console.log(data);
             }
         } catch (err) {
             console.log(err);
@@ -161,10 +166,10 @@ export default function UsersCreateView() {
         }
     }, [location.state?.userId]);
 
-    console.log(dept)
+    console.log(dept);
     return (
         <>
-            <Backdrop open={loading.value} sx={{zIndex:theme.zIndex.appBar +1}}>
+            <Backdrop open={loading.value} sx={{ zIndex: theme.zIndex.appBar + 1 }}>
                 <LoadingScreen />
             </Backdrop>
             {loading.value === false && (
@@ -204,7 +209,7 @@ export default function UsersCreateView() {
                                     <Typography variant="subtitle1">User Verification</Typography>
                                     <Button
                                         variant="contained"
-                                        disabled={location.state?.userId ? 0 : 1}
+                                        disabled={location.state?.userId && checkEmailValid ? 0 : 1}
                                         onClick={mailVerify}
                                     >
                                         Verify
@@ -240,6 +245,12 @@ export default function UsersCreateView() {
                                     label={item.label}
                                     value={formData[item.id]}
                                     onChange={HandleDetails}
+                                    error={!checkEmailValid && item.id === 'email'}
+                                    helperText={
+                                        !checkEmailValid &&
+                                        item.id === 'email' &&
+                                        'Incorrect email Id'
+                                    }
                                 />
                             ))}
                             <TextField
@@ -259,7 +270,14 @@ export default function UsersCreateView() {
                                 onChange={HandleDetails}
                             >
                                 {Roles.map((item) => (
-                                    <MenuItem key={item.role_id} value={item.role_id} disabled={(user.role=="admin" || user.role=="user") && item.name==="Super Admin"}>
+                                    <MenuItem
+                                        key={item.role_id}
+                                        value={item.role_id}
+                                        disabled={
+                                            (user.role == 'admin' || user.role == 'user') &&
+                                            item.name === 'Super Admin'
+                                        }
+                                    >
                                         {item.name}
                                     </MenuItem>
                                 ))}
@@ -322,7 +340,11 @@ export default function UsersCreateView() {
                             sx={{ mb: 3 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button onClick={syncData} variant="contained">
+                            <Button
+                                onClick={syncData}
+                                variant="contained"
+                                disabled={!checkEmailValid}
+                            >
                                 {location.state?.userId ? 'Save' : 'Create'}
                             </Button>
                         </Box>

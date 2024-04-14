@@ -9,6 +9,7 @@ import axiosInstance from 'src/utils/axios';
 const IntialReducerState = {
     user: null,
     IsInitialized: true,
+    IsLoggedIn: false,
 };
 
 const Reducer = (state, action) => {
@@ -16,6 +17,7 @@ const Reducer = (state, action) => {
         return {
             user: action.payload.user,
             IsInitialized: false,
+            IsLoggedIn: false,
         };
     }
     if (action.type === 'LOGIN') {
@@ -23,6 +25,15 @@ const Reducer = (state, action) => {
             ...state,
             user: action.payload.user,
             IsInitialized: false,
+            IsLoggedIn: true,
+        };
+    }
+    if (action.type === 'LOGIN_FAILED') {
+        return {
+            ...state,
+            user: action.payload.user,
+            IsInitialized: false,
+            IsLoggedIn: true,
         };
     }
     if (action.type === 'LOGOUT') {
@@ -30,6 +41,7 @@ const Reducer = (state, action) => {
             ...state,
             user: null,
             IsInitialized: false,
+            IsLoggedIn: false,
         };
     }
     if (action.type === 'REGISTER') {
@@ -37,6 +49,7 @@ const Reducer = (state, action) => {
             ...state,
             user: action.payload.user,
             IsInitialized: false,
+            IsLoggedIn: true,
         };
     }
     return state;
@@ -59,7 +72,7 @@ export function AuthProvider({ children }) {
                 const { errorcode, data, message, status } = response.data;
                 if (errorcode !== 0) {
                     Dispatch({
-                        type: 'INTIAL',
+                        type: 'LOGIN_FAILED',
                         payload: {
                             user: null,
                         },
@@ -155,7 +168,7 @@ export function AuthProvider({ children }) {
             const accessToken = storageAvaliable ? localStorage.getItem('accessToken') : '';
             console.log('token', accessToken);
             if (accessToken) {
-                const response = await axiosInstance.get('auth/authenticate',);
+                const response = await axiosInstance.get('auth/authenticate');
                 const { errorcode, data, message, status } = response.data;
                 if (errorcode === 0) {
                     Dispatch({
@@ -204,13 +217,14 @@ export function AuthProvider({ children }) {
             IsInitialized: status === 'loading',
             IsAuthenticated: status === 'authenticated',
             IsUnauthenticated: status === 'unauthenticated',
+            IsLoggedIn: state.IsLoggedIn,
             user: state.user,
             method: 'jwt',
             login,
             register,
             logout,
         }),
-        [status, state.user, login, logout, register]
+        [status, state.user, state.IsLoggedIn, login, logout, register]
     );
 
     return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

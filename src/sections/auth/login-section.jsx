@@ -1,5 +1,5 @@
 import { Box, Card, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -8,9 +8,8 @@ import { Link } from 'react-router-dom';
 import Iconify from 'src/components/iconify/Iconify';
 
 function LoginSection() {
-    const { login, IsAuthenticated, IsInitialized } = useContext(AuthContext);
+    const { login, IsUnauthenticated, IsLoggedIn } = useContext(AuthContext);
     const [passwordToogle, setPasswordToogle] = useState(false);
-
     const [loginDetails, setLoginDetails] = useState({ username: '', password: '' });
 
     const HandlePageDetails = useCallback(
@@ -24,6 +23,12 @@ function LoginSection() {
         [loginDetails]
     );
 
+    const checkEmailValid = useMemo(() => {
+        const re = /\S+@\S+\.\S+/;
+        const valid = re.test(loginDetails.username);
+        return valid;
+    }, [loginDetails.username]);
+
     const SubmitDetails = async () => {
         try {
             await login({ email: loginDetails.username, password: loginDetails.password });
@@ -31,6 +36,8 @@ function LoginSection() {
             console.error('Login failed', error);
         }
     };
+
+    console.log(checkEmailValid, 'lohin');
 
     return (
         <Box
@@ -62,20 +69,26 @@ function LoginSection() {
                         <TextField
                             name="username"
                             label="Email address"
-                            sx={{ height: '50px' }}
+                            sx={{ height: '50px', mb: 2 }}
                             value={loginDetails.username}
                             onChange={HandlePageDetails}
                             placeholder="Email address"
-                            error={IsAuthenticated === false && IsInitialized === false}
+                            error={
+                                (IsUnauthenticated && IsLoggedIn) ||
+                                (!checkEmailValid && loginDetails.username !== '')
+                            }
+                            helperText={
+                                !checkEmailValid &&
+                                loginDetails.username !== '' &&
+                                'Incorrect Email'
+                            }
                         ></TextField>
                         <TextField
                             name="password"
                             label="Password"
-                            error={IsAuthenticated === false && IsInitialized === false}
+                            error={IsUnauthenticated && IsLoggedIn}
                             helperText={
-                                IsAuthenticated === false &&
-                                IsInitialized === false &&
-                                'Incorrect Login Details'
+                                IsUnauthenticated && IsLoggedIn && 'Incorrect Login Details'
                             }
                             type={passwordToogle ? 'text' : 'password'}
                             sx={{ height: '50px' }}
@@ -122,6 +135,7 @@ function LoginSection() {
                                 textAlign: 'left',
                                 height: '50px',
                             }}
+                            disabled={checkEmailValid===false || loginDetails.password===''}
                             onClick={SubmitDetails}
                         >
                             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
