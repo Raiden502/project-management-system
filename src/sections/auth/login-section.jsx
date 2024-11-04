@@ -52,7 +52,7 @@ function LoginSection() {
                 <Stack gap={3}>
                     <Typography variant="h4">Sign in to TFMS</Typography>
                     <Typography variant="subtitle2">
-                        New user?{' '}
+                        New Organization?{' '}
                         <Typography
                             variant="subtitle2"
                             component={Link}
